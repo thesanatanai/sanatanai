@@ -40,7 +40,7 @@
 - **Node.js** & **Next.js**
 - **Google Generative AI API** (`@google/genai`)
 - **Mongodb🌿** (`mongoose`) for database/storage layer
-- **Nodemailer ** (Email notifications and otp verifications)
+- **Resend** for email verifications/messages
 - **Tavliy API** `@tavliy\core` for real-time latest search.
 
 ### Desktop Wrapper (Tauri)
@@ -113,6 +113,7 @@ You will also need valid API keys for:
    JWT_SECRET=your_jwt_secret
    MONGO_URI=your_mongodb_uri
    TAVLIY_API=your_tavliy_api_key
+   RESEND_API=your_resend_api_key
    ```
 
 4. **Run the local Development Server:**

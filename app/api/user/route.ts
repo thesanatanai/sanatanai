@@ -25,7 +25,11 @@ export async function PUT(request: NextRequest) {
 
   const user = await verifyUser(true) as User;
   if (typeof user == "function") return user();
-  await userModel.updateOne({ id: user.id }, { $set: changed });
+  await userModel.updateOne({ id: user.id }, { $set: {
+    picture: changed.picture,
+    name: changed.name,
+    prefferedLocale: changed.prefferedLocale
+  }});
   return NextResponse.json({
     message: "Done",
   });
