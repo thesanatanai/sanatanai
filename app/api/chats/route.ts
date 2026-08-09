@@ -85,8 +85,9 @@ export async function PUT(request: NextRequest) {
   const { id: chatId, ...changes } = await request.json();
 
   if(!Object.keys(changes).length) return respondErr("No modifications!!");
+
   const validated = validateModifications(changes);
-  console.log(validated, changes);
+  if(!Object.keys(validated).length) return respondErr("No valid modifications!!");
 
   const updated = await updateChat(id, chatId, validated);
   if(updated) return updated();

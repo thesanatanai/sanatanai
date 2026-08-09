@@ -3,6 +3,7 @@ import respondErr, {
   generateHash,
   generateUniqueId,
   genResErr,
+  isValidEmail,
 } from "../../utils/respondErr";
 import otpModel from "../../models/verify";
 import userModel from "../../models/user";
@@ -17,6 +18,7 @@ export async function POST(request: NextRequest) {
   const { otp, email, locale } = await request.json();
 
   if (!otp) return respondErr("Missing OTP");
+  if(!isValidEmail(email)) return respondErr("Invalid Email");
 
   const otpHash = await generateHash(otp);
   const registration = await getOtp(email);
@@ -46,7 +48,7 @@ export async function POST(request: NextRequest) {
     cookieStore.set({
       name: "token",
       value: token,
-      expires: Date.now() + 365 * 24 * 3600 * 900,
+      expires: Date.now() + 365 * 24 * 3600 * 1000,
       path: "/",
       httpOnly: true,
     });
@@ -62,7 +64,9 @@ export async function POST(request: NextRequest) {
     prefferedLocale: locale || "hi",
   });
 
-  const token = jwt.sign({ id }, process.env.JWT_SECRET as string);
+  const token = jwt.sign({ id }, process.env.JWT_SECRET as string, {
+    expiresIn: "1year"
+  });
 
   cookieStore.set({
     name: "token",
@@ -76,6 +80,8 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   const { email } = await request.json();
+  if(!isValidEmail(email)) return respondErr("Invalid Email");
+
   const alreadyExists = await getOtp(email);
   if (typeof alreadyExists !== "function")
     return NextResponse.json({ message: "Done" });

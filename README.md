@@ -4,7 +4,7 @@
 <h1 align="center" style="border-bottom:none;">Sanatan AI</h1>
 <h3 align="center">The Soul of Intellignece</h3>
 <p align="center">
-<img src="https://img.shields.io/badge/version-1.0.0-blue.svg" />
+<img src="https://img.shields.io/badge/version-1.0.1-blue.svg" />
 <img src="https://img.shields.io/badge/license-MIT-green.svg" />
 </p>
 
@@ -90,6 +90,7 @@ You will also need valid API keys for:
 - JWT_SECRET
 - Mongodb database
 - Tavliy API keys
+-Resend API key with valid domain 
 
 ### Local Development
 
@@ -147,7 +148,7 @@ Or install latest application bundle from GitHub.
 ## 🌐 Web Deployment
 
 This application is tailored to be deployed effortlessly to **Vercel** currently serving the world at
-[sanatan-next-three.vercel.app](https://sanatan-next-three.vercel.app) and will soon be available on [sanatan-ai.vercel.app](https://sanatan-ai.vercel.app)
+[sanatan-ai.app](https://sanatan-ai.vercel.app).
 
 ---
 

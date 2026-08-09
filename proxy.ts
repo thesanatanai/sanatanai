@@ -7,7 +7,10 @@ export default function proxy(req: NextRequest) {
 
   if (!(setupComplete == "true" && token) && !isPublicPath) {
     req.cookies.clear();
-    return NextResponse.redirect(new URL("/welcome", req.url));
+    const res = NextResponse.redirect(new URL("/welcome", req.url));
+    res.cookies.delete("token");
+    res.cookies.delete("setupComplete");
+    return res;
   }
 
   return NextResponse.next();

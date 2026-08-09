@@ -14,11 +14,11 @@ export function genResErr(msg: string, code = 400): () => ReturnType<typeof resp
     return () => respondErr(msg, code);
 }
 
-export async function generateUniqueId(model?: Model<unknown>) {
+export async function generateUniqueId(model?: Model<unknown>, field = "id") {
   const uuid = crypto.randomUUID() + Date.now();
   const hashHex = await generateHash(uuid);
-  if (await model?.findOne({ id: hashHex })) {
-    return generateUniqueId(model);
+  if (await model?.findOne({ [field]: hashHex })) {
+    return generateUniqueId(model, field);
   }
   return hashHex;
 }
@@ -29,4 +29,9 @@ export async function generateHash(data: string | number) {
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   return hashHex;
+}
+
+export const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+export function isValidEmail(email: unknown): email is string {
+  return typeof email === "string" && EMAIL_REGEX.test(email);
 }

@@ -60,7 +60,7 @@ export async function getChats(userId: string) {
 }
 
 export async function createNewChat(id: string, title?: string) {
-  const chatId = await generateUniqueId();
+  const chatId = await generateUniqueId(chatModel, "chatId");
   return await chatModel.create({
     id,
     timestamp: Date.now(),

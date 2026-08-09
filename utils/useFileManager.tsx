@@ -13,17 +13,33 @@ export default function useFileManager([stateFiles, setFiles]: uStat<UserFileDat
   }
   
   function handleFiles(files: File[]) {
-    if (stateFiles.length == 3) {
+    if (stateFiles.length >= 3) {
       notification("fileLimitExceeded", {
         language: true,
         type: "error",
       });
       return;
     }
+
+    const remainingSlots = 3 - stateFiles.length;
+    if (files.length > remainingSlots) {
+      notification("fileLimitExceeded", {
+        language: true,
+        type: "error",
+      });
+    }
+    files = files.slice(0, remainingSlots);
     files.forEach((file) => {
       const isImage = file.type.startsWith("image/");
-      let type = "text/plain";
-      if (supportedFiles.includes(file.type)) type = file.type;
+      const isPlainTextFallback = file.type === "" || file.type.startsWith("text/");
+      if (!supportedFiles.includes(file.type) && !isPlainTextFallback) {
+        notification("unsupportedFileType", {
+          language: true,
+          type: "error",
+        });
+        return;
+      }
+      const type = supportedFiles.includes(file.type) ? file.type : "text/plain";
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result;

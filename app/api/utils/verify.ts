@@ -2,7 +2,7 @@
 import { cookies } from "next/headers";
 import userModel from "../models/user";
 import jwt from "jsonwebtoken";
-import { genResErr } from "./respondErr";
+import { genResErr, isValidEmail } from "./respondErr";
 import { _sendOTP } from "./sendMail";
 import crypto from "node:crypto";
 import dbConnect from "./db";
@@ -49,8 +49,7 @@ export default async function verifyUser(deleteCookies = true): Promise<user> {
 export type User = NonNullable<Awaited<ReturnType<typeof verifyUser>>>;
 
 export async function sendOtp(email: string) {
-  if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.exec(email))
-    return genResErr("Email is invalid");
+  if (!isValidEmail(email)) return genResErr("Email is invalid");
   const OTP = crypto.randomInt(100000, 999999);
   await _sendOTP(OTP, email);
   return OTP;

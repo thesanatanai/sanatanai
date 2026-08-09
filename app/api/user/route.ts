@@ -8,6 +8,7 @@ import verifyUser, { User } from "../utils/verify";
 import dbConnect from "../utils/db";
 
 const client = new OAuth2Client(process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID);
+const ALLOWED_USER_FIELDS = ["picture", "name", "prefferedLocale"] as const;
 dbConnect();
 
 export async function GET() {
@@ -25,11 +26,16 @@ export async function PUT(request: NextRequest) {
 
   const user = await verifyUser(true) as User;
   if (typeof user == "function") return user();
-  await userModel.updateOne({ id: user.id }, { $set: {
-    picture: changed.picture,
-    name: changed.name,
-    prefferedLocale: changed.prefferedLocale
-  }});
+
+// Only apply fields that were actually provided and valid
+  const updates: Record<string, unknown> = {};
+  for (const key of ALLOWED_USER_FIELDS) {
+    if (changed[key] !== undefined) updates[key] = changed[key];
+  }
+
+  if (!Object.keys(updates).length) return respondErr("No valid changes", 304);
+
+  await userModel.updateOne({ id: user.id }, { $set: updates});
   return NextResponse.json({
     message: "Done",
   });
@@ -81,7 +87,7 @@ export async function POST(request: NextRequest) {
     cookieStore.set({
       name: "token",
       value: token,
-      expires: Date.now() + 365 * 24 * 3600 * 900,
+      expires: Date.now() + 365 * 24 * 3600 * 1000,
       path: "/",
       httpOnly: true,
     });
@@ -123,13 +129,16 @@ export async function DELETE(request: NextRequest) {
       const { id } = jwt.verify(token, process.env.JWT_SECRET as string) as {
         id: string;
       };
-      userModel.updateOne({ id }, { id: await generateUniqueId(userModel) });
+      await userModel.updateOne({ id }, { id: await generateUniqueId(userModel) });
       cookieManager.delete("token");
+      cookieManager.delete("setupComplete");
     } catch {
       cookieManager.delete("token");
+      cookieManager.delete("setupComplete");
       return respondErr("Either token invalid or user not exists..", 406)
     }
+    return NextResponse.json({ message: "Logged out from all devices" });
   } catch {
-    respondErr("Invalid cardential token");
+    return respondErr("Invalid cardential token");
   }
 }

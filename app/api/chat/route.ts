@@ -52,5 +52,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (e) {
     console.log("Response Gen Err: ", e);
+    return respondErr("Sorry, something went wrong while generating a response.", 500);
   }
 }
