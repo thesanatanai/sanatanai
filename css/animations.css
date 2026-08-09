@@ -1,0 +1,174 @@
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@keyframes fromLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+@keyframes fromTop {
+    0% {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scrollBtn {
+    from {
+       width: 0;
+       height: 0;
+       margin-right: 25px;
+       margin-bottom: 25px;
+    }
+    to {
+        width: 50px;
+       height: 50px;
+       margin-right: 0;
+       margin-bottom: 0;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.float-animation {
+    animation: float 6s ease infinite;
+}
+
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
+
+.rotate-animation {
+    animation: rotate 10s linear infinite;
+}
+
+/* Text Animations */
+@keyframes textFlicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.fromLeft {
+    animation: fromLeft 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+.fromTop {
+    animation: fromTop 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* Staggered Sidebar Entry */
+.chat-item {
+    opacity: 0;
+    animation: slideInLeft 0.3s ease forwards;
+}
+
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* Add staggered delays via JS or nth-child for first few items */
+.chat-item:nth-child(1) { animation-delay: 0.05s; }
+.chat-item:nth-child(2) { animation-delay: 0.1s; }
+.chat-item:nth-child(3) { animation-delay: 0.15s; }
+.chat-item:nth-child(4) { animation-delay: 0.2s; }
+.chat-item:nth-child(5) { animation-delay: 0.25s; }
+
+/* Button Interactions */
+.hover-lift-glow {
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.hover-lift-glow:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px var(--glow-color);
+}
+
+@keyframes opacity {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+/* For deep-think button */
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0 0 5px rgba(241, 196, 15, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(241, 196, 15, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(241, 196, 15, 0.2);
+  }
+}
+
+/* For files in chat input */
+@keyframes scaleInLeft {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes skeleton {
+    from {
+        background-position: 200% 0;
+    }
+    to {
+        background-position: 0 0;
+    }
+}

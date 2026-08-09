@@ -1,0 +1,82 @@
+@media(max-width: 713px) {
+	.sanatanai-app {
+		width: 100% !important;
+		right: 0 !important;
+		left: 0 !important;
+	}
+
+	.menuBar:not(.makeSmall) {
+		width: 300px !important;
+		opacity: 1 !important;
+        left: 0;
+		.action {
+			display: flex;
+			code,
+			span {
+				display: block;
+			}
+		}
+	}
+
+	.message-text {
+		max-width: 100% !important;
+	}
+
+	.scroll-button {
+		bottom: 150px !important;
+	}
+
+	[data-label]::after, [data-label]::before {
+		display: none;
+	}
+
+  .chat-capsule {
+    padding: 6px;
+    border-radius: 20px;
+  }
+
+  /* Force stack layout for input and buttons */
+  .capsule-content {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .input-wrapper {
+    width: 100% !important;
+    background: transparent;
+    padding: 0;
+  }
+
+  .capsule-input {
+    min-height: 48px;
+    padding: 10px 4px;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+
+  /* Horizontal scroll for buttons row */
+  .capsule-controls {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    overflow-x: auto;
+    padding-bottom: 4px;
+    gap: 12px;
+  }
+
+  .capsule-action-btn {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+  }
+
+  #settings-popup {
+    padding: 20px;
+  }
+  
+  .settings-body {
+    grid-template-columns: 1fr;
+  }
+}

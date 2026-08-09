@@ -1,0 +1,258 @@
+@import url('animations.css');
+@import url('modern-ui.css');
+@import url('menu.css');
+@import url('media.css');
+
+.mermaid {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 15px;
+  border-radius: 12px;
+  margin: 10px 0;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.light_mode .mermaid {
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* These classes are only appear when an error occurs */
+.mermaid.dark {
+  color: #ff0;
+}
+
+.mermaid.light {
+  color: #f00;
+}
+
+/* Tables */
+table,
+td,
+th {
+    border: solid 1px var(--subheading-color);
+    color: var(--text-color);
+    border-collapse: collapse;
+    padding: 8px 12px;
+}
+th, td {
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+th {
+  color: var(--gradient-2);
+    background: var(--secondary-color);
+    font-weight: 600;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+table {
+  width: 100%;
+    margin: 15px 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.material-symbols-rounded,
+.sanatan-symbol {
+    font-size: 24px;
+}
+
+/* Ask prompt */
+.del {
+    border: none;
+    cursor: pointer;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 30px;
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.del:hover {
+    background: linear-gradient(135deg, #0069d9, #004494);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+}
+
+.fullscreen {
+    width: 100vw !important;
+    height: 100vh !important;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(5px);
+    z-index: 5 !important;
+    top: 0;
+    left: 0;
+    position: fixed;
+    display: none;
+}
+.fullscreen.block {
+    display: block;
+}
+
+.scroll-button {
+    appearance: button;
+    position: fixed;
+    z-index: 4 !important;
+    bottom: 100px;
+    right: 50px;
+    background: linear-gradient(135deg, var(--secondary-color), var(--secondary-hover-color));
+    font-size: 24px;
+    width: 55px;
+    height: 55px;
+    animation: scrollBtn 1s ease;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.scroll-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+}
+
+button,
+[type="button"],
+.material-symbols-rounded,
+.pointer {
+    cursor: pointer;
+}
+
+
+/* Improve focus styles for accessibility */
+:not(textarea, input):focus-visible {
+    outline: 3px solid #2e8afd;
+    outline-offset: 2px;
+}
+
+
+/* Pulse Effect for Bot Avatar */
+img[alt="Sanatan Logo"] {
+    filter: drop-shadow(0 0 5px var(--glow-color));
+}
+
+lord-icon {
+    --lord-icon-primary: var(--text-color) !important;
+    --lord-icon-secondary: var(--text-color) !important;
+}
+
+
+/* Geeta Block Styles */
+.gita {
+    background: linear-gradient(135deg, rgba(255, 153, 51, 0.15), rgba(0, 0, 0, 0.2));
+    border: 1px solid rgba(255, 153, 51, 0.3);
+    border-left: 4px solid #ff9933;
+    border-radius: 12px;
+    padding: 25px;
+    margin: 25px 0;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    position: relative;
+    backdrop-filter: blur(5px);
+    overflow: hidden;
+    width: fit-content;
+}
+
+.gita::before {
+    content: '🕉';
+    position: absolute;
+    right: -10px;
+    top: -20px;
+    font-size: 150px;
+    opacity: 0.05;
+    color: #ff9933;
+    pointer-events: none;
+    z-index: 0;
+    font-family: 'Poppins', Georgia, 'Times New Roman', Times, serif;
+}
+
+.gita h1 {
+    color: #ff9933;
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 153, 51, 0.2);
+    padding-bottom: 15px;
+}
+
+.gita h2,
+.gita h3 {
+    color: var(--text-color);
+    margin: 12px 0;
+    line-height: 1.8;
+    position: relative;
+    z-index: 1;
+}
+
+.gita h2 {
+    font-size: 1.3rem;
+    font-weight: 500;
+}
+
+.gita h3 {
+    font-size: 1rem;
+    font-weight: 500;
+    opacity: 0.9;
+    margin-left: 10px;
+    border-left: 2px solid rgba(255, 153, 51, 0.3);
+    padding-left: 15px;
+}
+
+.canvas {
+    background: var(--secondary-color);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.message-text button:not(:where(.markstream-react) .table-node__resize-handle) {
+    background: var(--secondary-hover-color);
+    color: var(--text-color);
+    border: 0;
+    padding: 5px 10px;
+    margin: 0 10px;
+}
+
+:where(.markstream-react) .table-node__resize-handle {
+    cursor: col-resize !important;
+}
+
+.hide {
+    animation: opacity .1s linear;
+}
+
+.space-between {
+    justify-content: space-between;
+}
+
+.skeleton {
+    padding: 8px;
+    background-image: linear-gradient(to right, #777a, #fffa, #777a);
+    background-size: 200% 100%;
+    background-position: 100%;
+    border-radius: 10px;
+    margin: 10px;
+    animation: skeleton 5s linear infinite;
+}
+
+.user-message .skeleton {
+    margin: 0 10px 10px 10px;
+}
