@@ -1,3 +1,11 @@
+# V-1.0.2
+# Add OTP Rate Limiting
+Now, OTP's are rate-limited to avoid pishing and other malpractices
+# Introduce MNew Function Calls
+New function calls including `add_memory`, `delete_memory` are introduced along with their respective functions for better UX.
+# Bind System Prompt
+Systrem Prompt, initially dead code, is now correctly binded with model for better accuracy.
+
 # V-1.0.1
 ## Fix: critical auth, chat, and file-upload bugs
 

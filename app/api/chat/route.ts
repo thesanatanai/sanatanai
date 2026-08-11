@@ -6,6 +6,7 @@ import { getRequestParams, reqConfig } from "./search";
 import { getChat } from "@/actions/chatActions";
 import generateStream from "./stream";
 import dbConnect from "../utils/db";
+import prompt from "../utils/systemPrompt";
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GENAI,
@@ -14,8 +15,12 @@ const ai = new GoogleGenAI({
 dbConnect();
 
 export async function POST(request: NextRequest) {
-  const user = await verifyUser(true) as User;
+  const user = (await verifyUser(true)) as User;
   if (typeof user == "function") return user();
+
+  const name = user.name;
+  const memories = user.memories;
+  const locale = user.prefferedLocale;
 
   try {
     const {
@@ -31,15 +36,19 @@ export async function POST(request: NextRequest) {
     if (!chatId || !newMessage?.parts) {
       return respondErr("Required: sessionId and newMessage (with parts).");
     }
-    
-    if(newMessage.role !== "user") return respondErr(`Invalid message with role: ${newMessage.role || "No Role"}`);
+
+    if (newMessage.role !== "user")
+      return respondErr(
+        `Invalid message with role: ${newMessage.role || "No Role"}`,
+      );
 
     const id = user.id;
     if (!chatId) return respondErr("No chat id provided");
     const chat = await getChat(id, chatId);
     if (typeof chat == "function") return chat();
 
-    const requestOptions = getRequestParams(chat, newMessage, config);
+    const systemPrompt = prompt(name as string, locale, memories)
+    const requestOptions = getRequestParams(chat, newMessage, config, systemPrompt);
     const stream = generateStream(requestOptions, ai, id, chatId);
 
     return new Response(stream, {
@@ -52,6 +61,9 @@ export async function POST(request: NextRequest) {
     });
   } catch (e) {
     console.log("Response Gen Err: ", e);
-    return respondErr("Sorry, something went wrong while generating a response.", 500);
+    return respondErr(
+      "Sorry, something went wrong while generating a response.",
+      500,
+    );
   }
 }

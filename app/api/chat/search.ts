@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Content,
   FunctionDeclaration,
@@ -8,10 +9,11 @@ import {
 } from "@google/genai";
 import { tavily } from "@tavily/core";
 import { chatJSON } from "@/actions/chatActions";
+import userModel from "../models/user";
 
 const client = tavily({ apiKey: process.env.TAVILY_API as string });
 
-async function search(query: string) {
+async function search(query: string, id: string) {
   try {
   return await client.search(query, {
     includeAnswer: "basic",
@@ -24,7 +26,7 @@ async function search(query: string) {
 }
 }
 
-const visitUrl = async (url: string) => {
+const visitUrl = async (url: string, id: string) => {
   try {
  return await client.extract([url]);
   }
@@ -34,6 +36,27 @@ const visitUrl = async (url: string) => {
       error: "Sorry! an Internal server error was caused, try to answer within your knowledge.."
     }
   }
+}
+
+async function deleteMemory(idx: number, id: string) {
+  const user = await userModel.findOne({ id });
+  if(!user) return {error: "User not found"}
+
+  const memories = user.memories;
+  memories.splice(idx, 1);
+  userModel.updateOne({
+    id
+  }, { memories });
+}
+async function setMemory(memory: string, id: string) {
+  const user = await userModel.findOne({ id });
+  if(!user) return {error: "User not found"}
+
+  const memories = user.memories;
+  memories.push(memory);
+  userModel.updateOne({
+    id
+  }, { memories });
 }
 
 export type reqConfig = {
@@ -51,6 +74,7 @@ export const getRequestParams = (
   chat: chatJSON,
   newMessage: Content,
   config?: reqConfig,
+  systemPrompt?: string
 ) => {
   let functionCalls: FunctionDeclaration[] = [];
   const prevMessages = getMainChat(chat);
@@ -66,6 +90,7 @@ export const getRequestParams = (
     contents,
     config: {
       ...config?.config,
+      systemInstruction: systemPrompt,
       tools: [
         {
           functionDeclarations: [
@@ -90,6 +115,25 @@ export const getRequestParams = (
                 title: "query",
               },
             },
+            {
+              name: "set_memory",
+              description:
+                "Set a specific information which might be useful for future chats.",
+              parameters: {
+                type: Type.STRING,
+                description: "The memory to set.",
+                title: "query",
+              },
+            },
+            {
+              name: "delete_memory",
+              description: "Delete any irrevelant, wrong or non-useful memory",
+              parameters: {
+                type: Type.NUMBER,
+                description: "The index of memory (starts from 0)",
+                title: "query"
+              }
+            }
           ],
         },
       ],
@@ -101,6 +145,8 @@ export const getRequestParams = (
 export const serverCallMap = {
   web_search: search,
   web_fetch: visitUrl,
+  set_memory: setMemory,
+  delete_memory: deleteMemory
 };
 
 export const getSender = <K>(controller: ReadableStreamDefaultController<Uint8Array<ArrayBuffer>>) => {

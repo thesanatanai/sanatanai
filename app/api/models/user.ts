@@ -21,6 +21,9 @@ const userSchema = new mongoose.Schema({
     enum: ["en", "hi"],
     default: "en",
   },
+  memories: [{
+    type: String
+  }]
 });
 
 const newModel = () => mongoose.model("users", userSchema);

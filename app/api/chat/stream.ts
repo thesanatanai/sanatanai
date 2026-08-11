@@ -29,10 +29,6 @@ export default function generateStream(
       const serverFunctions = Object.keys(serverCallMap);
 
       async function runTurn(depth: number): Promise<void> {
-        // Snapshot *at the start of this turn* - requestOptions.contents
-        // has already been extended with the previous turn's function
-        // call/response by the time we recurse, and that history needs to
-        // make it into what gets persisted.
         const contents = structuredClone(requestOptions.contents);
         const result = await ai.models.generateContentStream(requestOptions);
         const modelParts: Part[] = [];
@@ -63,7 +59,7 @@ export default function generateStream(
                 }
                 const functionResult = await serverCallMap[
                   name as keyof typeof serverCallMap
-                ](args.query);
+                ](args.query as never, userID);
                 
 
                 requestOptions.contents.push(

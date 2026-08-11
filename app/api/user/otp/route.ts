@@ -5,7 +5,7 @@ import respondErr, {
   genResErr,
   isValidEmail,
 } from "../../utils/respondErr";
-import otpModel from "../../models/verify";
+import otpModel, { blackListedModel } from "../../models/verify";
 import userModel from "../../models/user";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
@@ -28,9 +28,35 @@ export async function POST(request: NextRequest) {
   const { otpHash: OTPHash } = registration;
 
   if (OTPHash !== otpHash) {
+    const blacklisted = await blackListedModel.findOne({ email });
+    if(blacklisted) {
+      if(blacklisted.endTime > Date.now()) return respondErr("User Blacklisted");
+      const tries = (blacklisted.tries || 0) + 1;
+      if(tries >= 3) {
+        await blackListedModel.updateOne({
+          email
+        }, {
+          $set: {
+            endTime: Date.now() + 300000
+          }
+        });
+        return respondErr("User Blacklisted");
+      }
+      await blackListedModel.updateOne({
+        email
+      }, {
+        tries: blacklisted.tries
+      });
+    }
+    await blackListedModel.create({
+      email,
+      endTime: Date.now(),
+      tries: 1
+    });
     return respondErr("OTP Invalid");
   }
 
+  await blackListedModel.deleteOne({ email });
   await otpModel.deleteOne({ email });
 
   const alreadyExists = await userModel.findOne({ email });
