@@ -16,40 +16,52 @@ import PageContext from "@/app/(root)/PageContext";
 import { parentCount } from "@/utils/utils";
 import { sendMessage as streamSendMessage } from "@/utils/message";
 import { initGestures } from "@/utils/gestures";
+import { useStartRecording } from "@/utils/useFileManager";
 
 export default function Footer() {
+  // Default context values for the footer component, including deep thinking mode and file management.
   const {
     isDeep: [isDeep, setDeep],
     isPC
   } = useContext(PageContext);
   const [files, setFiles] = useState<UserFileData[]>([]);
 
+  // Custom hook to manage file uploads and previews.
   const { handleInput, FilePreview } = useFileManager([files, setFiles]);
   const t = useT();
   const fileRef = useMemo(() => refManager<HTMLInputElement>(), []);
   const menuRef = useMemo(() => refManager<HTMLDivElement>(), []);
-  menuRef.afterAvail(menu => initGestures(menu, false, "hide", "close-magic"))
+
+  // Initialize gesture controls for the magic menu, allowing it to be hidden or closed with gestures.
+  menuRef.afterAvail(menu => initGestures(menu, false, "hide", "close-magic"));
+
   const placeHolders = useMemo(() => t("samplePrompts") as string[], [t]);
   const [placeHolder, setPlaceHolder] = useState("");
   const [userMessage, setUserMessage] = useState("");
   const sendMessage = useSendMessage(setUserMessage, [files, setFiles]);
   useEffect(() => typed(placeHolders, setPlaceHolder), [placeHolders]);
+
+  // Use custom React hook for handleing message recordings.
+  const { listening, toggle, supported, transcript } = useStartRecording(setUserMessage);
   return (
     <div className="chat-footer center-flex">
       <div className="chat-capsule glass-panel">
+
         <FilePreview />
+
         <div className="capsule-content">
           <textarea
             name="message"
             id="message"
             className="messsage-input capsule-input"
-            value={userMessage}
+            value={userMessage + transcript}
             placeholder={placeHolder}
             onChange={(e) => setUserMessage(e.target.value)}
             onKeyDown={e => {
               if(e.key == "Enter" && (e.ctrlKey || (isPC && !e.shiftKey))) return sendMessage(userMessage, { currentTarget: document.querySelector(".send-btn-capsule") });
             }}
           ></textarea>
+
           <div className="capsule-controls">
             <button
               className="capsule-action-btn close-magic"
@@ -65,7 +77,9 @@ export default function Footer() {
                 trigger="hover"
               />
             </button>
+
             <MagicMenu ref={menuRef} />
+
             <button
               className="capsule-action-btn"
               onClick={() => fileRef.afterAvail((i) => i.click())}
@@ -73,6 +87,7 @@ export default function Footer() {
             >
               <Lordicon size={24} src="file" target="parent" />
             </button>
+
             <input
               type="file"
               name="file"
@@ -88,9 +103,13 @@ export default function Footer() {
             >
               <Lordicon size={24} target="parent" src="brain" />
             </button>
-            <button className="capsule-action-btn" data-label={t("voice")}>
-              <Lordicon size={24} target="parent" src="mic" />
-            </button>
+
+            {supported && (
+              <button className="capsule-action-btn" data-label={t("voice")} onClick={() => toggle()}>
+                <Lordicon size={24} target="parent" src={listening ? "pause" : "mic"} />
+              </button>
+            )}
+
             <button
               className="send-btn-capsule"
               style={{
@@ -124,21 +143,29 @@ const MagicMenu = React.memo(function MagicMenu({
   );
 });
 
+/** Custom hook to handle sending messages, including file attachments and streaming responses from the model.
+ @param setMessage The function to set message to ""
+ @param param1 The array containing files and setFiles states.
+*/
 function useSendMessage(
   setMessage: (message: string) => void,
   [files, setFiles]: uStat<UserFileData[]>,
 ) {
   const {
+    userData: {
     chatHistory: [history, setHistory],
     currentSessionId: [id],
-  } = useContext(PageContext).userData;
+    },
+    isDeep: [isDeep]
+  } = useContext(PageContext);
 
+  // Use a callback to prevent performance issue.
   return useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function sendMessage(message: string, ev?: any) {
       if (!message) return;
 
-      const newMessage: ChatHistory[0] = {
+      const newMessage: ChatHistory[0] = { // New user message
         role: "user",
         index: history.length,
         parts: [
@@ -148,6 +175,7 @@ function useSendMessage(
         ],
       };
 
+      // File handleing
       files.forEach((file) => {
         newMessage.parts.push({
           inlineData: {
@@ -195,6 +223,7 @@ function useSendMessage(
       streamSendMessage(
         newMessage,
         id,
+        isDeep,
         (text) => {
           setHistory((prev: ChatHistory) => {
             if (prev.length === 0) return prev;
@@ -241,6 +270,6 @@ function useSendMessage(
             return next;
       }) : "");
     },
-    [files, history, id, setFiles, setHistory, setMessage],
+    [files, history, id, isDeep, setFiles, setHistory, setMessage],
   );
 }

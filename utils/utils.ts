@@ -157,6 +157,12 @@ export function logger(...data: unknown[]) {
   if (canLog) log(...data);
 }
 
+/**
+ * Get parent of parent of parent of ...{@link count} of {@link to}
+ * @param to The element to start from
+ * @param count The level of parent
+ * @returns Parent
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function parentCount(to: any, count: number) {
   let elem = to;

@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google"
 
 export const metadata: Metadata = {
   title: "Sanatan AI",
@@ -90,6 +91,7 @@ export default function RootLayout({
         ></script>
       </head>
       <body>
+        <GoogleAnalytics gaId="G-104LTZTEH1" />
         {children}
       </body>
     </html>

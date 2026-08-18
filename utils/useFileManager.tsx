@@ -1,7 +1,8 @@
 import { useNotification } from "@/components/Notification";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect } from "react";
 import { supportedFiles } from "./utils";
 import { FileText, X } from "lucide-react"
+import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
 
 export default function useFileManager([stateFiles, setFiles]: uStat<UserFileData[]>) {
   const notification = useNotification<true>();
@@ -98,4 +99,25 @@ export default function useFileManager([stateFiles, setFiles]: uStat<UserFileDat
 function formatName(name: string) {
   if (name.length > 10) return name.slice(0, 7) + "...";
   return name;
+}
+
+
+export function useStartRecording(setMessage: (val: (value: string) => string) => void) {
+  const { browserSupportsSpeechRecognition, listening, transcript, resetTranscript } = useSpeechRecognition();
+  return {
+    supported: browserSupportsSpeechRecognition,
+    listening,
+    transcript,
+    start: async function () {
+      SpeechRecognition.startListening();
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      useEffect(() => {
+      setMessage((previous) => previous + transcript);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [transcript]);
+      resetTranscript();
+    },
+    stop: SpeechRecognition.stopListening,
+    toggle: listening ? SpeechRecognition.stopListening : SpeechRecognition.startListening
+  }
 }

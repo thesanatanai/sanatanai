@@ -8,6 +8,7 @@ let activeAnimationFrame: number | null = null;
 export async function sendMessage(
   message: ChatHistory[0],
   id: string,
+  deepThink: boolean,
   onUpdate: (text: string) => void,
   onFinish?: (text: string) => void,
 ) {
@@ -33,6 +34,11 @@ export async function sendMessage(
       body: JSON.stringify({
         id,
         newMessage: message,
+        config: {
+          thinkingConfig: {
+            thinkingLevel: deepThink ? "high" : "medium",
+          }
+        }
       }),
       signal: abortController.signal,
     });

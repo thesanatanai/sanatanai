@@ -1,9 +1,20 @@
+# V-1.0.3
+## Implement deep thinking
+Now, deep thinking is supported and functional. API config is added with a verification.
+
+## Add Google Analytics Support
+Now, Google Analytics is enabled to track user actions and performance.
+
+## Add Recording Feature
+Now, Sanatan AI supports a verified speech recognition feature, users can now speak and type on their own if browser supports it.
+
+
 # V-1.0.2
-# Add OTP Rate Limiting
+## Add OTP Rate Limiting
 Now, OTP's are rate-limited to avoid pishing and other malpractices
-# Introduce MNew Function Calls
+## Introduce New Function Calls
 New function calls including `add_memory`, `delete_memory` are introduced along with their respective functions for better UX.
-# Bind System Prompt
+## Bind System Prompt
 Systrem Prompt, initially dead code, is now correctly binded with model for better accuracy.
 
 # V-1.0.1
