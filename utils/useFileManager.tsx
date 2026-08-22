@@ -1,10 +1,15 @@
 import { useNotification } from "@/components/Notification";
 import { ChangeEvent, useEffect } from "react";
 import { supportedFiles } from "./utils";
-import { FileText, X } from "lucide-react"
-import SpeechRecognition, { useSpeechRecognition } from "react-speech-recognition";
+import { FileText, X } from "lucide-react";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
+import Image from "next/image";
 
-export default function useFileManager([stateFiles, setFiles]: uStat<UserFileData[]>) {
+export default function useFileManager([stateFiles, setFiles]: uStat<
+  UserFileData[]
+>) {
   const notification = useNotification<true>();
 
   function handleInput(ev: ChangeEvent<HTMLInputElement, HTMLInputElement>) {
@@ -12,7 +17,7 @@ export default function useFileManager([stateFiles, setFiles]: uStat<UserFileDat
     if (!files?.length) return;
     handleFiles(files);
   }
-  
+
   function handleFiles(files: File[]) {
     if (stateFiles.length >= 3) {
       notification("fileLimitExceeded", {
@@ -32,7 +37,8 @@ export default function useFileManager([stateFiles, setFiles]: uStat<UserFileDat
     files = files.slice(0, remainingSlots);
     files.forEach((file) => {
       const isImage = file.type.startsWith("image/");
-      const isPlainTextFallback = file.type === "" || file.type.startsWith("text/");
+      const isPlainTextFallback =
+        file.type === "" || file.type.startsWith("text/");
       if (!supportedFiles.includes(file.type) && !isPlainTextFallback) {
         notification("unsupportedFileType", {
           language: true,
@@ -40,7 +46,9 @@ export default function useFileManager([stateFiles, setFiles]: uStat<UserFileDat
         });
         return;
       }
-      const type = supportedFiles.includes(file.type) ? file.type : "text/plain";
+      const type = supportedFiles.includes(file.type)
+        ? file.type
+        : "text/plain";
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result;
@@ -71,13 +79,31 @@ export default function useFileManager([stateFiles, setFiles]: uStat<UserFileDat
   function FilePreview() {
     return (
       <div className="file-preview-mini">
-        {stateFiles.map(file => {
+        {stateFiles.map((file) => {
           return (
-            <p className={`file ${file.isImage ? "image" : "other"}`} key={file.filename}>
-              {/*eslint-disable-next-line @next/next/no-img-element*/}
-              {file.isImage ? <img src={file.wholeData} alt="File" className="file-upload-img" /> : <code className="sanatan-symbol center-flex"><FileText /></code>}
+            <p
+              className={`file ${file.isImage ? "image" : "other"}`}
+              key={file.filename}
+            >
+              {file.isImage ? (
+                <Image
+                  src={file.wholeData}
+                  alt="File"
+                  width={50}
+                  height={50}
+                  className="file-upload-img"
+                  unoptimized
+                />
+              ) : (
+                <code className="sanatan-symbol center-flex">
+                  <FileText />
+                </code>
+              )}
               {formatName(file.filename)}
-                <X className="sanatan-symbol" onClick={() => removeFile(file.filename)}/>
+              <X
+                className="sanatan-symbol"
+                onClick={() => removeFile(file.filename)}
+              />
             </p>
           );
         })}
@@ -85,15 +111,15 @@ export default function useFileManager([stateFiles, setFiles]: uStat<UserFileDat
     );
   }
 
-   function removeFile(name: string) {
-    setFiles(stateFiles.filter(file => file.filename !== name));
+  function removeFile(name: string) {
+    setFiles(stateFiles.filter((file) => file.filename !== name));
     notification("successfullyRemoved", {
       language: true,
-      type: "success"
+      type: "success",
     });
-   }
+  }
 
-  return { handleInput, FilePreview }
+  return { handleInput, FilePreview };
 }
 
 function formatName(name: string) {
@@ -101,23 +127,30 @@ function formatName(name: string) {
   return name;
 }
 
-
-export function useStartRecording(setMessage: (val: (value: string) => string) => void) {
-  const { browserSupportsSpeechRecognition, listening, transcript, resetTranscript } = useSpeechRecognition();
+export function useStartRecording(
+  setMessage: (val: (value: string) => string) => void,
+) {
+  const {
+    browserSupportsSpeechRecognition,
+    listening,
+    transcript,
+    resetTranscript,
+  } = useSpeechRecognition();
+  useEffect(() => {
+    setMessage((previous) => previous + transcript);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transcript]);
   return {
     supported: browserSupportsSpeechRecognition,
     listening,
     transcript,
     start: async function () {
       SpeechRecognition.startListening();
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      useEffect(() => {
-      setMessage((previous) => previous + transcript);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, [transcript]);
       resetTranscript();
     },
     stop: SpeechRecognition.stopListening,
-    toggle: listening ? SpeechRecognition.stopListening : SpeechRecognition.startListening
-  }
+    toggle: listening
+      ? SpeechRecognition.stopListening
+      : SpeechRecognition.startListening,
+  };
 }

@@ -1,7 +1,7 @@
 "use client"
-import React, { useEffect, useMemo, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import { All } from "@/app/(root)/AllContext";
-import createRefManager from "@/utils/useRefManager";
+import useRefManager from "@/utils/useRefManager";
 import { LordIcon, LordIconProps } from "@/app/types/lordicon";
 import { logger } from "@/utils/utils";
 
@@ -23,7 +23,7 @@ const Lordicon: React.FC<LordIconProps> = React.memo(({
   onReady,
   ...props
 }) => {
-  const manager = useMemo(() => createRefManager<LordIcon>(), []);
+  const manager = useRefManager<LordIcon>();
   // Derive textColor from theme context
   const { theme: [theme] } = useContext(All);
   const textColor = theme == "dark" ? "#fff" : "#000";

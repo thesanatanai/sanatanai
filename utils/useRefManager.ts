@@ -1,15 +1,18 @@
+"use client";
+import { useMemo } from "react";
+
 /**
 ### How to use:
 ```jsx
 const ref = React.useMemo(() => refManager<YourReturnType>(), [])
 ```
 */
-export default function refManager<K = HTMLElement>() {
+export function refManager<K = HTMLElement>() {
   let item: K | null = null;
   let queue: Array<(x: K) => void> = [];
 
   return {
-    set(instance: K) {
+    set(instance: K | null) {
       if(!instance) return
       item = instance;
       queue.forEach(fn => fn(instance));
@@ -23,4 +26,8 @@ export default function refManager<K = HTMLElement>() {
 
     current: () => item
   };
+}
+
+export default function useRefManager<K = HTMLElement>() {
+  return useMemo(() => refManager<K>(), []);
 }

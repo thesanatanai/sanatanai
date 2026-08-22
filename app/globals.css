@@ -63,7 +63,6 @@ body {
   text-align: center;
 }
 
-
 [data-label]::after {
   content: attr(data-label);
   position: absolute;
@@ -103,7 +102,7 @@ body {
 [data-label]:hover::before {
   opacity: 1;
   visibility: visible;
-  transform: translateX(-50%) translateY(0);
+  transform: translateX(-50%);
 }
 
 

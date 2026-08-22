@@ -1,15 +1,12 @@
-/* eslint-disable react-hooks/purity */
 "use client";
 import { All } from "@/app/(root)/AllContext";
 import Md, {
   LinkNodeProps,
-  setCustomComponents,
-  type MermaidBlockNodeProps,
+  setCustomComponents
 } from "markstream-react";
 import "markstream-react/index.css";
-import { useContext, useMemo } from "react";
-import mermaid from "mermaid";
-import refManager from "./useRefManager";
+import { useContext } from "react";
+import Mermaid from "@/components/Mermaid";
 
 const id = "sanatan-md";
 
@@ -51,33 +48,6 @@ function Canvas(props: Readonly<{ node: { content: string } }>) {
       <MarkDown markdown={props.node.content} />
     </div>
   );
-}
-
-function Mermaid(props: Readonly<MermaidBlockNodeProps>) {
-  const id = useMemo(() => `mermaid-${Date.now()}`, []);
-  const divRef = useMemo(() => {
-    mermaid.initialize({
-      darkMode: props.isDark,
-      theme: props.isDark ? "dark" : "default",
-      securityLevel: "strict"
-    });
-
-    if (props.loading) return;
-    const manager = refManager<HTMLDivElement>();
-    const { code } = props.node;
-    manager.afterAvail(async (div) => {
-      const dark = props.isDark // This line updates theme
-      div.className = `mermaid`;
-      try {
-      await mermaid.render(id, code, div);
-      } catch (e) {
-        div.className = `mermaid ${dark ? "dark" : "light"}`;
-        div.textContent = e as string;
-      }
-    });
-    return manager;
-  }, [id, props.isDark, props.loading, props.node]);
-  return <div className="mermaid" ref={divRef?.set}></div>;
 }
 
 function preprocess(md?: string) {

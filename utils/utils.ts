@@ -123,7 +123,8 @@ export async function login(
       setters[setter][1](userData[setter], false);
     });
     fetched(true);
-  } catch {
+  } catch (e) {
+    console.log(e);
     if (!globalThis.window) fetched(true);
     cookieStore.delete("setupComplete");
     open("/welcome", "_self");

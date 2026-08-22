@@ -10,11 +10,11 @@ import {
   EllipsisVertical,
   Search,
 } from "lucide-react";
-import { useContext, useMemo } from "react";
+import { useContext } from "react";
 import Lordicon from "./Lordicon";
 import PageContext from "@/app/(root)/PageContext";
 import { createNewChat, deleteChat } from "@/utils/chatActions";
-import refManager from "@/utils/useRefManager";
+import useRefManager from "@/utils/useRefManager";
 import { initGestures } from "@/utils/gestures";
 export const Notification = () => {
   const {
@@ -81,7 +81,7 @@ export function useNotification<K extends boolean>() {
 
 export function SideMenu() {
   const { chats, currentSessionId } = useContext(PageContext).userData;
-  const sideRef = useMemo(() => refManager<HTMLDivElement>(), []);
+  const sideRef = useRefManager<HTMLDivElement>();
   sideRef.afterAvail(side => initGestures(side, false, "hide", "btn-toggle"));
   return (
     <>

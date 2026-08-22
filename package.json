@@ -1,14 +1,15 @@
 {
   "name": "sanatan-ai",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "npx tsc && npm run lint && npm run build",
-    "webpack": "next dev --webpack"
+    "test": "npm run lint && npm run build",
+    "webpack": "next dev --webpack",
+    "trace": "next dev --internal-trace"
   },
   "dependencies": {
     "@antv/infographic": "^0.2.19",

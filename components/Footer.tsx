@@ -8,7 +8,7 @@ import React, {
   useEffect,
 } from "react";
 import Lordicon from "./Lordicon";
-import refManager from "@/utils/useRefManager";
+import useRefManager from "@/utils/useRefManager";
 import { Language, useT } from "@/utils/i18n";
 import typed from "@/utils/typed";
 import useFileManager from "@/utils/useFileManager";
@@ -29,8 +29,8 @@ export default function Footer() {
   // Custom hook to manage file uploads and previews.
   const { handleInput, FilePreview } = useFileManager([files, setFiles]);
   const t = useT();
-  const fileRef = useMemo(() => refManager<HTMLInputElement>(), []);
-  const menuRef = useMemo(() => refManager<HTMLDivElement>(), []);
+  const fileRef = useRefManager<HTMLInputElement>();
+  const menuRef = useRefManager<HTMLDivElement>();
 
   // Initialize gesture controls for the magic menu, allowing it to be hidden or closed with gestures.
   menuRef.afterAvail(menu => initGestures(menu, false, "hide", "close-magic"));
@@ -42,7 +42,7 @@ export default function Footer() {
   useEffect(() => typed(placeHolders, setPlaceHolder), [placeHolders]);
 
   // Use custom React hook for handleing message recordings.
-  const { listening, toggle, supported, transcript } = useStartRecording(setUserMessage);
+  const { listening, toggle, supported } = useStartRecording(setUserMessage);
   return (
     <div className="chat-footer center-flex">
       <div className="chat-capsule glass-panel">
@@ -54,7 +54,7 @@ export default function Footer() {
             name="message"
             id="message"
             className="messsage-input capsule-input"
-            value={userMessage + transcript}
+            value={userMessage}
             placeholder={placeHolder}
             onChange={(e) => setUserMessage(e.target.value)}
             onKeyDown={e => {
@@ -131,7 +131,7 @@ export default function Footer() {
 const MagicMenu = React.memo(function MagicMenu({
   ref,
 }: {
-  ref: ReturnType<typeof refManager>;
+  ref: ReturnType<typeof useRefManager>;
 }) {
   return (
     <div className={`hide glass-dark popover-menu`} ref={ref.set}>

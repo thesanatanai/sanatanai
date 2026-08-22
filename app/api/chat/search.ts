@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Content,
   FunctionDeclaration,
@@ -8,12 +7,12 @@ import {
   Type,
 } from "@google/genai";
 import { tavily } from "@tavily/core";
-import { chatJSON } from "@/actions/chatActions";
+import { chatJSON, updateChat } from "@/actions/chatActions";
 import userModel from "../models/user";
 
 const client = tavily({ apiKey: process.env.TAVILY_API as string });
 
-async function search(query: string, id: string) {
+async function search(query: string) {
   try {
   return await client.search(query, {
     includeAnswer: "basic",
@@ -26,7 +25,7 @@ async function search(query: string, id: string) {
 }
 }
 
-const visitUrl = async (url: string, id: string) => {
+const visitUrl = async (url: string) => {
   try {
  return await client.extract([url]);
   }
@@ -57,6 +56,13 @@ async function setMemory(memory: string, id: string) {
   userModel.updateOne({
     id
   }, { memories });
+}
+
+async function name(title: string, id: string, chatId: string) {
+  const error = await updateChat(id, chatId, { title });
+  if(error) return await error().json();
+
+  return { success: "true" }
 }
 
 export type reqConfig = {
@@ -133,6 +139,15 @@ export const getRequestParams = (
                 description: "The index of memory (starts from 0)",
                 title: "query"
               }
+            },
+            {
+              name: "name",
+              description: "Give a name to a chat, (only once in chat)",
+              parameters: {
+                type: Type.STRING,
+                description: "The name to be given to chat",
+                title: "query"
+              }
             }
           ],
         },
@@ -146,7 +161,8 @@ export const serverCallMap = {
   web_search: search,
   web_fetch: visitUrl,
   set_memory: setMemory,
-  delete_memory: deleteMemory
+  delete_memory: deleteMemory,
+  name: name,
 };
 
 export const getSender = <K>(controller: ReadableStreamDefaultController<Uint8Array<ArrayBuffer>>) => {

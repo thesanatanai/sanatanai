@@ -13,7 +13,7 @@ import { setMessages } from "@/actions/chatActions";
 // user turn. Without this, a model that keeps requesting tool calls back
 // to back would recurse forever - holding the connection open indefinitely
 // and burning unbounded Gemini/Tavily quota on a single user message.
-const MAX_TOOL_CALL_STEPS = 8;
+const MAX_TOOL_CALL_STEPS = Number(process.env.MAX_TOOL_CALLS || 8);
 
 export default function generateStream(
   requestOptions: requestOptions,
@@ -59,7 +59,7 @@ export default function generateStream(
                 }
                 const functionResult = await serverCallMap[
                   name as keyof typeof serverCallMap
-                ](args.query as never, userID);
+                ](args.query as never, userID, chatID);
                 
 
                 requestOptions.contents.push(

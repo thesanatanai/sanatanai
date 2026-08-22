@@ -15,17 +15,21 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+.mermaid * {
+    user-select: none;
+}
+
 .light_mode .mermaid {
   background: rgba(0, 0, 0, 0.03);
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 /* These classes are only appear when an error occurs */
-.mermaid.dark {
+.mermaid .dark {
   color: #ff0;
 }
 
-.mermaid.light {
+.mermaid .light {
   color: #f00;
 }
 

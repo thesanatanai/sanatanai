@@ -3,11 +3,12 @@ import { All } from "@/app/(root)/AllContext";
 import { Fragment, useContext, useEffect, useMemo } from "react";
 import Lordicon from "./Lordicon";
 import { Language, useT } from "@/utils/i18n";
-import refManager from "@/utils/useRefManager";
+import useRefManager from "@/utils/useRefManager";
 import { Menu } from "lucide-react";
 import { initGestures } from "@/utils/gestures";
 import PageContext from "@/app/(root)/PageContext";
 import { deleteChat } from "@/utils/chatActions";
+import Image from "next/image";
 
 const MenuBar = () => {
   const {
@@ -20,11 +21,11 @@ const MenuBar = () => {
     settingsOpen: [, setShow],
     userData: {
       chats: [chats, setChats],
-      currentSessionId: [sessionId, setSessionId]
+      currentSessionId: [sessionId, setSessionId],
     },
   } = useContext(PageContext);
   const t = useT();
-  const menuRef = useMemo(() => refManager<HTMLDivElement>(), []);
+  const menuRef = useRefManager<HTMLDivElement>();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const chatSections = useMemo(() => chatList([chats, setChats], [sessionId, setSessionId]), [chats, sessionId]);
 
@@ -53,8 +54,10 @@ const MenuBar = () => {
             onClick={() => setShow(true)}
             onKeyDown={() => setShow(true)}
           >
-            {/*eslint-disable-next-line @next/next/no-img-element*/}
-            <img
+            <Image
+              width={50}
+              height={50}
+              unoptimized
               src={src || "user.png"}
               alt="User's Profile"
               className="profile-img w-11.25 h-11.25"
@@ -69,7 +72,11 @@ const MenuBar = () => {
             className="action center-flex text-sm"
             data-label={t("searchGeetaTooltip")}
             onClick={() =>
-              window.open("https://shivamsharma999.github.io/gita", "_self", "noopener")
+              window.open(
+                "https://shivamsharma999.github.io/gita",
+                "_self",
+                "noopener",
+              )
             }
           >
             <Lordicon src="gita" target="parent" trigger="hover" />
@@ -83,12 +90,15 @@ const MenuBar = () => {
   );
 };
 export function toggleMenu(
-  menuRef: ReturnType<typeof refManager<HTMLDivElement>>,
+  menuRef: ReturnType<typeof useRefManager<HTMLDivElement>>,
 ) {
   menuRef.afterAvail((m) => m.classList.toggle("makeSmall"));
 }
 
-function chatList([chats, setChats]: uStat<Chats>, [activeSessionId, setSessionId]: uStat<string>) {
+function chatList(
+  [chats, setChats]: uStat<Chats>,
+  [activeSessionId, setSessionId]: uStat<string>,
+) {
   const groups: Record<string, Chats> = {
     today: [],
     yesterday: [],
@@ -118,7 +128,10 @@ function chatList([chats, setChats]: uStat<Chats>, [activeSessionId, setSessionI
   });
 
   return Object.keys(groups).map((group) => {
-    const Chats = listSettions([groups[group], setChats], [activeSessionId, setSessionId]);
+    const Chats = listSettions(
+      [groups[group], setChats],
+      [activeSessionId, setSessionId],
+    );
     return (
       <Fragment key={group}>
         {Chats?.length ? (
@@ -136,23 +149,33 @@ function chatList([chats, setChats]: uStat<Chats>, [activeSessionId, setSessionI
   });
 }
 
-const listSettions = ([sessions, setSessions]: uStat<Chats>, [activeSessionId, setSessionId]: uStat<string>) =>
+const listSettions = (
+  [sessions, setSessions]: uStat<Chats>,
+  [activeSessionId, setSessionId]: uStat<string>,
+) =>
   sessions.map(({ id, title }) => {
-    const sessionId  = id; // For preventing function values
+    const sessionId = id; // For preventing function values
     return (
-    <div
-      className={`chat-item center-flex${sessionId == activeSessionId ? " active" : ""}`}
-      key={sessionId}
-      onClick={() => setSessionId(sessionId)}
-      onKeyDown={() => setSessionId(sessionId)}
-    >
-      <span className="chat-title">{title}</span>
-      <button className="delete-chat" onClick={e => {
-        e.stopPropagation();
-        deleteChat([setSessions, activeSessionId], [sessionId, setSessionId]);
-      }}>
-        <Lordicon src="trash" target="parent" size={24} />
-      </button>
-    </div>
-  )});
+      <div
+        className={`chat-item center-flex${sessionId == activeSessionId ? " active" : ""}`}
+        key={sessionId}
+        onClick={() => setSessionId(sessionId)}
+        onKeyDown={() => setSessionId(sessionId)}
+      >
+        <span className="chat-title">{title}</span>
+        <button
+          className="delete-chat"
+          onClick={(e) => {
+            e.stopPropagation();
+            deleteChat(
+              [setSessions, activeSessionId],
+              [sessionId, setSessionId],
+            );
+          }}
+        >
+          <Lordicon src="trash" target="parent" size={24} />
+        </button>
+      </div>
+    );
+  });
 export default MenuBar;

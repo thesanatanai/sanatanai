@@ -1,3 +1,17 @@
+# V-1.0.4
+## Implemented name setting
+Now, chats are given a name by Sanatan AI
+
+## Introduce enviornment variable for tool call limit
+Now, local users can set a custom tool call limit for the model
+
+## Fix voice recording issue
+The issue that occured when someone recorded throught voice has been fixed
+
+## Introduce new mermaid component
+Now, Sanatan AI has has a brand new Mermaid component with multiple abilities like zooming, dragging, etc.
+
+
 # V-1.0.3
 ## Implement deep thinking
 Now, deep thinking is supported and functional. API config is added with a verification.
