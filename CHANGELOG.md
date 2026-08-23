@@ -1,3 +1,13 @@
+# V-1.0.5
+## Implemented early token verification
+Now, Sanatan AI validates token before visiting a url to insure stability
+
+## Implement `logout` search parameter in welcome page
+Fixed welcome page redirect loop issue by implementing a `logout` searchg parameter in welcome page to log user out.
+
+## Add error handleing in OTP verification
+Implemented Error handleing in OTP sending and verification step.
+
 # V-1.0.4
 ## Implemented name setting
 Now, chats are given a name by Sanatan AI

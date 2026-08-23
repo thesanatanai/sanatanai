@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
   const { otp, email, locale } = await request.json();
 
   if (!otp) return respondErr("Missing OTP");
-  if(!isValidEmail(email)) return respondErr("Invalid Email");
+  if (!isValidEmail(email)) return respondErr("Invalid Email");
 
   const otpHash = await generateHash(otp);
   const registration = await getOtp(email);
@@ -29,29 +29,36 @@ export async function POST(request: NextRequest) {
 
   if (OTPHash !== otpHash) {
     const blacklisted = await blackListedModel.findOne({ email });
-    if(blacklisted) {
-      if(blacklisted.endTime > Date.now()) return respondErr("User Blacklisted");
+    if (blacklisted) {
+      if (blacklisted.endTime > Date.now())
+        return respondErr("User Blacklisted");
       const tries = (blacklisted.tries || 0) + 1;
-      if(tries >= 3) {
-        await blackListedModel.updateOne({
-          email
-        }, {
-          $set: {
-            endTime: Date.now() + 300000
-          }
-        });
+      if (tries >= 3) {
+        await blackListedModel.updateOne(
+          {
+            email,
+          },
+          {
+            $set: {
+              endTime: Date.now() + 300000,
+            },
+          },
+        );
         return respondErr("User Blacklisted");
       }
-      await blackListedModel.updateOne({
-        email
-      }, {
-        tries: blacklisted.tries
-      });
+      await blackListedModel.updateOne(
+        {
+          email,
+        },
+        {
+          tries: blacklisted.tries,
+        },
+      );
     }
     await blackListedModel.create({
       email,
       endTime: Date.now(),
-      tries: 1
+      tries: 1,
     });
     return respondErr("OTP Invalid");
   }
@@ -67,8 +74,8 @@ export async function POST(request: NextRequest) {
       { id: alreadyExists.id },
       process.env.JWT_SECRET as string,
       {
-        expiresIn: "1year"
-      }
+        expiresIn: "1year",
+      },
     );
 
     cookieStore.set({
@@ -91,7 +98,7 @@ export async function POST(request: NextRequest) {
   });
 
   const token = jwt.sign({ id }, process.env.JWT_SECRET as string, {
-    expiresIn: "1year"
+    expiresIn: "1year",
   });
 
   cookieStore.set({
@@ -106,25 +113,29 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   const { email } = await request.json();
-  if(!isValidEmail(email)) return respondErr("Invalid Email");
+  if (!isValidEmail(email)) return respondErr("Invalid Email");
+  try {
+    const alreadyExists = await getOtp(email);
+    if (typeof alreadyExists !== "function")
+      return NextResponse.json({ message: "Done" });
 
-  const alreadyExists = await getOtp(email);
-  if (typeof alreadyExists !== "function")
+    const otp = await sendOtp(email);
+
+    if (typeof otp == "function") return otp();
+
+    const otpHash = await generateHash(otp);
+
+    await otpModel.create({
+      otpHash,
+      email,
+      startTime: Date.now(),
+    });
+    setDelTimer(email, 600000);
     return NextResponse.json({ message: "Done" });
-  
-  const otp = await sendOtp(email);
-
-  if (typeof otp == "function") return otp();
-
-  const otpHash = await generateHash(otp);
-
-  await otpModel.create({
-    otpHash,
-    email,
-    startTime: Date.now(),
-  });
-  setDelTimer(email, 600000);
-  return NextResponse.json({ message: "Done" });
+  } catch (e) {
+    console.error(e);
+    return respondErr("Something Went Wrong in Server", 500);
+  }
 }
 
 async function getOtp(email: string) {
@@ -138,14 +149,13 @@ async function getOtp(email: string) {
   if (startTime + 600000 < now) {
     await otpModel.deleteOne({ email });
     return genResErr("OTP Expired", 401);
-  }
-  else {
+  } else {
     const leftTime = now - 600000 - startTime;
-    if(leftTime > 100) {
+    if (leftTime > 100) {
       setDelTimer(email, leftTime);
     }
   }
-  return registration
+  return registration;
 }
 
 function setDelTimer(email: string, timeLeft: number) {

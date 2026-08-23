@@ -1,11 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import verifyUser from "./app/api/utils/verify";
 
-export default function proxy(req: NextRequest) {
+export default async function proxy(req: NextRequest) {
   const setupComplete = req.cookies.get("setupComplete")?.value;
-  const token = req.cookies.get("token")?.value;
   const isPublicPath = req.nextUrl.pathname.includes("welcome");
-
-  if (!(setupComplete == "true" && token) && !isPublicPath) {
+  const user = await verifyUser(false, false);
+  if (
+    (setupComplete !== "true" || typeof user == "function") &&
+    !isPublicPath
+  ) {
     req.cookies.clear();
     const res = NextResponse.redirect(new URL("/welcome", req.url));
     res.cookies.delete("token");

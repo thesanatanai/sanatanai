@@ -18,14 +18,14 @@ export default async function Page() {
   const user = await verifyUser() as User;
   if(typeof user == "function") {
     console.error(await user().json());
-    redirect("/welcome");
+    redirect("/welcome?logout=true");
   }
-  if(typeof user == "function") redirect("/welcome");
+  if(typeof user == "function") redirect("/welcome?logout=true");
   const chats = await getChats(user.id);
-  if(typeof chats == "function") redirect("/welcome");
+  if(typeof chats == "function") redirect("/welcome?logout=true");
   const latestChat = await setSession(chats);
   const chat = await getChat(user.id, latestChat);
-  if(typeof chat == "function") redirect("/welcome");
+  if(typeof chat == "function") redirect("/welcome?logout=true");
   const messages = getMainChat(chat, true);
   return (
     <>

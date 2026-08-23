@@ -21,13 +21,17 @@ function Google(props: Record<string, Function>) {
           >
             <GoogleLogin
               onSuccess={(x) =>
-                handleLogin(x, {
-                  name,
-                  picture,
-                  email,
-                  language: language as (val: string | boolean) => void,
-                  ...props,
-                }, currentLanguage)
+                handleLogin(
+                  x,
+                  {
+                    name,
+                    picture,
+                    email,
+                    language: language as (val: string | boolean) => void,
+                    ...props,
+                  },
+                  currentLanguage,
+                )
               }
               click_listener={() => props.setIsLoading(true)}
               shape="pill"
@@ -37,8 +41,7 @@ function Google(props: Record<string, Function>) {
                   language: true,
                 });
                 props.setIsLoading(false);
-              }
-              }
+              }}
             />
           </GoogleOAuthProvider>
         </div>
@@ -55,12 +58,8 @@ function Email(props: Record<string, Function>) {
   const [errMsg, setErrMsg] = useState("");
   const t = useT();
   const { userData } = useContext(All);
-  const [ currentLanguage, language ] = userData.language;
-  const {
-    name,
-    picture,
-    email: userEmail,
-  } = getSetters(userData);
+  const [currentLanguage, language] = userData.language;
+  const { name, picture, email: userEmail } = getSetters(userData);
 
   async function getOtp() {
     try {
@@ -73,19 +72,23 @@ function Email(props: Record<string, Function>) {
 
       // Show loading until the OTP is being sent
       props.setIsLoading(true);
-      await fetch("api/user/otp", {
+      const res = await fetch("api/user/otp", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email }),
       });
+      if ((await res.json()).error) {
+        throw "Error";
+      }
 
       // Set user's information after sending OTP
       userEmail(email);
       setOtpGot(true);
       props.setIsLoading(false);
     } catch {
+      props.setIsLoading(false);
       setErrMsg(t("sorrySomethingWrong"));
     }
   }
@@ -104,8 +107,9 @@ function Email(props: Record<string, Function>) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email, otp,
-          locale: currentLanguage
+          email,
+          otp,
+          locale: currentLanguage,
         }),
       }).then((res) => res.json());
 
@@ -141,7 +145,10 @@ function Email(props: Record<string, Function>) {
               autoComplete="email"
             />
           </div>
-          <button className="btn-gradient mt-2 welcomeButton center-flex" onClick={getOtp}>
+          <button
+            className="btn-gradient mt-2 welcomeButton center-flex"
+            onClick={getOtp}
+          >
             <Language need="sendOTP" />
             <Lordicon src="arrow" target="parent" />
           </button>
@@ -160,7 +167,10 @@ function Email(props: Record<string, Function>) {
               onChange={(e) => setOtp(e.target.value)}
             />
           </div>
-          <button className="btn-gradient mt-2 welcomeButton" onClick={validateOtp}>
+          <button
+            className="btn-gradient mt-2 welcomeButton"
+            onClick={validateOtp}
+          >
             <Language need="submit" />
           </button>
         </>

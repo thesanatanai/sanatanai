@@ -41,6 +41,7 @@ export async function _sendOTP(otp: number, to: string) {
   } catch (e) {
     console.log(otp);
     console.error(e);
+    throw e;
   }
 }
 
@@ -62,12 +63,12 @@ export default async function sendMail(
 ) {
   try {
     const isTxt = typeof options == "string";
-    let sendText = options as string;
+    let sendText = options as string; // If options are string, they are saved here
     let sendHtml;
     let mailSubject = "Mail from Sanatan AI";
     if (!isTxt) {
       const { html, subject, text } = options;
-      sendText = text as string;
+      sendText = text as string; // If options has text, set it or it is set to undefined
       sendHtml = html;
       mailSubject = subject || "Mail from Sanatan AI";
     }

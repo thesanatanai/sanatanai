@@ -19,23 +19,31 @@ const findUser = (id: string) => {
 };
 type user = ReturnType<typeof findUser | typeof genResErr>;
 
-export default async function verifyUser(deleteCookies = true): Promise<user> {
+export default async function verifyUser(deleteCookies = true, find = true): Promise<user | undefined> {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
-  if (!token) return genResErr("Token not found", 401);
+  if (!token) {
+    if (deleteCookies) {
+      cookieStore.delete({ name: "token" });
+      cookieStore.delete({ name: "setupComplete" });
+    }
+    return genResErr("Token not found", 401);
+  }
   try {
     const { id } = jwt.verify(token, process.env.JWT_SECRET as string) as {
       id: string;
     };
-    const user = await findUser(id);
-    if (!user) {
-      if (deleteCookies) {
-        cookieStore.delete({ name: "token" });
-        cookieStore.delete({ name: "setupComplete" });
+    if (find) {
+      const user = await findUser(id);
+      if (!user) {
+        if (deleteCookies) {
+          cookieStore.delete({ name: "token" });
+          cookieStore.delete({ name: "setupComplete" });
+        }
+        return genResErr("User not found", 401);
       }
-      return genResErr("User not found", 401);
+      return user;
     }
-    return user;
   } catch (err) {
     console.error("Error occurred while verifying user:", err);
     if (deleteCookies) {
