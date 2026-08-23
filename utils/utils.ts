@@ -127,7 +127,7 @@ export async function login(
     console.log(e);
     if (!globalThis.window) fetched(true);
     cookieStore.delete("setupComplete");
-    open("/welcome", "_self");
+    open("/welcome?logout=true", "_self");
     fetched(true);
   }
 }

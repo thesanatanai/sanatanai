@@ -128,7 +128,7 @@ function formatName(name: string) {
 }
 
 export function useStartRecording(
-  setMessage: (val: (value: string) => string) => void,
+  setMessage: (val: string) => void,
 ) {
   const {
     browserSupportsSpeechRecognition,
@@ -137,8 +137,7 @@ export function useStartRecording(
     resetTranscript,
   } = useSpeechRecognition();
   useEffect(() => {
-    setMessage((previous) => previous + transcript);
-    resetTranscript();
+    setMessage(transcript);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transcript]);
   return {
