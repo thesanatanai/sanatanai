@@ -138,6 +138,7 @@ export function useStartRecording(
   } = useSpeechRecognition();
   useEffect(() => {
     setMessage((previous) => previous + transcript);
+    resetTranscript();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [transcript]);
   return {
@@ -145,8 +146,8 @@ export function useStartRecording(
     listening,
     transcript,
     start: async function () {
-      SpeechRecognition.startListening();
       resetTranscript();
+      await SpeechRecognition.startListening();
     },
     stop: SpeechRecognition.stopListening,
     toggle: listening
