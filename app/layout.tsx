@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
-import { GoogleAnalytics } from "@next/third-parties/google"
+import localFont from "next/font/local"
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 export const metadata: Metadata = {
   title: "Sanatan AI",
@@ -49,9 +50,49 @@ const poppins = Poppins({
   weight: ["400", "500", "600", "700"],
 });
 
+const theSeasons = localFont({
+  variable: "--font-the-seasons",
+  display: "swap",
+  src: [
+    {
+      path: "./the-seasons/TheSeasons-Light.ttf",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "./the-seasons/TheSeasons-LightItalic.ttf",
+      weight: "300",
+      style: "italic",
+    },
+    {
+      path: "./the-seasons/TheSeasons-Regular.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./the-seasons/TheSeasons-Italic.ttf",
+      weight: "400",
+      style: "italic",
+    },
+    {
+      path: "./the-seasons/TheSeasons-Bold.ttf",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "./the-seasons/TheSeasons-BoldItalic.ttf",
+      weight: "700",
+      style: "italic",
+    },
+  ],
+})
+
 export const viewport: Viewport = {
-  themeColor: "#000000"
-}
+  themeColor: "#000000",
+  width: "device-width",
+  initialScale: 1,
+};
+
 
 
 export default function RootLayout({
@@ -60,7 +101,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="hi" className={`h-full antialiased ${poppins.className}`}>
+    <html lang="en" className={`h-full antialiased ${poppins.className} ${theSeasons.variable}`}>
       <head>
         <meta name="apple-mobile-web-app-title" content="Sanatan AI" />
         <script

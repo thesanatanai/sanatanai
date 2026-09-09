@@ -11,7 +11,7 @@ export default function Loading() {
         return arr;
       })()}
     </div>
-    <h1 className="loading-txt">Sanatan AI</h1>
+    <h1 className="loading-txt font-display">Sanatan AI</h1>
     </div>
   );
 }

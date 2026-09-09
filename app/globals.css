@@ -3,7 +3,6 @@
 
 * {
   box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
 }
 
 :root {
@@ -17,6 +16,11 @@
   --success-color: #2ecc71;
   --error-color: #e74c3c;
   --info-color: #3498db;
+  --font-display: var(--font-the-seasons), "Poppins", "Georgia", 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+@theme inline {
+  --font-display: var(--font-display);
 }
 
 .light_mode {
@@ -32,8 +36,12 @@ body {
   transition: all 1s ease;
   overflow-x: hidden;
   position: relative;
+  font-family: "Poppins", sans-serif;
 }
 
+.seasons {
+  font-family: var(--font-display);
+}
 
 /* Scrollbar styling */
 ::-webkit-scrollbar {

@@ -29,7 +29,7 @@ export default function AllContext(
   const theme = [themeValue, setThemeValue];
   const [mainTheme, setMainTheme] = useState<theme | "auto">(() => globalThis.window && (localStorage.getItem("theme") as theme ?? "auto"));
   const [fetched, setFetched] = useState(false);
-  const language = useOnDb<"en" | "hi">("prefferedLocale", fetched, "hi");
+  const language = useOnDb<"en" | "hi">("prefferedLocale", fetched, "en");
   const name = useOnDb("name", fetched, "");
   const picture = useOnDb("picture", fetched, "");
   const email = useOnDb("email", fetched, "");
@@ -99,7 +99,7 @@ function handleTheme(setter: (value: theme) => void) {
 export type usedOnDb<K> = [K, (val: K | ((value: K) => K), update?: boolean) => void];
 
 /**
- * Works same as {@link useState}, as an alternative to it, which alose updates value on database
+ * Works same as {@link useState}, as an alternative to it, which also updates value on database
  * @param name 
  * @param fetched 
  * @param initial 

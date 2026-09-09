@@ -172,9 +172,9 @@ function Home() {
   return (
     <div className="home">
       <div className="imgWrapper">
-        <Image src="/logo.png" width={110} height={110} alt="Sanatan Logo" loading="eager" preload />
+        <Image src="/logo.png" width={150} height={150} alt="Sanatan Logo" loading="eager" preload />
       </div>
-      <h3>
+      <h3 className="font-display">
         <Language need="greetingHello" /> {name}
       </h3>
       <h1 className="logoTxt animated-gradient-text fast-transition font-medium">

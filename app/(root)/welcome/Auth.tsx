@@ -205,7 +205,7 @@ export default function Auth(props: Record<string, Function>) {
       <h1 className="welcome-title animated-gradient-text">
         <Language need="welcomeSeeker" />
       </h1>
-      <h2 className="welcome-subtext">
+      <h2 className="welcome-subtext font-display">
         <Language need="loginJourney" />
       </h2>
 

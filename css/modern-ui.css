@@ -48,13 +48,13 @@ span:has(a)::after {
   left: 100% !important;
 }
 
-a {
+a:not(.not) {
   --text-color: var(--gradient-2) !important;
   position: relative;
   text-decoration: none;
 }
 
-a::after {
+a:not(.not)::after {
   content: '';
   position: absolute;
   bottom: -2px;
@@ -67,7 +67,7 @@ a::after {
   transition: transform 0.3s ease;
 }
 
- a:hover::after {
+ a:not(.not):hover::after {
   transform: scaleX(1);
   transform-origin: left;
 }

@@ -192,7 +192,6 @@ export const locales = {
   },
 };
 
-let currentLocale = defaultLocale;
 let currentTranslations = locales[defaultLocale];
 
 function formatTemplate(text: string, vars?: Record<string, string>) {
@@ -218,9 +217,8 @@ export function initI18n(locale: "en" | "hi") {
   if (!locales[locale]) {
     locale = defaultLocale;
   }
-  currentLocale = locale;
   currentTranslations = locales[locale];
-  if(globalThis.window !== undefined) localStorage.setItem('sanatan_locale', currentLocale);
+  if(globalThis.document && globalThis.document.documentElement) document.documentElement.lang = locale;
 }
 
 

@@ -63,13 +63,13 @@ const MenuBar = () => {
               className="profile-img w-11.25 h-11.25"
             />
             <div className="profile-info">
-              <span id="user-name-display" className="user-name">
+              <span id="user-name-display" className="user-name font-display">
                 {name}
               </span>
             </div>
           </button>
           <button
-            className="action center-flex text-sm"
+            className="action center-flex text-sm font-display"
             data-label={t("searchGeetaTooltip")}
             onClick={() =>
               window.open(

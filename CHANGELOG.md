@@ -1,3 +1,13 @@
+# V-1.0.6
+## Added `the-seasons` font family
+Sanatan AI operates now along with cooperation of the-seasons font family.
+
+## Refined error page
+Refined Error page to make it more polished and beautiful
+
+## Improved SEO
+Improved SEO by setting default language to english, changing `lang` parameter of root when languages changes and replaced previous manifest.json with latest manifest.ts
+
 # V-1.0.5
 ## Implemented early token verification
 Now, Sanatan AI validates token before visiting a url to insure stability

@@ -56,7 +56,7 @@ function Terms(props: any) {
           </span>
         </div>
       </div>
-      <h2 className="welcome-subtext">
+      <h2 className="welcome-subtext font-display">
         <Language need="termsTitle" />
       </h2>
       <div className="terms-box">
@@ -119,7 +119,7 @@ function Customize() {
           draggable="false"
         />
       </div>
-      <h1 className="welcome-text fromTop animated-gradient-text">
+      <h1 className="welcome-text fromTop font-display animated-gradient-text">
         <Language need="almostThere" />
       </h1>
       <h2 className="welcome-subtext fromLeft">

@@ -249,7 +249,7 @@ lord-icon {
 
 .skeleton {
     padding: 8px;
-    background-image: linear-gradient(to right, #777a, #fffa, #777a);
+    background-image: linear-gradient(to right, #7775, #fff5, #7775);
     background-size: 200% 100%;
     background-position: 100%;
     border-radius: 10px;

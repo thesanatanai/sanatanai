@@ -429,7 +429,6 @@ function MermaidZoom({
         <button
           type="button"
           onClick={() => zoomButton(ZOOM_STEP)}
-          data-label="Zoom in"
           title="Zoom in"
           style={{
             width: 32,
@@ -446,7 +445,6 @@ function MermaidZoom({
         <button
           type="button"
           onClick={() => zoomButton(1 / ZOOM_STEP)}
-          data-label="Zoom out"
           title="Zoom out"
           style={{
             width: 32,
