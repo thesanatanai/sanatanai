@@ -100,7 +100,7 @@ Browser
 ### Install and run
 
 ```bash
-git clone https://github.com/ShivamSharma999/sanatanai.git
+git clone https://github.com/thesanatanai/sanatanai.git
 cd sanatanai
 npm ci
 # Create .env.local with the variables below.
