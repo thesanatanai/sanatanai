@@ -3,6 +3,8 @@ import { logger, login } from "@/utils/utils";
 import jsCookie from "js-cookie";
 
 async function manageSw() {
+  if(!globalThis.navigator) return;
+  
   if ("serviceWorker" in navigator) {
     const sw = navigator.serviceWorker;
     const isRegistered = await sw.getRegistration("/");

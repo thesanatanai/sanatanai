@@ -1,5 +1,5 @@
 const STATIC_CACHE = "sanatanai";
-const OFFLINE_URLs = ["/offline.html", "/manifest.json", "/favicon.ico"];
+const OFFLINE_URLs = ["/offline.html", "/manifest.webmanifest", "/favicon.ico"];
 const offlineFallbackResponse = () =>
   caches.open(STATIC_CACHE).then((cache) => cache.match(OFFLINE_URLs[0]));
 

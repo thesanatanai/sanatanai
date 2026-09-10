@@ -14,6 +14,7 @@ import Messages from "./skeletons/Messages";
 
 sign();
 
+//#region Chat
 const ChatApp = () => {
   const history = React.useContext(PageContext).userData.chatHistory[0];
   return history?.length ? (
@@ -33,9 +34,10 @@ interface ChatItemProps {
   chat: ChatHistory[0];
   isPC: boolean;
   index: number;
+  isLast: boolean;
 }
 const ChatItem: React.FC<ChatItemProps> = React.memo(
-  ({ chat, isPC, index }) => {
+  ({ chat, isPC, index, isLast }) => {
     const deleteMessage = useDeleteMessage();
     if (chat.role == "user") {
       const text = chat.parts.map((part) => part.text).join("");
@@ -73,16 +75,20 @@ const ChatItem: React.FC<ChatItemProps> = React.memo(
           <p className="flex gap-2">
             <button
               className="icon"
-              onClick={e => copyListener(e, chat.parts.map((x) => x.text).join(""))}
+              onClick={(e) => copyListener(e, chat.parts.map((x) => x.text).join(""))}
             >
               <Lordicon size={25} src="copy" />
             </button>
-            <button className="icon">
-              <Lordicon size={25} src="edit" />
-            </button>
-            <button className="icon">
-              <Lordicon size={25} src="regenerate" />
-            </button>
+            {isLast && (
+              <>
+                <button className="icon">
+                  <Lordicon size={25} src="edit" />
+                </button>
+                <button className="icon">
+                  <Lordicon size={25} src="regenerate" />
+                </button>
+              </>
+            )}
             <button onClick={() => deleteMessage(index)} className="icon">
               <Lordicon size={25} src="trash" />
             </button>
@@ -133,7 +139,7 @@ const ChatItem: React.FC<ChatItemProps> = React.memo(
               <Lordicon size={25} src="speak" />
             </button>
             <button
-              onClick={e => copyListener(e, chat.parts.map((x) => x.text).join(""))}
+              onClick={(e) => copyListener(e, chat.parts.map((x) => x.text).join(""))}
               className="icon"
             >
               <Lordicon size={25} src="copy" />
@@ -141,9 +147,11 @@ const ChatItem: React.FC<ChatItemProps> = React.memo(
             <button onClick={() => deleteMessage(index)} className="icon">
               <Lordicon size={25} src="trash" />
             </button>
-            <button className="icon">
-              <Lordicon size={25} src="regenerate" />
-            </button>
+            {isLast && (
+              <button className="icon">
+                <Lordicon size={25} src="regenerate" />
+              </button>
+            )}
           </div>
         </div>
       );
@@ -158,10 +166,19 @@ const FormatChat = React.memo(function FormatChat({
 }: {
   history: ChatHistory;
 }) {
-  const { isPC, historyLoading: [loading] } = React.useContext(PageContext);
-  if(loading) return <Messages />;
+  const {
+    isPC,
+    historyLoading: [loading],
+  } = React.useContext(PageContext);
+  if (loading) return <Messages />;
   return history.map((chat, i) => (
-     <ChatItem key={i} chat={chat} isPC={isPC} index={i} />
+    <ChatItem
+      key={i}
+      chat={chat}
+      isPC={isPC}
+      index={i}
+      isLast={history.length - 1 == i}
+    />
   ));
 });
 
@@ -172,7 +189,14 @@ function Home() {
   return (
     <div className="home">
       <div className="imgWrapper">
-        <Image src="/logo.png" width={150} height={150} alt="Sanatan Logo" loading="eager" preload />
+        <Image
+          src="/logo.png"
+          width={150}
+          height={150}
+          alt="Sanatan Logo"
+          loading="eager"
+          preload
+        />
       </div>
       <h3 className="font-display">
         <Language need="greetingHello" /> {name}
@@ -183,10 +207,15 @@ function Home() {
     </div>
   );
 }
+//#endregion
 
-function scroll(cBody?: Element | null) {
-  cBody?.scrollTo({ top: cBody?.scrollHeight, behavior: "smooth" });
-}
+
+//#region Scrolling
+
+// Helper function
+const scroll = (chatBody?: Element | null) => chatBody?.scrollTo({ top: chatBody?.scrollHeight, behavior: "smooth" });
+
+// Scroll button
 function ScrollBtn() {
   return (
     <button
@@ -199,5 +228,6 @@ function ScrollBtn() {
     </button>
   );
 }
+//#endregion
 
 export default ChatApp;

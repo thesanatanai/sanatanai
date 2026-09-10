@@ -160,7 +160,7 @@ app/
 │   ├── user/               # OAuth, profile, OTP routes
 │   └── utils/              # Database, auth, mail, system prompt
 ├── globals.css             # Global app styles
-└── manifest.json           # Web app manifest
+└── manifest.ts           # Web app manifest
 components/                 # Chat, menu, settings, notifications, visuals
 utils/                      # Client-side chat, file, i18n, Markdown helpers
 actions/                    # Server actions for chats and error reporting

@@ -23,7 +23,7 @@ export default async function Page() {
   if(typeof user == "function") redirect("/welcome?logout=true");
   const chats = await getChats(user.id);
   if(typeof chats == "function") redirect("/welcome?logout=true");
-  const latestChat = await setSession(chats);
+  const latestChat = setSession(chats);
   const chat = await getChat(user.id, latestChat);
   if(typeof chat == "function") redirect("/welcome?logout=true");
   const messages = getMainChat(chat, true);

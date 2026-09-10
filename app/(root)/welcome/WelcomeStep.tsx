@@ -37,11 +37,11 @@ function Terms(props: any) {
       <div className="center-flex gap-5">
         <label className="center-flex gap-1">
           <Lordicon src="language" target="parent*2" />
-          <code>
+          <code className="font-display">
             <Language need="languageLabel" />:
           </code>
         </label>
-        <div className="center-flex gap-1">
+        <div className="center-flex gap-1 cursor-pointer">
           <span
             className={`rounded-xl transition-all pb-1 pt-1 pl-2 pr-2 ${language == "en" ? "bg-green-500" : ""}`}
             onClick={() => setLanguage("en")}
@@ -56,14 +56,14 @@ function Terms(props: any) {
           </span>
         </div>
       </div>
-      <h2 className="welcome-subtext font-display">
+      <h2 className="welcome-subtext">
         <Language need="termsTitle" />
       </h2>
       <div className="terms-box">
         <p>
           <Language need="termsIntro" />
         </p>
-        <ul>
+        <ul className="list-disc">
           <li>
             <Language need="termsList1" />
           </li>

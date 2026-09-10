@@ -8,7 +8,7 @@ import verifyUser, { User } from "../utils/verify";
 import dbConnect from "../utils/db";
 
 const client = new OAuth2Client(process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID);
-const ALLOWED_USER_FIELDS = ["picture", "name", "prefferedLocale"] as const;
+const ALLOWED_USER_FIELDS = ["picture", "name", "prefferedLocale", "memories"] as const;
 dbConnect();
 
 export async function GET() {

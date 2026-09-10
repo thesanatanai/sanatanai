@@ -33,7 +33,7 @@ export default function Settings() {
         <div className={`fullscreen block`}>
           <div className="settings glass-dark" id="settings-popup">
             <div className="settings-header">
-              <h2 className="gradient-text">
+              <h2 className="gradient-text font-display">
                 <SettingsIcon />
                 <span><Language need="settingsTitle" /></span>
               </h2>
@@ -64,14 +64,14 @@ export default function Settings() {
                 />
               </SettingItem>
               <SettingItem className="col gap-[inherit]">
-                <div className="flex gap-[inherit]">
+                <div className="flex md:gap-[inherit]">
                   <label>
                     <Lordicon src="theme" target="parent*2" />
                     <code>
                       <Language need="themeLabel" />:
                     </code>
                   </label>
-                  <div className="center-flex gap-1">
+                  <div className="center-flex gap-1 cursor-pointer">
                     <span
                       className={`rounded-xl transition-all pb-1 pt-1 pl-2 pr-2 ${theme == "light" ? "bg-blue-500" : ""}`}
                       onClick={() => {

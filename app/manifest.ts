@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Sanatan AI - The Soul of Intelligence",
+    name: "Sanatan AI — The Soul of Intelligence",
     orientation: "any",
     start_url: "/",
     id: "/",

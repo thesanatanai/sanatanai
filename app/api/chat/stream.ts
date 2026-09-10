@@ -8,7 +8,6 @@ import {
 } from "./search";
 import { setMessages } from "@/actions/chatActions";
 
-
 // Hard cap on chained server-side tool calls (web_search / web_fetch) per
 // user turn. Without this, a model that keeps requesting tool calls back
 // to back would recurse forever - holding the connection open indefinitely
@@ -48,7 +47,11 @@ export default function generateStream(
                   // whatever text was generated so far rather than
                   // silently dropping it.
                   sendToFrontend([
-                    { error: "Tool call limit reached, please try rephrasing your request." },
+                    {
+                      content: {
+                        parts: [{ text: "\n\nSorry! Tool Call limit reached" }],
+                      },
+                    },
                   ]);
                   await setMessages(
                     userID,
@@ -60,7 +63,6 @@ export default function generateStream(
                 const functionResult = await serverCallMap[
                   name as keyof typeof serverCallMap
                 ](args.query as never, userID, chatID);
-                
 
                 requestOptions.contents.push(
                   { role: "model", parts: structuredClone(modelParts) },
@@ -75,24 +77,19 @@ export default function generateStream(
                 );
 
                 modelParts.length = 0; // Clear modelParts
-                return runTurn(depth + 1)
-              }
-              else {
+                return runTurn(depth + 1);
+              } else {
                 modelParts.push({
-                functionCall: part.functionCall,
-                thoughtSignature: part.thoughtSignature,
-              });
+                  functionCall: part.functionCall,
+                  thoughtSignature: part.thoughtSignature,
+                });
               }
             }
           }
           sendToFrontend(chunk.candidates);
         }
 
-        await setMessages(
-          userID,
-          chatID,
-          getNewMessage(contents, modelParts),
-        ); // Set messages on database
+        await setMessages(userID, chatID, getNewMessage(contents, modelParts)); // Set messages on database
       }
 
       try {

@@ -42,7 +42,7 @@ export async function getChats(
   return chats || []
 }
 
-export async function setSession(chats: Chats, setCurrentSession?: (value: string) => void) {
+export function setSession(chats: Chats, setCurrentSession?: (value: string) => void) {
   let latestChat = chats[0];
     chats.forEach(
       (chat) =>

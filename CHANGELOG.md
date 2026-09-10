@@ -1,3 +1,14 @@
+# V-1.0.7
+- Updated manifest file extension from .json to .ts for better type safety.
+- Fixed service worker registration check to ensure compatibility with non-browser environments.
+- Optimized chat session handling by removing unnecessary await in session setting.
+- Enhanced welcome page logic to handle cookie-based redirection more effectively.
+- Updated error handling in the error component for better user experience.
+- Improved i18n utility for better localization support.
+- Refactored chat actions to streamline session management.
+- Updated global styles for better font handling and consistency.
+- Fixed various UI components to improve accessibility and usability.
+
 # V-1.0.6
 ## Added `the-seasons` font family
 Sanatan AI operates now along with cooperation of the-seasons font family.

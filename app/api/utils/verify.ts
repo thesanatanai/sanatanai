@@ -9,14 +9,11 @@ import dbConnect from "./db";
 
 dbConnect();
 
-const findUser = (id: string) => {
-  try {
-    return userModel.findOne({ id });
-  } catch (err) {
+const findUser = (id: string) => userModel.findOne({ id }).catch(err => {
     console.error("Error occurred while finding user:", err);
     return null;
-  }
-};
+});
+
 type user = ReturnType<typeof findUser | typeof genResErr>;
 
 export default async function verifyUser(deleteCookies = true, find = true): Promise<user | undefined> {

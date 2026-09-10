@@ -142,7 +142,7 @@ export const getRequestParams = (
             },
             {
               name: "name",
-              description: "Give a name to a chat, (only once in chat)",
+              description: "Give a name to a chat, (only in first message)",
               parameters: {
                 type: Type.STRING,
                 description: "The name to be given to chat",
@@ -175,12 +175,21 @@ export const getSender = <K>(controller: ReadableStreamDefaultController<Uint8Ar
   }
 }
 
+/**
+ * Optimizer function — combines multiple `parts` to a single bot response with single part.
+ * @param prev Previous chat history to combine with
+ * @param now New parts array to combine
+ * @returns The new chat history — fully optimized
+ */
 export function getNewMessage(prev: Content[], now: Part[]) {
   const next = structuredClone(prev);
+  const text = now.map(part => part.text).join("");
   if(now.length) {
     next.push({
       role: "model",
-      parts: now
+      parts: [{
+        text // Only text as all other fields — functionCall, functionResponse, etc. were already removed in main loop
+      }]
     });
   }
   return next;
