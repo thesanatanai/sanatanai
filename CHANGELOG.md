@@ -1,3 +1,7 @@
+# v-1.0.9
+- Implemented Privacy and Terms pages
+- Integrated `LegalPage` component
+
 # V-1.0.8
 - Moved code into `src/` folder
 

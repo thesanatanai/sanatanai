@@ -14,7 +14,7 @@ if "%errorLevel%"=="0" (
     echo Commiting and pushing to GitHub
     echo.
     echo Write 'x' in commit message to skip commit.
-    set /p commitMsg=Please enter a commit message (leave blank to auto-update and commit): 
+    set /p commitMsg=Please enter a commit message (leave blank to auto-update and commit) 
     if "%commitMsg%"=="" (
         git add .
         git commit -m "Update Sanatan AI"

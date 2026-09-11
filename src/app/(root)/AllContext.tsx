@@ -83,7 +83,7 @@ export default function AllContext(
 
   return (
     <All.Provider value={values}>
-      {!(fetched || path.includes("welcome")) ? <Loading /> : props.children}
+      {!(fetched || path !== "/") ? <Loading /> : props.children}
       </All.Provider>
   );
 }

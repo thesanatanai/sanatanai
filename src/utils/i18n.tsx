@@ -9,28 +9,104 @@ const fallbackLocale = "en";
 export const locales = {
   en: {
     siteTitle: "SANATAN AI",
-    termsTitle: "Terms of Service",
+    termsTitle: <>By Using <span className="font-display">Sanatan AI</span></>,
     termsIntro:
-      "By using Sanatan AI, you agree to the following terms and conditions:",
+      "You agree to the following terms and conditions:",
     termsList1:
-      "This AI is for informational and educational purposes related to Sanatan Dharma.",
+      "This AI is for informational and educational purposes related to Sanatan Dharma and general-purpose assistance.",
     termsList2:
-      "The information provided may not always be 100% accurate. Please consult with qualified spiritual teachers for profound matters.",
+      "Responses may not always be fully accurate. For matters of religious practice or interpretation, please consult a qualified spiritual teacher.",
     termsList3:
-      "Do not use this service for any illegal or malicious activities.",
-    termsList4: (
+      "Sanatan AI does not provide medical, legal, financial, or psychological advice. Please consult a qualified professional for such matters.",
+    termsList4:
+      "You must be at least 8 years old to use Sanatan AI. We recommend that younger users use the service together with a parent or guardian.",
+    termsList5:
+      "Do not use this service for any illegal, harmful, or malicious activities.",
+    termsList6: (
+      <>
+        <b>Sanatan AI</b> is operated by Shivam Sharma. Questions or requests can be sent to{" "}
+        <a href="mailto:great.sanatan.ai@gmail.com" className="underline">great.sanatan.ai@gmail.com</a>.
+      </>
+    ),
+    termsList7: (
       <>
         <b>Sanatan AI&apos;s Responses</b> are powered by Gemini{" "}
       </>
     ),
-    termsList5: (
+    termsList8: (
       <>
         Animated Icons are from <a href="https://lordicon.com" className="underline">LordIcon</a>
       </>
     ),
-    termsList6:
-      "Your conversations may be used anonymously to improve the AI model.",
-    termsList7: "We reserve the right to change these terms at any time.",
+    termsList9: (
+      <>
+        Sanatan AI is hosted on Vercel. Your data may be processed by our service providers
+        (including Google, Vercel, and MongoDB) as described in our{" "}
+        <a href="/privacy" className="underline">Privacy Policy</a>.
+      </>
+    ),
+    termsList10:
+      "Your conversations may be used, including in anonymized form, to improve Sanatan AI.",
+    termsList11:
+      "Sanatan AI is currently free to use. We may introduce paid features in the future, with advance notice.",
+    termsList12: "We reserve the right to change these terms at any time.",
+    privacyTitle: <>Your <span className="font-display">Privacy</span></>,
+    privacyIntro:
+      "This page explains what we collect, how we use it, and the choices you have:",
+    privacySectionCollect: "What We Collect",
+    privacyCollect1:
+      "Account info: your name, email address, profile picture, and language preference.",
+    privacyCollect2:
+      "Conversation data: the messages, attachments, and AI-saved memories in your chats.",
+    privacyCollect3:
+      "Sign-in data: a Google sign-in token, or a one-time passcode emailed to you — verification codes are deleted automatically within minutes.",
+    privacyCollect4:
+      "Basic technical data, such as the secure cookie that keeps you signed in.",
+    privacySectionUse: "How We Use It",
+    privacyUse1:
+      "To run your account, save your chat history, and remember your preferences and AI memories.",
+    privacyUse2: (
+      <>
+        To generate responses using <b>Google Gemini</b>, and to search the web using{" "}
+        <b>Tavily</b> when the assistant decides it&apos;s needed.
+      </>
+    ),
+    privacyUse3: (
+      <>
+        To send sign-in emails through <b>Resend</b>.
+      </>
+    ),
+    privacyUse4: "To keep Sanatan AI secure and prevent abuse.",
+    privacyUse5:
+      "Your conversations may be used, including in anonymized form, to improve Sanatan AI.",
+    privacySectionShare: "Who We Share It With",
+    privacyShare1:
+      "We share data only with the service providers that run Sanatan AI — Google, Tavily, Resend, MongoDB, and Vercel — solely to operate the features above.",
+    privacyShare2: "We do not sell your personal data.",
+    privacySectionChoices: "Your Choices",
+    privacyChoices1:
+      "Delete individual chats or messages, or delete all messages, at any time.",
+    privacyChoices2: "View or remove your saved AI memories from settings.",
+    privacyChoices3: (
+      <>
+        Request access to or deletion of your data by contacting{" "}
+        <a href="mailto:great.sanatan.ai@gmail.com" className="underline">great.sanatan.ai@gmail.com</a>.
+      </>
+    ),
+    privacyChoices4:
+      "Revoke Sanatan AI's access to your Google account anytime from your Google Account settings.",
+    privacySectionChildren: "Children's Privacy",
+    privacyChildren1:
+      "Sanatan AI is intended for use with a parent or guardian's involvement for users under 13. Contact us if you believe a child has shared personal data without appropriate consent.",
+    privacySectionContact: "Changes & Contact",
+    privacyContact1: (
+      <>
+        <b>Sanatan AI</b> is operated by Shivam Sharma. We may update this policy from time to
+        time; contact{" "}
+        <a href="mailto:great.sanatan.ai@gmail.com" className="underline">great.sanatan.ai@gmail.com</a>{" "}
+        with any questions.
+      </>
+    ),
     agreeProceed: "Agree & Proceed",
     welcomeSeeker: "Welcome Seeker",
     loginJourney: "Login to begin your journey.",
@@ -63,6 +139,7 @@ export const locales = {
     fileLimitExceeded: "File limit exceeded",
     unsupportedFileType: "This file type is not supported",
     messageCopied: "Message copied",
+    termsAgree: <>By using this service, you agree to the <a href="/terms" className="underline">terms & conditions</a> and <a href="/privacy" className="underline">privacy policy</a>.</>,
     deleteAllConfirmation: "Are you sure you want to delete all messages?",
     pleaseEnterTextToEnhance: "Please enter text to enhance.",
     failedToEnhancePrompt: "Unable to enhance prompt.",
@@ -73,7 +150,7 @@ export const locales = {
     remove: "Remove",
     nameLabel: "Name:",
     themeLabel: "Theme",
-    emailLabel: "Enail: ",
+    emailLabel: "Email: ",
     themeAuto: "Auto",
     submit: "Submit",
     themeLight: "Light",
@@ -113,30 +190,107 @@ export const locales = {
   },
   hi: {
     siteTitle: "सनातन एआई",
-    termsTitle: "सेवा की शर्तें",
+    termsTitle: <>सनातन ऐआई का उपयोग करके,</>,
     termsIntro:
-      "Sanatan AI का उपयोग करके, आप निम्नलिखित नियमों और शर्तों से सहमत होते हैं:",
+      "आप निम्नलिखित नियमों और शर्तों से सहमत होते हैं:",
     termsList1:
-      "यह एआई सनातन धर्म से संबंधित जानकारी और शैक्षिक उद्देश्यों के लिए है।",
+      "यह एआई सनातन धर्म से संबंधित जानकारी, शिक्षा और सामान्य सहायता के लिए है।",
     termsList2:
-      "प्रदान की गई जानकारी हमेशा 100% सही नहीं हो सकती। गहरी समझ के लिए योग्य आध्यात्मिक शिक्षकों से परामर्श करें।",
+      "उत्तर हमेशा पूरी तरह सटीक नहीं हो सकते। धार्मिक अभ्यास या व्याख्या से जुड़े विषयों के लिए कृपया किसी योग्य आध्यात्मिक शिक्षक से सलाह लें।",
     termsList3:
-      "कृपया किसी भी अवैध या दुष्ट गतिविधियों के लिए इस सेवा का उपयोग न करें।",
-    termsList4: (
+      "सनातन एआई चिकित्सा, कानूनी, वित्तीय या मानसिक स्वास्थ्य संबंधी सलाह नहीं देता। ऐसे विषयों के लिए कृपया किसी योग्य विशेषज्ञ से संपर्क करें।",
+    termsList4:
+      "सनातन एआई का उपयोग करने के लिए आपकी उम्र कम से कम 8 वर्ष होनी चाहिए। कम उम्र के उपयोगकर्ताओं को माता-पिता या अभिभावक के साथ सेवा का उपयोग करने की सलाह दी जाती है।",
+    termsList5:
+      "कृपया किसी भी अवैध, हानिकारक या दुष्ट गतिविधि के लिए इस सेवा का उपयोग न करें।",
+    termsList6: (
+      <>
+        <b>सनातन एआई</b> का संचालन शिवम शर्मा द्वारा किया जाता है। किसी भी प्रश्न या अनुरोध के लिए{" "}
+        <a href="mailto:great.sanatan.ai@gmail.com" className="underline">great.sanatan.ai@gmail.com</a> पर संपर्क करें।
+      </>
+    ),
+    termsList7: (
       <>
         <b>Sanatan AI के उत्तर</b> Gemini द्वारा समर्थित हैं
       </>
     ),
-    termsList5: (
+    termsList8: (
       <>
-        एनिमेटेड आइकन <a href="https://lordicon.com">LordIcon</a> से हैं
+        एनिमेटेड आइकन <a href="https://lordicon.com" className="underline">LordIcon</a> से हैं
       </>
     ),
-    termsList6:
-      "आपकी बातचीत को मॉडेल सुधारने के लिए गुमनाम रूप से उपयोग किया जा सकता है।",
-    termsList7:
+    termsList9: (
+      <>
+        सनातन एआई Vercel पर होस्ट किया गया है। आपका डेटा हमारी सेवा प्रदाताओं (जैसे Google, Vercel और MongoDB)
+        द्वारा हमारी <a href="/privacy" className="underline">गोपनीयता नीति</a> के अनुसार संसाधित किया जा सकता है।
+      </>
+    ),
+    termsList10:
+      "आपकी बातचीत को गुमनाम रूप में सनातन एआई को बेहतर बनाने के लिए उपयोग किया जा सकता है।",
+    termsList11:
+      "सनातन एआई फिलहाल उपयोग करने के लिए निःशुल्क है। भविष्य में हम सशुल्क सुविधाएं शुरू कर सकते हैं, जिसकी पूर्व सूचना दी जाएगी।",
+    termsList12:
       "हम किसी भी समय इन शर्तों को बदलने का अधिकार सुरक्षित रखते हैं।",
-    agreeProceed: "सहमत हूं और आगे बढ़ें",
+    privacyTitle: <>सनातन ऐआई पर आपकी <span className="font-display">गोपनीयता</span></>,
+    privacyIntro:
+      "यह पेज बताता है कि हम क्या जानकारी एकत्र करते हैं, उसका उपयोग कैसे करते हैं, और आपके पास कौन से विकल्प हैं:",
+    privacySectionCollect: "हम क्या एकत्र करते हैं",
+    privacyCollect1:
+      "खाता जानकारी: आपका नाम, ईमेल पता, प्रोफ़ाइल फ़ोटो, और भाषा प्राथमिकता।",
+    privacyCollect2:
+      "बातचीत का डेटा: आपकी चैट में मौजूद संदेश, अटैचमेंट, और एआई द्वारा सहेजी गई मेमोरी।",
+    privacyCollect3:
+      "साइन-इन डेटा: Google साइन-इन टोकन, या आपके ईमेल पर भेजा गया एक बार का पासकोड — सत्यापन कोड कुछ ही मिनटों में स्वतः हटा दिए जाते हैं।",
+    privacyCollect4:
+      "बुनियादी तकनीकी डेटा, जैसे वह सुरक्षित कुकी जो आपको साइन-इन रखती है।",
+    privacySectionUse: "हम इसका उपयोग कैसे करते हैं",
+    privacyUse1:
+      "आपका खाता चलाने, चैट इतिहास सहेजने, और आपकी प्राथमिकताओं व एआई मेमोरी को याद रखने के लिए।",
+    privacyUse2: (
+      <>
+        <b>Google Gemini</b> का उपयोग करके उत्तर तैयार करने के लिए, और जब सहायक आवश्यक समझे तब{" "}
+        <b>Tavily</b> से वेब खोजने के लिए।
+      </>
+    ),
+    privacyUse3: (
+      <>
+        <b>Resend</b> के माध्यम से साइन-इन ईमेल भेजने के लिए।
+      </>
+    ),
+    privacyUse4: "सनातन एआई को सुरक्षित रखने और दुरुपयोग रोकने के लिए।",
+    privacyUse5:
+      "आपकी बातचीत को, गुमनाम रूप में, सनातन एआई को बेहतर बनाने के लिए उपयोग किया जा सकता है।",
+    privacySectionShare: "हम इसे किसके साथ साझा करते हैं",
+    privacyShare1:
+      "हम डेटा केवल उन सेवा प्रदाताओं के साथ साझा करते हैं जो सनातन एआई को चलाते हैं — Google, Tavily, Resend, MongoDB, और Vercel — और केवल ऊपर बताई गई सुविधाओं के लिए।",
+    privacyShare2: "हम आपका व्यक्तिगत डेटा नहीं बेचते।",
+    privacySectionChoices: "आपके विकल्प",
+    privacyChoices1:
+      "किसी भी समय अलग-अलग चैट या संदेश हटाएं, या सभी संदेश एक साथ हटाएं।",
+    privacyChoices2: "सेटिंग्स से अपनी सहेजी गई एआई मेमोरी देखें या हटाएं।",
+    privacyChoices3: (
+      <>
+        अपने डेटा तक पहुंच या उसे हटाने का अनुरोध करने के लिए{" "}
+        <a href="mailto:great.sanatan.ai@gmail.com" className="underline">great.sanatan.ai@gmail.com</a>{" "}
+        पर संपर्क करें।
+      </>
+    ),
+    privacyChoices4:
+      "अपने Google खाता सेटिंग्स से कभी भी सनातन एआई की पहुंच वापस लें।",
+    privacySectionChildren: "बच्चों की गोपनीयता",
+    privacyChildren1:
+      "13 वर्ष से कम उम्र के उपयोगकर्ताओं के लिए सनातन एआई का उपयोग माता-पिता या अभिभावक की भागीदारी के साथ किया जाना चाहिए। यदि आपको लगता है कि किसी बच्चे ने उचित सहमति के बिना व्यक्तिगत डेटा साझा किया है, तो कृपया हमसे संपर्क करें।",
+    privacySectionContact: "बदलाव और संपर्क",
+    privacyContact1: (
+      <>
+        <b>सनातन एआई</b> का संचालन शिवम शर्मा द्वारा किया जाता है। हम समय-समय पर इस नीति को अपडेट
+        कर सकते हैं; किसी भी प्रश्न के लिए{" "}
+        <a href="mailto:great.sanatan.ai@gmail.com" className="underline">great.sanatan.ai@gmail.com</a>{" "}
+        पर संपर्क करें।
+      </>
+    ),
+    termsAgree: <>इस सेवा का उपयोग करके, आप <a href="/terms" className="underline">नियमों और शर्तों</a> से सहमत होते हैं।</>,
+    agreeProceed: "सहमत हूं ",
     welcomeSeeker: "स्वागत साधक",
     loginJourney: "अपनी यात्रा शुरू करने के लिए लॉगिन करें।",
     almostThere: "लगभग हो गया!",

@@ -71,27 +71,6 @@
   animation: fadeIn 0.5s ease-in-out forwards;
 }
 
-.terms-box {
-  height: 150px;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 15px;
-  overflow-y: auto;
-  text-align: left;
-  margin-bottom: 20px;
-  font-size: 0.9rem;
-}
-
-.terms-box ul {
-  padding-left: 20px;
-  margin-top: 10px;
-}
-
-.terms-box li {
-  margin-bottom: 8px;
-}
 
 #email-step .input-group {
   display: flex;
@@ -138,7 +117,6 @@
 @media (max-width: 712px) {
   .welcome-content {
     padding: 10px !important;
-    height: 100% !important;
     display: flex;
   }
 

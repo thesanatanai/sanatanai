@@ -1,13 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import verifyUser from "./src/app/api/utils/verify";
+import verifyUser from "./app/api/utils/verify";
 
 export default async function proxy(req: NextRequest) {
   const setupComplete = req.cookies.get("setupComplete")?.value;
-  const isPublicPath = req.nextUrl.pathname.includes("welcome");
   const user = await verifyUser(true, false);
   if (
-    (setupComplete !== "true" || typeof user == "function") &&
-    !isPublicPath
+    setupComplete !== "true" || typeof user == "function"
   ) {
     req.cookies.clear();
     const res = NextResponse.redirect(new URL("/welcome?logout=true", req.url));
@@ -20,5 +18,5 @@ export default async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|terms|welcome|privacy|.*\\..*).*)"],
 };

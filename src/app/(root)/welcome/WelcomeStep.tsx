@@ -57,37 +57,9 @@ function Terms(props: any) {
           </span>
         </div>
       </div>
-      <h2 className="welcome-subtext">
-        <Language need="termsTitle" />
+      <h2 className="welcome-subtext text-center text-xl">
+        <Language need="termsAgree" />
       </h2>
-      <div className="terms-box">
-        <p>
-          <Language need="termsIntro" />
-        </p>
-        <ul className="list-disc">
-          <li>
-            <Language need="termsList1" />
-          </li>
-          <li>
-            <Language need="termsList2" />
-          </li>
-          <li>
-            <Language need="termsList3" />
-          </li>
-          <li>
-            <Language need="termsList4" />
-          </li>
-          <li>
-            <Language need="termsList5" />
-          </li>
-          <li>
-            <Language need="termsList6" />
-          </li>
-          <li>
-            <Language need="termsList7" />
-          </li>
-        </ul>
-      </div>
       <button
         id="agree-btn"
         className="welcomeButton center-flex"
@@ -97,7 +69,7 @@ function Terms(props: any) {
         }}
       >
         <Language need="agreeProceed" />
-        <Lordicon src="arrow" target="parent" />
+        <Lordicon src="arrow" target="parent" colors="primary:#ffffff,secondary:#ffffff" />
       </button>
     </>
   );
@@ -154,7 +126,7 @@ function Customize() {
         <span>
           <Language need="startAi" />
         </span>
-        <Lordicon src="arrow" target="parent" />
+        <Lordicon src="arrow" target="parent" colors="primary:#ffffff,secondary:#ffffff" />
       </button>
     </>
   );

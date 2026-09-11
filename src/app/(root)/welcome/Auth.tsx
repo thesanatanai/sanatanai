@@ -150,7 +150,7 @@ function Email(props: Record<string, Function>) {
             onClick={getOtp}
           >
             <Language need="sendOTP" />
-            <Lordicon src="arrow" target="parent" />
+            <Lordicon src="arrow" target="parent" colors="primary:#ffffff,secondary:#ffffff" />
           </button>
         </>
       )}
@@ -205,7 +205,7 @@ export default function Auth(props: Record<string, Function>) {
       <h1 className="welcome-title animated-gradient-text">
         <Language need="welcomeSeeker" />
       </h1>
-      <h2 className="welcome-subtext font-display">
+      <h2 className="welcome-subtext font-display text-center">
         <Language need="loginJourney" />
       </h2>
 
