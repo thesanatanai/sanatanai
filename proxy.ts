@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import verifyUser from "./app/api/utils/verify";
+import verifyUser from "./src/app/api/utils/verify";
 
 export default async function proxy(req: NextRequest) {
   const setupComplete = req.cookies.get("setupComplete")?.value;

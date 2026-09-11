@@ -5,6 +5,7 @@ import { useContext } from "react";
 import { All } from "../AllContext";
 import Lordicon from "@/components/Lordicon";
 import Auth from "./Auth";
+import jsCookie from "js-cookie";
 
 export default function Step(
   props: Readonly<{
@@ -142,11 +143,8 @@ function Customize() {
         id="finish-setup-btn"
         className="welcomeButton center-flex pulse-animation"
         onClick={() => {
-          globalThis.cookieStore.set({
-            name: "setupComplete",
-            value: "true",
-            expires: Date.now() + 365 * 24 * 3600 * 1000,
-            domain: globalThis.location.hostname,
+          jsCookie.set("setupComplete", "true", {
+            expires: 365,
           });
           globalThis.localStorage.removeItem("emailVerified");
           globalThis.localStorage.removeItem("termsAgreed");

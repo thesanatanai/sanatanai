@@ -1,9 +1,9 @@
 "use server";
 
 import { Content } from "@google/genai";
-import chatModel from "../app/api/models/chat";
-import userModel from "../app/api/models/user";
-import { generateUniqueId, genResErr } from "../app/api/utils/respondErr";
+import chatModel from "@/app/api/models/chat";
+import userModel from "@/app/api/models/user";
+import { generateUniqueId, genResErr } from "@/app/api/utils/respondErr";
 import { AnyKeys } from "mongoose";
 
 export async function getChat(id: string, chatId: string) {

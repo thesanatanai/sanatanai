@@ -35,7 +35,7 @@ body {
   font-family: "Poppins", sans-serif;
 }
 
-.seasons, code, input, .font-display {
+.seasons, code, input, .font-display, .welcome-title, .logoTxt {
   font-weight: 500;
   letter-spacing: 1px;
   font-family: var(--font-seasons);

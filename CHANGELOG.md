@@ -1,3 +1,6 @@
+# V-1.0.8
+- Moved code into `src/` folder
+
 # V-1.0.7
 - Updated manifest file extension from .json to .ts for better type safety.
 - Fixed service worker registration check to ensure compatibility with non-browser environments.

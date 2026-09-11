@@ -201,7 +201,7 @@ function Home() {
       <h3 className="font-display">
         <Language need="greetingHello" /> {name}
       </h3>
-      <h1 className="logoTxt animated-gradient-text fast-transition font-medium">
+      <h1 className="logoTxt animated-gradient-text fast-transition font-medium font-display">
         <Language need="searchGeetaTooltip" />
       </h1>
     </div>
