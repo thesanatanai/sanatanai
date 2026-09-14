@@ -230,6 +230,7 @@ lord-icon {
 .message-text button:not(:where(.markstream-react) .table-node__resize-handle) {
     background: var(--secondary-hover-color);
     color: var(--text-color);
+    box-shadow: none;
     border: 0;
     padding: 5px 10px;
     margin: 0 10px;

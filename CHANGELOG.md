@@ -1,3 +1,7 @@
+# V-1.0.10
+- Add speaking support
+- Introduce sanatan calendar
+
 # v-1.0.9
 - Implemented Privacy and Terms pages
 - Integrated `LegalPage` component

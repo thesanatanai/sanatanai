@@ -8,7 +8,7 @@ import { Language, useT } from "@/utils/i18n";
 import PageContext from "@/app/(root)/PageContext";
 import { FileText } from "lucide-react";
 import { useDeleteMessage } from "@/utils/chatActions";
-import { copyListener, sign } from "@/utils/utils";
+import { copyListener, sign, speak } from "@/utils/utils";
 import { Err } from "./Notification";
 import Messages from "./skeletons/Messages";
 
@@ -35,9 +35,10 @@ interface ChatItemProps {
   isPC: boolean;
   index: number;
   isLast: boolean;
+  length: number;
 }
 const ChatItem: React.FC<ChatItemProps> = React.memo(
-  ({ chat, isPC, index, isLast }) => {
+  ({ chat, isPC, index, isLast, length }) => {
     const deleteMessage = useDeleteMessage();
     if (chat.role == "user") {
       const text = chat.parts.map((part) => part.text).join("");
@@ -79,7 +80,7 @@ const ChatItem: React.FC<ChatItemProps> = React.memo(
             >
               <Lordicon size={25} src="copy" />
             </button>
-            {isLast && (
+            {((index == (length - 2)) || isLast) && (
               <>
                 <button className="icon">
                   <Lordicon size={25} src="edit" />
@@ -98,7 +99,6 @@ const ChatItem: React.FC<ChatItemProps> = React.memo(
     } else {
       const text = chat.parts.map((part) => part.text || "").join("");
       const isStreaming = chat.streaming;
-      if (!text && !isStreaming) return "";
       const isError = chat.error;
       return (
         <div className="bot-message message **:text-(--text-color)">
@@ -135,7 +135,7 @@ const ChatItem: React.FC<ChatItemProps> = React.memo(
             </div>
           </div>
           <div className="row gap-2 mt-2">
-            <button className="icon ml-10">
+            <button className="icon ml-10" onClick={speak}>
               <Lordicon size={25} src="speak" />
             </button>
             <button
@@ -177,6 +177,7 @@ const FormatChat = React.memo(function FormatChat({
       chat={chat}
       isPC={isPC}
       index={i}
+      length={history.length}
       isLast={history.length - 1 == i}
     />
   ));

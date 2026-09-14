@@ -210,3 +210,14 @@ export function sign() {
   const logoStyle = "background: linear-gradient(to right, #ff5e00, #ff9100, #ff3300, #ff1e00, #bc16c2, #5139d8, #2b6ee9, #00ff55); font-size: 20px; font-weight: 1000; background-clip: text; color: transparent; font-family: erdana, Geneva, Tahoma, sans-serif, Georgia";
   console.log("%c Sanatan AI", logoStyle);
 }
+
+export function speak(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+  const text = parentCount(e.target, 3)?.querySelector(".message-text")?.textContent;
+  if(!text) return;
+  const synth = globalThis.speechSynthesis;
+  const utterence = new SpeechSynthesisUtterance(text);
+  utterence.pitch = 1;
+  utterence.volume = 1;
+  utterence.rate = 1;
+  synth.speak(utterence);
+}

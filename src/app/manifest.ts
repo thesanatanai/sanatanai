@@ -103,7 +103,7 @@ export default function manifest(): MetadataRoute.Manifest {
       {
         name: "Logout from Sanatan AI",
         short_name: "Logout",
-        url: "/",
+        url: "/welcome?logout=true",
         description: "Logs out of Sanatan AI application",
         icons: [
           {

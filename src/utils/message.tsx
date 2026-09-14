@@ -69,3 +69,5 @@ export async function sendMessage(
     return true; // Return true to indicate an error occurred
   }
 }
+
+export default sendMessage;

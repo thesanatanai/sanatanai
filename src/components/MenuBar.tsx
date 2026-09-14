@@ -2,7 +2,7 @@
 import { All } from "@/app/(root)/AllContext";
 import { Fragment, useContext, useEffect, useMemo } from "react";
 import Lordicon from "./Lordicon";
-import { Language, useT } from "@/utils/i18n";
+import { useT } from "@/utils/i18n";
 import useRefManager from "@/utils/useRefManager";
 import { Menu } from "lucide-react";
 import { initGestures } from "@/utils/gestures";
@@ -68,22 +68,34 @@ const MenuBar = () => {
               </span>
             </div>
           </button>
-          <button
-            className="action center-flex text-sm font-display"
-            data-label={t("searchGeetaTooltip")}
-            onClick={() =>
-              window.open(
-                "https://shivamsharma999.github.io/gita",
-                "_self",
-                "noopener",
-              )
-            }
-          >
-            <Lordicon src="gita" target="parent" trigger="hover" />
-            <span>
-              <Language need="searchGeetaButton" />
-            </span>
-          </button>
+          <div className="row">
+            <button
+              className="action center-flex text-sm"
+              data-label={t("searchGeetaTooltip")}
+              onClick={() =>
+                window.open(
+                  "https://shivamsharma999.github.io/gita",
+                  "_self",
+                  "noopener",
+                )
+              }
+            >
+              <Lordicon src="gita" target="parent" trigger="hover" />
+            </button>
+            <button
+              className="action center-flex text-sm"
+              data-label={t("calendarTooltip")}
+              onClick={() =>
+                window.open(
+                  "https://sanatancalendar.vercel.app",
+                  "_self",
+                  "noopener",
+                )
+              }
+            >
+              <Lordicon src="calendar" target="parent" trigger="hover" />
+            </button>
+          </div>
         </div>
       </div>
     </>

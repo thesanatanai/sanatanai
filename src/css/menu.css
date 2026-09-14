@@ -68,11 +68,8 @@
   background: var(--secondary-color);
   border-radius: 12px;
   padding: 12px 18px;
-  width: 80%;
-  display: flex;
-  align-items: center;
+  width: fit-content;
   color: var(--text-color);
-  gap: 10px;
   transition: all 0.3s ease;
   border: 1px solid var(--box-shadow-color);
 }

@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     siteName: "Sanatan AI",
     locale: "en",
     alternateLocale: "hi",
-    images: ["/preview.png", "/icon.png"],
+    images: ["/desktop.png", "/icon.png"],
     url: "https://sanatan-ai.vercel.app",
     countryName: "India",
   },
