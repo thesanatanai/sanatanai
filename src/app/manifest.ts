@@ -2,12 +2,19 @@ import { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Sanatan AI — The Soul of Intelligence",
+    name: "Sanatan AI",
+    short_name: "Sanatan AI",
     orientation: "any",
+    display: "standalone",
     start_url: "/",
     id: "/",
     scope: "/",
-    short_name: "Sanatan AI",
+     categories: ["education", "productivity"],
+    lang: "en",
+    theme_color: "#000000",
+    background_color: "#000000",
+    dir: "ltr",
+    prefer_related_applications: false,
     description:
       "SANATAN AI — The Soul of Intelligence. One of the world's most advanced AI assistants, empowering users with authentic knowledge, spiritual guidance, and deep insights into Sanatan Dharma.",
     screenshots: [
@@ -80,12 +87,6 @@ export default function manifest(): MetadataRoute.Manifest {
         purpose: "maskable",
       },
     ],
-    categories: ["education", "productivity"],
-    lang: "en",
-    theme_color: "#ffffff",
-    background_color: "#ffffff",
-    dir: "ltr",
-    prefer_related_applications: false,
     shortcuts: [
       {
         name: "Continue to Sanatan AI",
@@ -114,6 +115,5 @@ export default function manifest(): MetadataRoute.Manifest {
         ],
       },
     ],
-    display: "standalone",
   };
 }

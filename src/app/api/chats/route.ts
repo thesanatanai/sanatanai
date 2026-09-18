@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import chatModel from "../models/chat";
 import respondErr from "../utils/respondErr";
 import verifyUser, { User } from "../utils/verify";
-import { createNewChat, getChat, updateChat } from "@/actions/chatActions";
+import { chatJSON, createNewChat, getChat, updateChat } from "@/actions/chatActions";
 import dbConnect from "../utils/db";
 import validateModifications from "./validateModifications";
 
@@ -39,7 +39,7 @@ export async function OPTIONS(request: NextRequest) {
   if (!chatId) return respondErr("No chat id provided");
   const chat = await getChat(id, chatId);
   if(typeof chat == "function") return chat();
-  return NextResponse.json(chat);
+  return NextResponse.json(await validateChat(chat));
 }
 
 // Add a new chat
@@ -95,4 +95,15 @@ export async function PUT(request: NextRequest) {
   return NextResponse.json({
     message: "Done"
   });
+}
+
+async function validateChat(chat: chatJSON) {
+  const allText = chat.messages.map(message => message?.parts?.map(part => part?.text).join("")).join("");
+  if(!allText) {
+    await updateChat(chat.id, chat.chatId, {
+      messages: []
+    });
+    return { ...chat, messages: [] }
+  }
+  return chat
 }

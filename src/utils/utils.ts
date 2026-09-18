@@ -166,9 +166,10 @@ export function logger(...data: unknown[]) {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function parentCount(to: any, count: number) {
+  if(!to || !(to instanceof Element)) return;
   let elem = to;
   for (let i = 0; i < count; i++) {
-    elem = elem?.parentElement;
+    elem = elem?.parentElement as Element;
   }
   return elem as Element;
 }

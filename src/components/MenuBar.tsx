@@ -68,7 +68,7 @@ const MenuBar = () => {
               </span>
             </div>
           </button>
-          <div className="row">
+          <div className="row gap-2">
             <button
               className="action center-flex text-sm"
               data-label={t("searchGeetaTooltip")}
@@ -87,7 +87,7 @@ const MenuBar = () => {
               data-label={t("calendarTooltip")}
               onClick={() =>
                 window.open(
-                  "https://sanatancalendar.vercel.app",
+                  "https://calendar.shivam.click",
                   "_self",
                   "noopener",
                 )

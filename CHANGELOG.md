@@ -1,3 +1,8 @@
+# V-1.0.11
+- Move Sanatan AI to another domain
+- Add a GA_ID enviornment variable
+- Remove bulky edit and regenerate functionality
+
 # V-1.0.10
 - Add speaking support
 - Introduce sanatan calendar

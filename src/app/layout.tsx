@@ -22,10 +22,10 @@ export const metadata: Metadata = {
     locale: "en",
     alternateLocale: "hi",
     images: ["/desktop.png", "/icon.png"],
-    url: "https://sanatan-ai.vercel.app",
+    url: "https://sanatan.shivam.click",
     countryName: "India",
   },
-  metadataBase: "https://sanatan-ai.vercel.app",
+  metadataBase: "https://sanatan.shivam.click",
   keywords: [
     "Sanatan AI",
     "Sanatan chatgpt",
@@ -111,7 +111,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "WebSite",
               name: "Sanatan AI",
-              url: "https://sanatan-ai.vercel.app",
+              url: "https://sanatan.shivam.click",
               keywords:
                 "Sanatan AI, Sanatan chatgpt, AI assiatant, Sanatan, ai, AI, ChatGPT, Gemini, Sanatan gemini, chatbot",
               description:
@@ -132,7 +132,7 @@ export default function RootLayout({
         ></script>
       </head>
       <body>
-        <GoogleAnalytics gaId="G-104LTZTEH1" />
+        <GoogleAnalytics gaId={process.env.GA_ID || "G-104LTZTEH1"} />
         {children}
       </body>
     </html>

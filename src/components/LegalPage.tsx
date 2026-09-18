@@ -37,7 +37,7 @@ export default function LegalPage({
         <header className={styles.hero}>
           <div>
             <p className={styles.eyebrow}>{eyebrow}</p>
-            <h1 className={`${styles.title} animated-gradient-text`}>
+            <h1 className={styles.title}>
               <Language need={title} />
             </h1>
             <p className={styles.intro}>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type Validator = (value: unknown) => boolean;
 
 const allowedModifications: Record<string, Validator> = {
@@ -16,15 +17,19 @@ const allowedModifications: Record<string, Validator> = {
 };
 
 export default function validateModifications(
-  modifications: Record<string, unknown>,
+  modifications: { [K in string]: any },
 ) {
-  const final: Record<string, unknown> = {};
+  const final: { [K in string]: any } = {};
   for (const key of Object.keys(modifications)) {
     const validator = allowedModifications[key];
     if (!validator) continue;
     const value = modifications[key];
     if (!validator(value)) continue;
     final[key] = value;
+  }
+  const allText = final.messages?.map((message: any) => message?.parts?.map((part: any) => part?.text).join("")).join("");
+  if(!allText && final.messages) {
+    final.messages = [];
   }
   return final;
 }

@@ -82,7 +82,7 @@ function useSendMessage(
       
       ev?.nativeEvent?.preventDefault(); // To prevent a newline in message box
 
-      const chatbotUi = parentCount(ev?.currentTarget, 5).querySelector(
+      const chatbotUi = parentCount(ev?.currentTarget, 5)?.querySelector(
         ".chat-body",
       ) as HTMLDivElement;
 

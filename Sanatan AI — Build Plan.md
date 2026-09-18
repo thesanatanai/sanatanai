@@ -14,8 +14,6 @@
 - **Refresh Token** Add a refresh token support using *cookies*.
 
 ## 3. Things Left
-- Regenerate Functionality
-- Edit functionality
 - Enahnce Prompt
 - Setting Actions
 - Custom Instructions

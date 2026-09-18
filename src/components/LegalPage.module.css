@@ -115,7 +115,7 @@
     box-shadow 0.2s ease;
 }
 
-.languageButton:hover {
+.languageButton:hover:not(.languageButtonActive) {
   transform: translateY(-1px);
   background: color-mix(in srgb, var(--text-color) 8%, transparent);
 }
@@ -151,8 +151,8 @@
   inset: 0;
   pointer-events: none;
   background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--gradient-2) 16%, transparent), transparent);
-  transform: translateX(-110%);
-  transition: transform 0.7s ease;
+  transform: translateX(-110%) skewX(-20deg);
+  transition: transform 2s ease;
 }
 
 .panel:hover::after {

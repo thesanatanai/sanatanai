@@ -34,11 +34,9 @@ interface ChatItemProps {
   chat: ChatHistory[0];
   isPC: boolean;
   index: number;
-  isLast: boolean;
-  length: number;
 }
 const ChatItem: React.FC<ChatItemProps> = React.memo(
-  ({ chat, isPC, index, isLast, length }) => {
+  ({ chat, isPC, index }) => {
     const deleteMessage = useDeleteMessage();
     if (chat.role == "user") {
       const text = chat.parts.map((part) => part.text).join("");
@@ -80,16 +78,6 @@ const ChatItem: React.FC<ChatItemProps> = React.memo(
             >
               <Lordicon size={25} src="copy" />
             </button>
-            {((index == (length - 2)) || isLast) && (
-              <>
-                <button className="icon">
-                  <Lordicon size={25} src="edit" />
-                </button>
-                <button className="icon">
-                  <Lordicon size={25} src="regenerate" />
-                </button>
-              </>
-            )}
             <button onClick={() => deleteMessage(index)} className="icon">
               <Lordicon size={25} src="trash" />
             </button>
@@ -100,6 +88,8 @@ const ChatItem: React.FC<ChatItemProps> = React.memo(
       const text = chat.parts.map((part) => part.text || "").join("");
       const isStreaming = chat.streaming;
       const isError = chat.error;
+      if(!text && !isStreaming && !isError) return "";
+      if(isError) return <Err />
       return (
         <div className="bot-message message **:text-(--text-color)">
           <div className="flex">
@@ -124,14 +114,12 @@ const ChatItem: React.FC<ChatItemProps> = React.memo(
               ) : (
                 ""
               )}
-              {(function () {
-                if (isError) return <Err />;
-                return text === "" && isStreaming ? (
+              {text === "" && isStreaming ? (
                   <Lordicon src="loop" trigger="loop" />
                 ) : (
                   <Markdown markdown={text} streaming={isStreaming} />
-                );
-              })()}
+                )
+              }
             </div>
           </div>
           <div className="row gap-2 mt-2">
@@ -147,11 +135,6 @@ const ChatItem: React.FC<ChatItemProps> = React.memo(
             <button onClick={() => deleteMessage(index)} className="icon">
               <Lordicon size={25} src="trash" />
             </button>
-            {isLast && (
-              <button className="icon">
-                <Lordicon size={25} src="regenerate" />
-              </button>
-            )}
           </div>
         </div>
       );
@@ -177,8 +160,6 @@ const FormatChat = React.memo(function FormatChat({
       chat={chat}
       isPC={isPC}
       index={i}
-      length={history.length}
-      isLast={history.length - 1 == i}
     />
   ));
 });

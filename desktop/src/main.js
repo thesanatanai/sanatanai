@@ -7,6 +7,6 @@ function run() {
     document.querySelector(".loader").style.display = "none";
     return
   }
-  window.open("https://sanatan-ai.vercel.app", "_self");
+  window.open("https://sanatan.shivam.click", "_self");
 }
 run();

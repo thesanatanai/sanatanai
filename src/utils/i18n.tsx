@@ -9,9 +9,12 @@ const fallbackLocale = "en";
 export const locales = {
   en: {
     siteTitle: "SANATAN AI",
-    termsTitle: <>By Using <span className="font-display">Sanatan AI</span></>,
-    termsIntro:
-      "You agree to the following terms and conditions:",
+    termsTitle: (
+      <>
+        By Using <span className="font-display animated-gradient-text">Sanatan AI</span>
+      </>
+    ),
+    termsIntro: "You agree to the following terms and conditions:",
     termsList1:
       "This AI is for informational and educational purposes related to Sanatan Dharma and general-purpose assistance.",
     termsList2:
@@ -24,8 +27,12 @@ export const locales = {
       "Do not use this service for any illegal, harmful, or malicious activities.",
     termsList6: (
       <>
-        <b>Sanatan AI</b> is operated by Shivam Sharma. Questions or requests can be sent to{" "}
-        <a href="mailto:great.sanatan.ai@gmail.com" className="underline">great.sanatan.ai@gmail.com</a>.
+        <b>Sanatan AI</b> is operated by Shivam Sharma. Questions or requests
+        can be sent to{" "}
+        <a href="mailto:great.sanatan.ai@gmail.com" className="underline">
+          great.sanatan.ai@gmail.com
+        </a>
+        .
       </>
     ),
     termsList7: (
@@ -35,14 +42,21 @@ export const locales = {
     ),
     termsList8: (
       <>
-        Animated Icons are from <a href="https://lordicon.com" className="underline">LordIcon</a>
+        Animated Icons are from{" "}
+        <a href="https://lordicon.com" className="underline">
+          LordIcon
+        </a>
       </>
     ),
     termsList9: (
       <>
-        Sanatan AI is hosted on Vercel. Your data may be processed by our service providers
-        (including Google, Vercel, and MongoDB) as described in our{" "}
-        <a href="/privacy" className="underline">Privacy Policy</a>.
+        Sanatan AI is hosted on Vercel. Your data may be processed by our
+        service providers (including Google, Vercel, and MongoDB) as described
+        in our{" "}
+        <a href="/privacy" className="underline">
+          Privacy Policy
+        </a>
+        .
       </>
     ),
     termsList10:
@@ -50,7 +64,11 @@ export const locales = {
     termsList11:
       "Sanatan AI is currently free to use. We may introduce paid features in the future, with advance notice.",
     termsList12: "We reserve the right to change these terms at any time.",
-    privacyTitle: <>Your <span className="font-display">Privacy</span></>,
+    privacyTitle: (
+      <>
+        Your <span className="font-display animated-gradient-text">Privacy</span>
+      </>
+    ),
     privacyIntro:
       "This page explains what we collect, how we use it, and the choices you have:",
     privacySectionCollect: "What We Collect",
@@ -67,8 +85,8 @@ export const locales = {
       "To run your account, save your chat history, and remember your preferences and AI memories.",
     privacyUse2: (
       <>
-        To generate responses using <b>Google Gemini</b>, and to search the web using{" "}
-        <b>Tavily</b> when the assistant decides it&apos;s needed.
+        To generate responses using <b>Google Gemini</b>, and to search the web
+        using <b>Tavily</b> when the assistant decides it&apos;s needed.
       </>
     ),
     privacyUse3: (
@@ -90,7 +108,10 @@ export const locales = {
     privacyChoices3: (
       <>
         Request access to or deletion of your data by contacting{" "}
-        <a href="mailto:great.sanatan.ai@gmail.com" className="underline">great.sanatan.ai@gmail.com</a>.
+        <a href="mailto:great.sanatan.ai@gmail.com" className="underline">
+          great.sanatan.ai@gmail.com
+        </a>
+        .
       </>
     ),
     privacyChoices4:
@@ -101,9 +122,11 @@ export const locales = {
     privacySectionContact: "Changes & Contact",
     privacyContact1: (
       <>
-        <b>Sanatan AI</b> is operated by Shivam Sharma. We may update this policy from time to
-        time; contact{" "}
-        <a href="mailto:great.sanatan.ai@gmail.com" className="underline">great.sanatan.ai@gmail.com</a>{" "}
+        <b>Sanatan AI</b> is operated by Shivam Sharma. We may update this
+        policy from time to time; contact{" "}
+        <a href="mailto:great.sanatan.ai@gmail.com" className="underline">
+          great.sanatan.ai@gmail.com
+        </a>{" "}
         with any questions.
       </>
     ),
@@ -133,13 +156,24 @@ export const locales = {
     sorrySomethingWrong: "Sorry, Something went wrong",
     errorInvalidEmail: "Error: Invalid email",
     errorInvalidOtp: "Error: Invalid OTP",
-    regenerateResponse: "Regenerate response?",
     pleaseSelectChat: "Select a chat, or tap 'New Chat' in the top-right.",
     pleaseWriteMessage: "Please write a message...",
     fileLimitExceeded: "File limit exceeded",
     unsupportedFileType: "This file type is not supported",
     messageCopied: "Message copied",
-    termsAgree: <>By using this service, you agree to the <a href="/terms" className="underline">terms & conditions</a> and <a href="/privacy" className="underline">privacy policy</a>.</>,
+    termsAgree: (
+      <>
+        By using this service, you agree to the{" "}
+        <a href="/terms" className="underline">
+          terms & conditions
+        </a>{" "}
+        and{" "}
+        <a href="/privacy" className="underline">
+          privacy policy
+        </a>
+        .
+      </>
+    ),
     deleteAllConfirmation: "Are you sure you want to delete all messages?",
     pleaseEnterTextToEnhance: "Please enter text to enhance.",
     failedToEnhancePrompt: "Unable to enhance prompt.",
@@ -186,12 +220,12 @@ export const locales = {
     errorReading: "Error reading file",
     successfullyRemoved: "Successfully removed file..",
     changedSetting: "{setting} successfully changed..",
+    reloadPage: "Try Reloading Page",
   },
   hi: {
     siteTitle: "सनातन एआई",
-    termsTitle: <>सनातन ऐआई का उपयोग करके,</>,
-    termsIntro:
-      "आप निम्नलिखित नियमों और शर्तों से सहमत होते हैं:",
+    termsTitle: <><span className="animated-gradient-text">सनातन ऐआई</span> का उपयोग करके,</>,
+    termsIntro: "आप निम्नलिखित नियमों और शर्तों से सहमत होते हैं:",
     termsList1:
       "यह एआई सनातन धर्म से संबंधित जानकारी, शिक्षा और सामान्य सहायता के लिए है।",
     termsList2:
@@ -204,8 +238,12 @@ export const locales = {
       "कृपया किसी भी अवैध, हानिकारक या दुष्ट गतिविधि के लिए इस सेवा का उपयोग न करें।",
     termsList6: (
       <>
-        <b>सनातन एआई</b> का संचालन शिवम शर्मा द्वारा किया जाता है। किसी भी प्रश्न या अनुरोध के लिए{" "}
-        <a href="mailto:great.sanatan.ai@gmail.com" className="underline">great.sanatan.ai@gmail.com</a> पर संपर्क करें।
+        <b>सनातन एआई</b> का संचालन शिवम शर्मा द्वारा किया जाता है। किसी भी
+        प्रश्न या अनुरोध के लिए{" "}
+        <a href="mailto:great.sanatan.ai@gmail.com" className="underline">
+          great.sanatan.ai@gmail.com
+        </a>{" "}
+        पर संपर्क करें।
       </>
     ),
     termsList7: (
@@ -215,13 +253,21 @@ export const locales = {
     ),
     termsList8: (
       <>
-        एनिमेटेड आइकन <a href="https://lordicon.com" className="underline">LordIcon</a> से हैं
+        एनिमेटेड आइकन{" "}
+        <a href="https://lordicon.com" className="underline">
+          LordIcon
+        </a>{" "}
+        से हैं
       </>
     ),
     termsList9: (
       <>
-        सनातन एआई Vercel पर होस्ट किया गया है। आपका डेटा हमारी सेवा प्रदाताओं (जैसे Google, Vercel और MongoDB)
-        द्वारा हमारी <a href="/privacy" className="underline">गोपनीयता नीति</a> के अनुसार संसाधित किया जा सकता है।
+        सनातन एआई Vercel पर होस्ट किया गया है। आपका डेटा हमारी सेवा प्रदाताओं
+        (जैसे Google, Vercel और MongoDB) द्वारा हमारी{" "}
+        <a href="/privacy" className="underline">
+          गोपनीयता नीति
+        </a>{" "}
+        के अनुसार संसाधित किया जा सकता है।
       </>
     ),
     termsList10:
@@ -230,7 +276,11 @@ export const locales = {
       "सनातन एआई फिलहाल उपयोग करने के लिए निःशुल्क है। भविष्य में हम सशुल्क सुविधाएं शुरू कर सकते हैं, जिसकी पूर्व सूचना दी जाएगी।",
     termsList12:
       "हम किसी भी समय इन शर्तों को बदलने का अधिकार सुरक्षित रखते हैं।",
-    privacyTitle: <>सनातन ऐआई पर आपकी <span className="font-display">गोपनीयता</span></>,
+    privacyTitle: (
+      <>
+        आपकी <span className="animated-gradient-text">गोपनीयता</span>
+      </>
+    ),
     privacyIntro:
       "यह पेज बताता है कि हम क्या जानकारी एकत्र करते हैं, उसका उपयोग कैसे करते हैं, और आपके पास कौन से विकल्प हैं:",
     privacySectionCollect: "हम क्या एकत्र करते हैं",
@@ -247,8 +297,8 @@ export const locales = {
       "आपका खाता चलाने, चैट इतिहास सहेजने, और आपकी प्राथमिकताओं व एआई मेमोरी को याद रखने के लिए।",
     privacyUse2: (
       <>
-        <b>Google Gemini</b> का उपयोग करके उत्तर तैयार करने के लिए, और जब सहायक आवश्यक समझे तब{" "}
-        <b>Tavily</b> से वेब खोजने के लिए।
+        <b>Google Gemini</b> का उपयोग करके उत्तर तैयार करने के लिए, और जब सहायक
+        आवश्यक समझे तब <b>Tavily</b> से वेब खोजने के लिए।
       </>
     ),
     privacyUse3: (
@@ -270,7 +320,9 @@ export const locales = {
     privacyChoices3: (
       <>
         अपने डेटा तक पहुंच या उसे हटाने का अनुरोध करने के लिए{" "}
-        <a href="mailto:great.sanatan.ai@gmail.com" className="underline">great.sanatan.ai@gmail.com</a>{" "}
+        <a href="mailto:great.sanatan.ai@gmail.com" className="underline">
+          great.sanatan.ai@gmail.com
+        </a>{" "}
         पर संपर्क करें।
       </>
     ),
@@ -282,13 +334,23 @@ export const locales = {
     privacySectionContact: "बदलाव और संपर्क",
     privacyContact1: (
       <>
-        <b>सनातन एआई</b> का संचालन शिवम शर्मा द्वारा किया जाता है। हम समय-समय पर इस नीति को अपडेट
-        कर सकते हैं; किसी भी प्रश्न के लिए{" "}
-        <a href="mailto:great.sanatan.ai@gmail.com" className="underline">great.sanatan.ai@gmail.com</a>{" "}
+        <b>सनातन एआई</b> का संचालन शिवम शर्मा द्वारा किया जाता है। हम समय-समय पर
+        इस नीति को अपडेट कर सकते हैं; किसी भी प्रश्न के लिए{" "}
+        <a href="mailto:great.sanatan.ai@gmail.com" className="underline">
+          great.sanatan.ai@gmail.com
+        </a>{" "}
         पर संपर्क करें।
       </>
     ),
-    termsAgree: <>इस सेवा का उपयोग करके, आप <a href="/terms" className="underline">नियमों और शर्तों</a> से सहमत होते हैं।</>,
+    termsAgree: (
+      <>
+        इस सेवा का उपयोग करके, आप{" "}
+        <a href="/terms" className="underline">
+          नियमों और शर्तों
+        </a>{" "}
+        से सहमत होते हैं।
+      </>
+    ),
     agreeProceed: "सहमत हूं ",
     welcomeSeeker: "स्वागत साधक",
     loginJourney: "अपनी यात्रा शुरू करने के लिए लॉगिन करें।",
@@ -316,7 +378,6 @@ export const locales = {
     goToNextLine: "अगली पंक्ति जोड़ें",
     manageAIMemory: "एआई मेमोरी प्रबंधित करें",
     sorrySomethingWrong: "क्षमा करें, कुछ गलत हुआ",
-    regenerateResponse: "क्या उत्तर पुनरुत्पादित करें?",
     pleaseSelectChat:
       "कृपया चैट चुनें, या शीर्ष-दाएँ कोने में 'नई चैट' पर टैप करें।",
     pleaseWriteMessage: "कृपया एक संदेश लिखें...",
@@ -369,6 +430,7 @@ export const locales = {
     errorReading: "फाइल पढ़ने मे खराबी हुई",
     successfullyRemoved: "फाइल सफलता से निकली गई",
     changedSetting: "{setting} सफलतापूर्वक बदल गई..",
+    reloadPage: "पुनः पेज लोड करें",
   },
 };
 

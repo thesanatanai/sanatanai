@@ -127,6 +127,9 @@ MONGO_URI=mongodb+srv://username:password@cluster.example.mongodb.net/sanatanai
 # Optional: maximum chained server-side model tool calls for one user turn
 # Defaults to 8.
 MAX_TOOL_CALLS=8
+
+# Optional: Your Google Analytics ID defaults to Snatan AI's ID
+GA_ID=your_id
 ```
 
 ### Provider setup notes

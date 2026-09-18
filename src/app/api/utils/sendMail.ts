@@ -27,7 +27,7 @@ export async function _sendOTP(otp: number, to: string) {
 
     await resend.emails.send({
       to,
-      from: "Sanatan AI <verify@sanatan.run.place>",
+      from: "Sanatan AI <sanatan@shivam.click>",
       template: {
         id: template.data?.id as string,
         variables: {
@@ -78,7 +78,7 @@ export default async function sendMail(
       html: sendHtml,
       text: sendText,
       react: undefined,
-      from: "Sanatan AI <sanatan@sanatan.run.place>",
+      from: "Sanatan AI <sanatan@shivam.click>",
     });
     return true;
   } catch (e) {
