@@ -31,3 +31,5 @@ export function refManager<K = HTMLElement>() {
 export default function useRefManager<K = HTMLElement>() {
   return useMemo(() => refManager<K>(), []);
 }
+
+export type RefManger<K = HTMLElement> = ReturnType<typeof refManager<K>>

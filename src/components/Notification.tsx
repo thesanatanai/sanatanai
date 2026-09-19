@@ -49,7 +49,7 @@ export const Notification = () => {
   );
 };
 
-interface NotificationProps<K extends boolean> {
+interface NotificationProps<K> {
   language?: K;
   vars?: Record<string, string>;
   type?: "info" | "success" | "error";

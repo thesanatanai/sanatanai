@@ -225,6 +225,10 @@
     margin-left: 20px;
   }
 
+  li::marker {
+    color: var(--text-color);
+  }
+
   strong {
     font-weight: 550;
   }

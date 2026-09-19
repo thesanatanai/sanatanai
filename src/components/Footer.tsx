@@ -1,15 +1,16 @@
 "use client";
 /*eslint-disable react-hooks/refs*/
-import React, { useContext, useMemo, useState, useEffect } from "react";
+import { useContext, useMemo, useState, useEffect } from "react";
 import Lordicon from "./Lordicon";
 import useRefManager from "@/utils/useRefManager";
-import { Language, useT } from "@/utils/i18n";
+import { useT } from "@/utils/i18n";
 import typed from "@/utils/typed";
 import useFileManager from "@/utils/useFileManager";
 import PageContext from "@/app/(root)/PageContext";
 import { initGestures } from "@/utils/gestures";
 import { useStartRecording } from "@/utils/useFileManager";
 import useSendMessage from "@/utils/useSendMessage";
+import EnhancePrompt from "@/utils/enhancePrompt";
 
 export default function Footer() {
   // Default context values for the footer component, including deep thinking mode and file management.
@@ -71,7 +72,7 @@ export default function Footer() {
               <Lordicon size={24} src="magic" target="parent" trigger="hover" />
             </button>
 
-            <MagicMenu ref={menuRef} />
+            <EnhancePrompt message={userMessage} setMessage={setUserMessage} menuRef={menuRef} />
 
             <button
               className="capsule-action-btn"
@@ -128,18 +129,3 @@ export default function Footer() {
     </div>
   );
 }
-
-const MagicMenu = React.memo(function MagicMenu({
-  ref,
-}: {
-  ref: ReturnType<typeof useRefManager>;
-}) {
-  return (
-    <div className={`hide glass-dark popover-menu`} ref={ref.set}>
-      <button className="menu-item">
-        <Lordicon src="magic" />
-        <Language need="enhancePrompt" />
-      </button>
-    </div>
-  );
-});

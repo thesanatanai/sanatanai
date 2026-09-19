@@ -79,4 +79,7 @@
   .settings-body {
     grid-template-columns: 1fr;
   }
+  li {
+    margin-left: 10px;
+  }
 }
