@@ -7,7 +7,7 @@ import {
   Type,
 } from "@google/genai";
 import { tavily } from "@tavily/core";
-import { chatJSON, updateChat } from "@/actions/chatActions";
+import { chatJSON } from "@/actions/chatActions";
 import userModel from "../models/user";
 
 const client = tavily({ apiKey: process.env.TAVILY_API as string });
@@ -58,13 +58,6 @@ async function setMemory(memory: string, id: string) {
   }, { memories });
 }
 
-async function name(title: string, id: string, chatId: string) {
-  const error = await updateChat(id, chatId, { title });
-  if(error) return await error().json();
-
-  return { success: "true" }
-}
-
 export type reqConfig = {
   config?: GenerateContentConfig;
   model?: string;
@@ -92,7 +85,7 @@ export const getRequestParams = (
     functionCalls = (config.config.tools[0] as Tool).functionDeclarations || [];
   }
   const requestOptions: requestOptions = {
-    model: config?.model || "gemini-3-flash-preview",
+    model: config?.model || "gemini-3.6-flash",
     contents,
     config: {
       ...config?.config,
@@ -140,15 +133,6 @@ export const getRequestParams = (
                 title: "query"
               }
             },
-            {
-              name: "name",
-              description: "Give a name to a chat, (only in first message)",
-              parameters: {
-                type: Type.STRING,
-                description: "The name to be given to chat",
-                title: "query"
-              }
-            }
           ],
         },
       ],
@@ -162,7 +146,6 @@ export const serverCallMap = {
   web_fetch: visitUrl,
   set_memory: setMemory,
   delete_memory: deleteMemory,
-  name: name,
 };
 
 export const getSender = <K>(controller: ReadableStreamDefaultController<Uint8Array<ArrayBuffer>>) => {

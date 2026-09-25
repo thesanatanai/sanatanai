@@ -1,12 +1,14 @@
 import { NextRequest } from "next/server";
 import respondErr from "../utils/respondErr";
 import verifyUser, { User } from "../utils/verify";
-import { type Content, GoogleGenAI } from "@google/genai";
-import { getRequestParams, reqConfig } from "./search";
+import { GoogleGenAI } from "@google/genai";
+import { getRequestParams } from "./search";
 import { getChat } from "@/actions/chatActions";
 import generateStream from "./stream";
 import dbConnect from "../utils/db";
 import prompt from "../utils/systemPrompt";
+import z from "zod";
+import Incoming from "../models/chatModel";
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GENAI,
@@ -27,20 +29,7 @@ export async function POST(request: NextRequest) {
       id: chatId,
       newMessage,
       config,
-    } = await request.json() as {
-      id: string;
-      newMessage: Content;
-      config?: reqConfig;
-    };
-
-    if (!chatId || !newMessage?.parts) {
-      return respondErr("Required: sessionId and newMessage (with parts).");
-    }
-
-    if (newMessage.role !== "user")
-      return respondErr(
-        `Invalid message with role: ${newMessage.role || "No Role"}`,
-      );
+    } = Incoming.parse(await request.json());
 
     const id = user.id;
     if (!chatId) return respondErr("No chat id provided");
@@ -60,6 +49,9 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (e) {
+    if(e instanceof z.ZodError) {
+      return respondErr(e.message);
+    }
     console.log("Response Gen Err: ", e);
     return respondErr(
       "Sorry, something went wrong while generating a response.",

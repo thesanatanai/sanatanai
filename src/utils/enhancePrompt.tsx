@@ -4,11 +4,11 @@ import { RefManger } from "./useRefManager"
 import { Language } from "./i18n"
 import { useNotification } from "@/components/Notification"
 
-export default function EnhancePrompt({message, setMessage, menuRef}: {
+export default function EnhancePrompt({message, setMessage, menuRef}: Readonly<{
     message: string,
     setMessage: (text: string) => void,
     menuRef: RefManger
-}) {
+}>) {
     const enhance = useEnhance(message, setMessage);
     return (
     <div className={`hide glass-dark popover-menu`} ref={menuRef.set}>
@@ -33,6 +33,15 @@ function useEnhance(message: string, setMessage: (text: string) => void) {
                 newMessage: message
             })
         }).then(response => response.text());
+        try {
+            const json = JSON.parse(enhanced);
+            if(json.error) {
+                return notification("sorrySomethingWrong", {
+                    type: "error",
+                    language: true
+                });
+            }
+        } catch {}
         return setMessage(enhanced);
     } catch {
         notification("sorrySomethingWrong", {

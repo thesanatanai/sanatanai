@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 
-export default function Eror({ error: err }: { error: Error }) {
+export default function Eror({ error: err }: Readonly<{ error: Error }>) {
   const error = {
     ...err,
     stack: err.stack,

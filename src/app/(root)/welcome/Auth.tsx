@@ -79,8 +79,9 @@ function Email(props: Record<string, Function>) {
         },
         body: JSON.stringify({ email }),
       });
-      if ((await res.json()).error) {
-        throw "Error";
+      const { error } = await res.json()
+      if (error) {
+        throw new Error(error);
       }
 
       // Set user's information after sending OTP
