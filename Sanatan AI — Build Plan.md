@@ -14,7 +14,6 @@
 - **Refresh Token** Add a refresh token support using *cookies*.
 
 ## 3. Things Left
-- Set Chat Name
 - Setting Actions
 - Custom Instructions
 - Alerts

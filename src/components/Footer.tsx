@@ -5,10 +5,9 @@ import Lordicon from "./Lordicon";
 import useRefManager from "@/utils/useRefManager";
 import { useT } from "@/utils/i18n";
 import typed from "@/utils/typed";
-import useFileManager from "@/utils/useFileManager";
 import PageContext from "@/app/(root)/PageContext";
 import { initGestures } from "@/utils/gestures";
-import { useStartRecording } from "@/utils/useFileManager";
+import useFileManager, { useStartRecording } from "@/utils/useFileManager";
 import useSendMessage from "@/utils/useSendMessage";
 import EnhancePrompt from "@/utils/enhancePrompt";
 
@@ -34,7 +33,8 @@ export default function Footer() {
   const placeHolders = useMemo(() => t("samplePrompts") as string[], [t]);
   const [placeHolder, setPlaceHolder] = useState("");
   const [userMessage, setUserMessage] = useState("");
-  const sendMessage = useSendMessage(setUserMessage, [files, setFiles]);
+  const [responding, setResponding] = useState(false);
+  const sendMessage = useSendMessage(setUserMessage, [files, setFiles], setResponding);
   useEffect(() => typed(placeHolders, setPlaceHolder), [placeHolders]);
 
   // Use custom React hook for handleing message recordings.
@@ -120,6 +120,7 @@ export default function Footer() {
                 transition: "all 0.2s linear",
               }}
               onClick={(e) => sendMessage(userMessage, e)}
+              disabled={responding}
             >
               <Lordicon target="parent" size={24} src="plane" />
             </button>

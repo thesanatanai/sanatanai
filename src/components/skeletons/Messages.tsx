@@ -29,10 +29,10 @@ export default function Messages() {
 }
 
 /** Get random number between 20 to 65 using seeds */
-function randomNum(seed1: number, seed2 = 1) {
-  let seed = Math.imul(seed1, 31) ^ seed2;
+export function randomNum(seed1: number, seed2 = 1) {
+  const seed = Math.imul(seed1, 31) ^ seed2;
 
-  let t = (seed += 0x6d2b79f5);
+  let t = seed + 0x6d2b79f5;
   t = Math.imul(t ^ (t >>> 15), t | 1);
   t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
 

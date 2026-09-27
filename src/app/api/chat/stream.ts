@@ -62,7 +62,7 @@ export default function generateStream(
                 }
                 const functionResult = await serverCallMap[
                   name as keyof typeof serverCallMap
-                ](args.query as never, userID, chatID);
+                ](args.query as never, userID);
 
                 requestOptions.contents.push(
                   { role: "model", parts: structuredClone(modelParts) },

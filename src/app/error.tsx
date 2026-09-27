@@ -31,7 +31,7 @@ export default function Eror({ error: err }: Readonly<{ error: Error }>) {
             height={86}
           />
           <p className="error-kicker">Some error caused.</p>
-          <h1 id="error-title font-display">Error</h1>
+          <h1 className="font-display" id="error-title">Error</h1>
           <p className="error-copy">
             The page you opened is not available dur to some errors. Retry, or
             Logout to Sanatan AI and begin a fresh conversation. <br />

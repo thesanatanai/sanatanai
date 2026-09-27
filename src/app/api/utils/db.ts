@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
-const isProd = process.env.NODE_ENV == "production"
-const MONGO_URI = isProd ? process.env.MONGO_URI : "mongodb://localhost:27017/sanatanai";
+const uriDev = process.env.NODE_ENV == "development" ? process.env.MONGO_DEV : undefined;
+const MONGO_URI = uriDev || process.env.MONGO_URI;
 
 if (!MONGO_URI) {
   throw new Error('Please define the MONGO_URI environment variable');

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   applicationName: "Sanatan AI",
   authors: {
     name: "Shivam Sharma",
-    url: "https://shivamsharma999.github.io",
+    url: "https://shivam.click/",
   },
   creator: "Shivam Sharma",
   publisher: "Sanatan AI",
@@ -22,10 +22,13 @@ export const metadata: Metadata = {
     locale: "en",
     alternateLocale: "hi",
     images: ["/desktop.png", "/icon.png"],
-    url: "https://sanatan.shivam.click",
+    url: "https://sanatan.shivam.click/",
     countryName: "India",
   },
-  metadataBase: "https://sanatan.shivam.click",
+  metadataBase: "https://sanatan.shivam.click/",
+  alternates: {
+    canonical: "https://sanatan.shivam.click/"
+  },
   keywords: [
     "Sanatan AI",
     "Sanatan chatgpt",
@@ -39,10 +42,7 @@ export const metadata: Metadata = {
     "chatbot",
   ],
   description:
-    "SANATAN AI — The Soul of Intelligence. One of the world's most advanced AI assistants, empowering users with authentic knowledge, spiritual guidance, and deep insights into Sanatan Dharma.",
-  verification: {
-    google: "Dm5OMog15ZMCDGVpyuRpkB7H0pgDqb60mUO_Nx3wcek",
-  },
+    "SANATAN AI — The Soul of Intelligence. Sanatan AI is of the world's most advanced AI assistants, empowering users with authentic knowledge, spiritual guidance, and deep insights into Sanatan Dharma.",
 };
 
 const poppins = Poppins({

@@ -1,3 +1,9 @@
+# V-1.1.1
+- Added a sitemap and robot.txt support
+- Added Memory view component
+- Enhance enhancePrompt component.
+- Refractor useSendMessage.
+
 # V-1.1.0
 - Introduced panchanga details in system prompt
 - Introduced upcoming festivals function (yet to be implemented)
@@ -5,18 +11,5 @@
 - Implemented zod based API Validation, and will soon be introduced in more places.
 - Added a chat name API (Yet to be implemented) and removed former name functioncall.
 
-# V-1.0.11
-- Move Sanatan AI to another domain
-- Add a GA_ID enviornment variable
-- Remove bulky edit and regenerate functionality
-
-# V-1.0.10
-- Add speaking support
-- Introduce sanatan calendar
-
-# v-1.0.9
-- Implemented Privacy and Terms pages
-- Integrated `LegalPage` component
-
-# V-1.0.0 - 1.0.8
-Initilize Sanatan AI NextJS Application, enhance UI, utils and functioning and implement, and introduce new components, fix issues, optimised for SEO and more.
+# V-1.0.0 - 1.0.11
+Following the initial Next.js platform launch—which focused on UI enhancements, SEO optimization, and bug fixes—the application incorporated legal compliance pages (v1.0.9), voice capabilities, and the Sanatan Calendar (v1.0.10). The update v1.0.11 successfully migrated the platform to a new domain, added Google Analytics tracking, and streamlined the interface by removing redundant edit and regenerate options for a lighter, faster user experience.

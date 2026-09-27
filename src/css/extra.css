@@ -96,7 +96,7 @@ table {
     align-items: center;
     background: rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(5px);
-    z-index: 5 !important;
+    z-index: 5;
     top: 0;
     left: 0;
     position: fixed;

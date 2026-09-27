@@ -3,10 +3,11 @@ import "@/css/settings.css";
 import { SettingsIcon } from "lucide-react";
 import Lordicon from "./Lordicon";
 import { All } from "@/app/(root)/AllContext";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Language, useT } from "@/utils/i18n";
 import { useNotification } from "./Notification";
 import PageContext from "@/app/(root)/PageContext";
+import Memory from "./Memory";
 
 export default function Settings() {
   const {
@@ -27,9 +28,12 @@ export default function Settings() {
   const t = useT();
   const setTheme = modifySetter(setTheTheme, t("themeLabel"), notification);
   const setLanguage = modifySetter(setTheLanguage, t("languageLabel"), notification);
+  const [memoryOpen, setMemoryOpen] = useState(false);
   return (
     <>
       {open ? (
+        <>
+        {memoryOpen && <Memory setIsOpen={setMemoryOpen} /> }
         <div className={`fullscreen block`}>
           <div className="settings glass-dark" id="settings-popup">
             <div className="settings-header">
@@ -125,7 +129,7 @@ export default function Settings() {
                   <Lordicon src="trash" target="parent" />
                   <Language need="deleteAllMessages" />
                 </button>
-                <button className="btn-gradient gap-1 center-flex">
+                <button className="btn-gradient gap-1 center-flex" onClick={() => setMemoryOpen(true)}>
                   <Lordicon src="manage" target="parent" />
                   <Language need="manageAIMemory" />
                 </button>
@@ -162,7 +166,7 @@ export default function Settings() {
             </SettingItem>
           </div>
         </div>
-      ) : (
+      </>) : (
         <></>
       )}
     </>

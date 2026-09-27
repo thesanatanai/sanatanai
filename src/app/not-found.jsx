@@ -19,7 +19,7 @@ export default function notFound() {
             height={86}
           />
           <p className="not-found-kicker">This path is quiet.</p>
-          <h1 id="not-found-title font-display">404</h1>
+          <h1 className="font-display" id="not-found-title">404</h1>
           <p className="not-found-copy font-display">
             The page you opened is not available. Return to Sanatan AI and begin
             a fresh conversation.
