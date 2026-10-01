@@ -7,7 +7,7 @@ import "@/css/onboarding.css";
 import { useEffect, useState } from "react";
 
 const Welcome = () => {
-    const [step, setStep] = useState<"customize" | "google" | "terms">("terms");
+    const [step, setStep] = useState<"google" | "terms">("terms");
 
     useEffect(() => {
         async function redirect() {

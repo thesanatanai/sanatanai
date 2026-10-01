@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-function-type, @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import { useContext, useMemo, useState } from "react";
 import { All } from "../AllContext";
 import { Language, useT } from "@/utils/i18n";
@@ -6,48 +6,33 @@ import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import handleLogin from "./handleLogin";
 import { useNotification } from "@/components/Notification";
 import Lordicon from "@/components/Lordicon";
+import jsCookie from "js-cookie";
 
 function Google(props: Record<string, Function>) {
   const notification = useNotification<true>();
   const { userData } = useContext(All);
-  const [currentLanguage, language] = userData.language;
-  const { name, picture, email } = getSetters(userData);
+  const [currentLanguage] = userData.language;
   return (
-    <>
-      <div className="login-container center-flex">
-        <div id="google-login-btn">
-          <GoogleOAuthProvider
-            clientId={process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID || ""}
-          >
-            <GoogleLogin
-              onSuccess={(x) =>
-                handleLogin(
-                  x,
-                  {
-                    name,
-                    picture,
-                    email,
-                    language: language as (val: string | boolean) => void,
-                    ...props,
-                  },
-                  currentLanguage,
-                )
-              }
-              click_listener={() => props.setIsLoading(true)}
-              shape="pill"
-              onError={() => {
-                notification("loginError", {
-                  type: "error",
-                  language: true,
-                });
-                props.setIsLoading(false);
-              }}
-            />
-          </GoogleOAuthProvider>
-        </div>
+    <div className="login-container center-flex">
+      <div id="google-login-btn">
+        <GoogleOAuthProvider
+          clientId={process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID || ""}
+        >
+          <GoogleLogin
+            onSuccess={(response) => handleLogin(response, currentLanguage)}
+            click_listener={() => props.setIsLoading(true)}
+            shape="pill"
+            onError={() => {
+              notification("loginError", {
+                type: "error",
+                language: true,
+              });
+              props.setIsLoading(false);
+            }}
+          />
+        </GoogleOAuthProvider>
       </div>
-      <p id="verification-status"></p>
-    </>
+    </div>
   );
 }
 
@@ -58,8 +43,8 @@ function Email(props: Record<string, Function>) {
   const [errMsg, setErrMsg] = useState("");
   const t = useT();
   const { userData } = useContext(All);
-  const [currentLanguage, language] = userData.language;
-  const { name, picture, email: userEmail } = getSetters(userData);
+  const [currentLanguage] = userData.language;
+  const userEmail = userData.email[1];
 
   async function getOtp() {
     try {
@@ -79,7 +64,7 @@ function Email(props: Record<string, Function>) {
         },
         body: JSON.stringify({ email }),
       });
-      const { error } = await res.json()
+      const { error } = await res.json();
       if (error) {
         throw new Error(error);
       }
@@ -117,14 +102,9 @@ function Email(props: Record<string, Function>) {
       // Send error message if caught
       if (user.error) return setErrMsg(user.error);
 
-      // Set User's information after verification
-      userEmail(user.email);
-      name(user.name);
-      picture(user.picture);
-      language(user.prefferedLocale);
-
-      // Go to customize step
-      props.setStep("customize");
+      jsCookie.set("setupComplete", "true", {
+        expires: 365,
+      });
     } catch {
       return setErrMsg(t("errorInvalidOtp"));
     }
@@ -151,7 +131,11 @@ function Email(props: Record<string, Function>) {
             onClick={getOtp}
           >
             <Language need="sendOTP" />
-            <Lordicon src="arrow" target="parent" colors="primary:#ffffff,secondary:#ffffff" />
+            <Lordicon
+              src="arrow"
+              target="parent"
+              colors="primary:#ffffff,secondary:#ffffff"
+            />
           </button>
         </>
       )}
@@ -178,21 +162,6 @@ function Email(props: Record<string, Function>) {
       )}
     </>
   );
-}
-
-/**
- * ### Get setters from a value-setter object
- * @param stateObj The [value, setter] object
- * @returns The setter object with same keys
- */
-function getSetters<K extends Record<string, uStat<any>>, X extends keyof K>(
-  stateObj: K,
-): Record<X, (value: any) => void> {
-  const returnObj = {} as Record<X, (value: any) => void>;
-  Object.keys(stateObj).forEach((state) => {
-    returnObj[state as X] = stateObj[state][1];
-  });
-  return returnObj;
 }
 
 export default function Auth(props: Record<string, Function>) {

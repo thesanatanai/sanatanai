@@ -5,18 +5,21 @@ export default async function proxy(req: NextRequest) {
   const setupComplete = req.cookies.get("setupComplete")?.value;
   const user = await verifyUser(true, false);
   if (
-    setupComplete !== "true" || typeof user == "function"
+    (setupComplete !== "true" || typeof user == "function") && req.url.includes("app")
   ) {
     req.cookies.clear();
-    const res = NextResponse.redirect(new URL("/welcome?logout=true", req.url));
-    res.cookies.delete("token");
-    res.cookies.delete("setupComplete");
-    return res;
+    const response = NextResponse.redirect(new URL("/welcome?logout=true", req.url));
+    response.cookies.delete("token");
+    response.cookies.delete("setupComplete");
+    return response;
+  }
+  else if (setupComplete == "true" && typeof user !== "function" && !req.url.includes("app")) {
+    return NextResponse.redirect(new URL("/app", req.url));
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|terms|welcome|privacy|.*\\..*).*)"],
+  matcher: ["/(app|)"],
 };

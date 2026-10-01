@@ -6,7 +6,7 @@ import { useT } from "@/utils/i18n";
 import useRefManager from "@/utils/useRefManager";
 import { Menu } from "lucide-react";
 import { initGestures } from "@/utils/gestures";
-import PageContext from "@/app/(root)/PageContext";
+import PageContext from "@/app/(root)/app/PageContext";
 import { deleteChat } from "@/utils/chatActions";
 import Image from "next/image";
 

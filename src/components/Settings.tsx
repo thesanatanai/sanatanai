@@ -6,7 +6,7 @@ import { All } from "@/app/(root)/AllContext";
 import { useContext, useState } from "react";
 import { Language, useT } from "@/utils/i18n";
 import { useNotification } from "./Notification";
-import PageContext from "@/app/(root)/PageContext";
+import PageContext from "@/app/(root)/app/PageContext";
 import Memory from "./Memory";
 
 export default function Settings() {

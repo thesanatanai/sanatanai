@@ -1,4 +1,4 @@
-import PageContext from "@/app/(root)/PageContext";
+import PageContext from "@/app/(root)/app/PageContext";
 import { useContext } from "react";
 
 export async function createNewChat(

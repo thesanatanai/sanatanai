@@ -1,10 +1,10 @@
 import { logger } from "@/utils/utils";
 import { CredentialResponse } from "@react-oauth/google";
+import jsCookie from "js-cookie";
 
-export default async function handleLogin<K extends string>(
+export default async function handleLogin(
   cardentialResponse: CredentialResponse,
-  setters: Record<string, (value: K | boolean) => void>,
-  lang: "en" | "hi"
+  lang: "en" | "hi",
 ) {
   const googleToken = cardentialResponse.credential;
   if (!googleToken) return;
@@ -20,16 +20,12 @@ export default async function handleLogin<K extends string>(
       }),
     });
 
-    const { userData: data } = await response.json();
+    const data = await response.json();
 
     if (response.ok) {
-      setters.name(data.name);
-      setters.email(data.email);
-      setters.picture(data.picture);
-      setters.setIsLoading(false);
-      setters.setStep("customize" as K);
-      setters.language(data.prefferedLocale);
-      localStorage.setItem("emailVerified", "true");
+      jsCookie.set("setupComplete", "true", {
+        expires: 365,
+      });
     } else {
       logger("Backend authentication failed:", data.error);
     }

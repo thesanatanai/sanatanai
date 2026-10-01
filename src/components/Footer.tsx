@@ -5,7 +5,7 @@ import Lordicon from "./Lordicon";
 import useRefManager from "@/utils/useRefManager";
 import { useT } from "@/utils/i18n";
 import typed from "@/utils/typed";
-import PageContext from "@/app/(root)/PageContext";
+import PageContext from "@/app/(root)/app/PageContext";
 import { initGestures } from "@/utils/gestures";
 import useFileManager, { useStartRecording } from "@/utils/useFileManager";
 import useSendMessage from "@/utils/useSendMessage";

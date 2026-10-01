@@ -5,7 +5,7 @@ import Lordicon from "./Lordicon";
 import Image from "next/image";
 import Markdown from "@/utils/md";
 import { Language, useT } from "@/utils/i18n";
-import PageContext from "@/app/(root)/PageContext";
+import PageContext from "@/app/(root)/app/PageContext";
 import { FileText } from "lucide-react";
 import { useDeleteMessage } from "@/utils/chatActions";
 import { copyListener, sign, speak } from "@/utils/utils";

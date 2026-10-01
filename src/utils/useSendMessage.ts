@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import PageContext from "@/app/(root)/PageContext";
+import PageContext from "@/app/(root)/app/PageContext";
 import { useCallback, useContext } from "react";
 import { parentCount } from "./utils";
 import streamSendMessage from "./message";

@@ -5,6 +5,7 @@ export default function Robots(): MetadataRoute.Robots {
         rules: {
             userAgent: "*",
             allow: "/",
+            disallow: "/app"
         },
         sitemap: "https://sanatan.shivam.click/sitemap.xml"
     }

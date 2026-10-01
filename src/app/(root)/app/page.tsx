@@ -12,7 +12,7 @@ import { setSession } from "@/utils/chatActions";
 import { getChat, getChats } from "@/actions/chatActions";
 import verifyUser, { User } from "@/app/api/utils/verify";
 import { redirect } from "next/navigation";
-import { getMainChat } from "../api/chat/search";
+import { getMainChat } from "@/app/api/chat/search";
 
 export default async function Page() {
   const user = await verifyUser() as User;

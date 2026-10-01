@@ -1,49 +1,10 @@
-import type { Metadata, Viewport } from "next";
+import type { Viewport } from "next";
 import { Poppins } from "next/font/google";
 import localFont from "next/font/local"
 import { GoogleAnalytics } from "@next/third-parties/google";
+import { buildMetadata } from "./(main)/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Sanatan AI",
-  applicationName: "Sanatan AI",
-  authors: {
-    name: "Shivam Sharma",
-    url: "https://shivam.click/",
-  },
-  creator: "Shivam Sharma",
-  publisher: "Sanatan AI",
-  openGraph: {
-    type: "website",
-    title: "Sanatan AI",
-    description:
-      "SANATAN AI — The Soul of Intelligence. One of the world's most advanced AI assistants, empowering users with authentic knowledge, spiritual guidance, and deep insights into Sanatan Dharma.",
-    emails: "shivam8299.sharma@gmail.com",
-    siteName: "Sanatan AI",
-    locale: "en",
-    alternateLocale: "hi",
-    images: ["/desktop.png", "/icon.png"],
-    url: "https://sanatan.shivam.click/",
-    countryName: "India",
-  },
-  metadataBase: "https://sanatan.shivam.click/",
-  alternates: {
-    canonical: "https://sanatan.shivam.click/"
-  },
-  keywords: [
-    "Sanatan AI",
-    "Sanatan chatgpt",
-    "AI assiatant",
-    "Sanatan",
-    "ai",
-    "AI",
-    "ChatGPT",
-    "Gemini",
-    "Sanatan gemini",
-    "chatbot",
-  ],
-  description:
-    "SANATAN AI — The Soul of Intelligence. Sanatan AI is of the world's most advanced AI assistants, empowering users with authentic knowledge, spiritual guidance, and deep insights into Sanatan Dharma.",
-};
+export const metadata = buildMetadata("en");
 
 const poppins = Poppins({
   subsets: ["latin", "devanagari"],
@@ -102,35 +63,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`h-full antialiased ${poppins.className} ${theSeasons.variable}`}>
-      <head>
-        <meta name="apple-mobile-web-app-title" content="Sanatan AI" />
-        <script
-          type="ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              name: "Sanatan AI",
-              url: "https://sanatan.shivam.click",
-              keywords:
-                "Sanatan AI, Sanatan chatgpt, AI assiatant, Sanatan, ai, AI, ChatGPT, Gemini, Sanatan gemini, chatbot",
-              description:
-                "SANATAN AI — The Soul of Intelligence. One of the world's most advanced AI assistants, empowering users with authentic knowledge, spiritual guidance, and deep insights into Sanatan Dharma.",
-              author: {
-                "@type": "Person",
-                name: "Shivam Sharma",
-                url: "https://shivamsharma999.github.io",
-              },
-              publisher: {
-                "@type": "Organization",
-                name: "Sanatan AI",
-              },
-              inLanguage: ["en", "hi"],
-              genre: ["AI", "Chatbot", "Sanatan Dharma"],
-            }),
-          }}
-        ></script>
-      </head>
       <body>
         <GoogleAnalytics gaId={process.env.GA_ID || "G-104LTZTEH1"} />
         {children}

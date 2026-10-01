@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useContext } from "react";
 import Lordicon from "./Lordicon";
-import PageContext from "@/app/(root)/PageContext";
+import PageContext from "@/app/(root)/app/PageContext";
 import { createNewChat, deleteChat } from "@/utils/chatActions";
 import useRefManager from "@/utils/useRefManager";
 import { initGestures } from "@/utils/gestures";
