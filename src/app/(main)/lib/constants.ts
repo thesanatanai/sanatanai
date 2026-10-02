@@ -1,10 +1,17 @@
+export const languages = ["en", "hi"] as const;
+export type Lang = (typeof languages)[number];
+
+export const paths: Record<Lang, string> = { en: "/", hi: "/hi" };
+
+export const otherLang = (lang: Lang): Lang => (lang === "en" ? "hi" : "en");
+
 /**
  * Shared, mutable state between GSAP (which animates it on scroll) and the
  * three.js render loop (which reads it every frame). Kept outside React on
  * purpose so nothing re-renders while scrolling.
  */
 export const sceneState = {
-  /** Scale multiplier of the mandala. 1 = fits inside the porthole. */
+  /** Scale multiplier of the mandala. */
   zoom: 1,
   /** 0..1 progress of the whole page scroll. */
   page: 0,

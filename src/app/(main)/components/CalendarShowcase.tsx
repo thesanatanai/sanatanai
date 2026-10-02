@@ -135,7 +135,7 @@ export default function CalendarShowcase({ t, url, externalLabel }: Readonly<Cal
                 >
                   <Image
                     src={`/calendar/${tab.id}.webp`}
-                    alt={i === active ? tab.alt : ""}
+                    alt={tab.alt}
                     width={1280}
                     height={720}
                     unoptimized

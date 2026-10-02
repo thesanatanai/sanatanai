@@ -1,5 +1,5 @@
 import { getContent } from "../lib/content";
-import type { Lang } from "../lib/i18n";
+import type { Lang } from "../lib/constants";
 import Cta from "./Cta";
 import Faq from "./Faq";
 import Family from "./Family";
@@ -16,7 +16,7 @@ import Stack from "./Stack";
 import Story from "./Story";
 import VideoStage from "./VideoStage";
 
-export default function Landing({ lang }: Readonly<{ lang: Lang }>) {
+export default function Landing({ lang, prefix }: Readonly<{ lang: Lang, prefix?: boolean }>) {
   const t = getContent(lang);
 
   return (
@@ -28,7 +28,7 @@ export default function Landing({ lang }: Readonly<{ lang: Lang }>) {
         {t.ui.skip}
       </a>
       <SceneLoader />
-      <Header lang={lang} t={t.ui} />
+      <Header lang={lang} t={t.ui} prefix={prefix} />
       <main className="relative z-10">
         <Hero lang={lang} t={t.hero} hint={t.ui.scrollHint} />
         <Story t={t.story} />
@@ -36,10 +36,10 @@ export default function Landing({ lang }: Readonly<{ lang: Lang }>) {
         <Marquee items={t.marquee} />
        {lang == "en" && <VideoStage src="/demo.mp4" poster="/demo-poster.jpg" />}
         <Inside lang={lang} t={t.inside} />
+        <Cta t={t.cta} externalLabel={t.ui.external} />
         <Family t={t.family} calendar={t.calendar} gita={t.gita} externalLabel={t.ui.external} />
         <Stack t={t.stack} />
         <Faq t={t.faq} />
-        <Cta t={t.cta} externalLabel={t.ui.external} />
       </main>
       <Footer t={t.footer} externalLabel={t.ui.external} />
       <JsonLd lang={lang} />

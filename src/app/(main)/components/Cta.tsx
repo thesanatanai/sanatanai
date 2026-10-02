@@ -5,7 +5,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { Content } from "../lib/content";
-import { sceneState } from "../lib/scene-store";
+import { sceneState } from "../lib/constants";
 import ButtonLink from "./ButtonLink";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);

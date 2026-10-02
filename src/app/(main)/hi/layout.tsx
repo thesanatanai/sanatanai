@@ -1,7 +1,7 @@
 import "@/app/(main)/styles.css";
 import type { Viewport } from "next";
-import RootShell from "../../components/RootShell";
-import { buildMetadata, viewportConfig } from "../../lib/metadata";
+import RootShell from "../components/RootShell";
+import { buildMetadata, viewportConfig } from "../lib/metadata";
 
 export const viewport: Viewport = viewportConfig;
 export const metadata = buildMetadata("hi");

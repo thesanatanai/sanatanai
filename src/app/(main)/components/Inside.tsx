@@ -1,5 +1,5 @@
 import type { Content } from "../lib/content";
-import type { Lang } from "../lib/i18n";
+import type { Lang } from "../lib/constants";
 import ChatDemo from "./ChatDemo";
 
 export default function Inside({ lang, t }: Readonly<{ lang: Lang; t: Content["inside"] }>) {

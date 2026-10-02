@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { getContent } from "./content";
-import { otherLang, paths, type Lang } from "./i18n";
+import { otherLang, paths, type Lang } from "./constants";
 
 export const viewportConfig: Viewport = {
   themeColor: "#0d0b1e",

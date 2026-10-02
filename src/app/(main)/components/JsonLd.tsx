@@ -1,5 +1,5 @@
 import { getContent } from "../lib/content";
-import { paths, type Lang } from "../lib/i18n";
+import { paths, type Lang } from "../lib/constants";
 
 export default function JsonLd({ lang }: Readonly<{ lang: Lang }>) {
   const t = getContent(lang).meta;

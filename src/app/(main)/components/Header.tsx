@@ -6,14 +6,14 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { Content } from "../lib/content";
-import { paths, type Lang } from "../lib/i18n";
+import { paths, type Lang } from "../lib/constants";
 import Icon from "./Lordicon";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 const brand: Record<Lang, string> = { en: "Sanatan AI", hi: "सनातन एआई" };
 
-export default function Header({ lang, t }: Readonly<{ lang: Lang; t: Content["ui"] }>) {
+export default function Header({ lang, t, prefix }: Readonly<{ lang: Lang; t: Content["ui"], prefix?: boolean }>) {
   const [solid, setSolid] = useState(false);
   const bar = useRef<HTMLDivElement>(null);
 
@@ -39,7 +39,7 @@ export default function Header({ lang, t }: Readonly<{ lang: Lang; t: Content["u
   const segment = (l: Lang, label: string) => (
     <a
       key={l}
-      href={paths[l]}
+      href={(prefix ? "/home/" : "") + paths[l]}
       hrefLang={l}
       lang={l}
       aria-current={lang === l ? "page" : undefined}
@@ -59,7 +59,7 @@ export default function Header({ lang, t }: Readonly<{ lang: Lang; t: Content["u
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 md:gap-6 md:px-8">
           <a href="#top" className="flex items-center gap-3" aria-label={t.home}>
-            <Image src="/192x192.png" alt="" width={36} height={36} className="size-9" />
+            <Image src="/192x192.png" alt="Sanatan Logo" width={36} height={36} className="size-9" />
             <span className="hidden font-display text-xl sm:inline">{brand[lang]}</span>
           </a>
 

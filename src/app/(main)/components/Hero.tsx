@@ -6,14 +6,11 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import type { Content } from "../lib/content";
-import type { Lang } from "../lib/i18n";
-import { sceneState } from "../lib/scene-store";
+import { sceneState, type Lang } from "../lib/constants";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
 
-/** Porthole diameter on screen. MandalaScene uses the same formula to size the mandala. */
 const portalSize = () => Math.min(window.innerHeight * 0.44, window.innerWidth * 0.66);
-/** Zoom at which the porthole has grown to cover the whole viewport. */
 const fullZoom = () => (Math.hypot(window.innerWidth, window.innerHeight) / portalSize()) * 1.08;
 
 interface HeroProps {

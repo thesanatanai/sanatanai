@@ -6,7 +6,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
-import type { Lang } from "../lib/i18n";
+import type { Lang } from "../lib/constants";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
 
@@ -77,11 +77,11 @@ export default function ChatDemo({ lang, label, note, toggleLabel }: { lang: Lan
     >
       <div className="flex items-center justify-between gap-3 border-b border-ivory/10 px-5 py-3">
         <div className="flex items-center gap-3">
-          <Image src="/192x192.png" alt="" width={28} height={28} className="size-7" />
+          <Image src="/192x192.png" alt="Sanatana Logo" width={28} height={28} className="size-7" />
           <span className="font-display text-lg">{shown === "hi" ? "सनातन एआई" : "Sanatan AI"}</span>
         </div>
         <div className="flex items-center gap-2 text-sm">
-          <span className="rounded-full border border-ember/50 px-3 py-1 text-ember">Deep Think</span>
+          <span className="rounded-full border border-ember/50 px-3 py-1 text-ember hidden sm:flex">Deep Think</span>
           <div className="flex overflow-hidden rounded-full border border-ivory/20" role="group" aria-label={toggleLabel}>
             {(["en", "hi"] as const).map((l) => (
               <button

@@ -1,3 +1,12 @@
+# V-2.2.1
+- Fixed sitemap issue
+- Made welcome page mobile friendly
+- Moved i18n.tsx and scene-store.ts in constants.ts
+- Removed unused site.ts
+
+# V-2.1.1
+- Introduced a desktop-friendly showcase homepage for Sanatan AI, in order to maintain better SEO.
+
 # V-1.1.1
 - Added a sitemap and robot.txt support
 - Added Memory view component

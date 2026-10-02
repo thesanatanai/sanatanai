@@ -8,7 +8,7 @@ export default function Footer({ t, externalLabel }: Readonly<{ t: Content["foot
       <div className="mx-auto flex max-w-6xl flex-col gap-8 md:flex-row md:items-start md:justify-between">
         <div className="max-w-md">
           <div className="flex items-center gap-3">
-            <Image src="/192x192.png" alt="" width={32} height={32} className="size-8" />
+            <Image src="/192x192.png" alt="Sanatan Logo" width={32} height={32} className="size-8" />
             <span className="font-display text-xl">Sanatan AI</span>
           </div>
           <p className="mt-4 text-sm text-ivory/65">{t.disclaimer}</p>

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { sceneState } from "../lib/scene-store";
+import { sceneState } from "../lib/constants";
 
 /** sRGB hex -> vec3 without colour-space conversion (shaders output sRGB directly). */
 const rgb = (hex: string) => {
@@ -75,12 +75,12 @@ const CORE_FRAG = /* glsl */ `
 const DUST_VERT = /* glsl */ `
   attribute float aSeed;
   attribute vec3 aColor;
-  uniform float uTime, uFly, uSize, uPixelRatio;
+  uniform float uTime, uFly, uSize, uPixelRatio, uBoost;
   varying vec3 vColor;
   varying float vAlpha;
   void main() {
     vec3 pos = position;
-    float z = mod(pos.z + uTime * (0.25 + aSeed * 0.5) + uFly * 6.0 + 12.0, 16.0) - 12.0;
+    float z = mod(pos.z + uTime * (0.25 + aSeed * 0.5) + uFly * (uBoost * 5.0 + 6.0) + 12.0, 16.0) - 12.0;
     pos.z = z;
     pos.xy += vec2(sin(uTime * 0.3 + aSeed * 20.0), cos(uTime * 0.25 + aSeed * 30.0)) * 0.08;
     vec4 mv = modelViewMatrix * vec4(pos, 1.0);
@@ -203,13 +203,13 @@ export default function MandalaScene() {
         uSize: { value: 5 },
         uPixelRatio: { value: 1 },
         uAlpha: { value: 1 },
+        uBoost: { value: 0 }
       },
     });
     const dust = new THREE.Points(dustGeo, dustMaterial);
     dust.frustumCulled = false;
     scene.add(dust);
 
-    // ----- sizing: the mandala starts exactly the size of the hero porthole -----
     let baseScale = 1;
     const resize = () => {
       const w = window.innerWidth;
@@ -266,6 +266,7 @@ export default function MandalaScene() {
       dustMaterial.uniforms.uTime.value = t;
       dustMaterial.uniforms.uFly.value = sceneState.page * 3 + Math.log(sceneState.zoom) * 0.6;
       dustMaterial.uniforms.uAlpha.value = 0.55 + 0.45 * sceneState.dim;
+      dustMaterial.uniforms.uBoost.value = boost;
 
       // gentle pointer parallax
       camX += (sceneState.px * 0.35 - camX) * Math.min(1, dt * 2.5);

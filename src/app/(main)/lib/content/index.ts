@@ -1,4 +1,4 @@
-import type { Lang } from "../i18n";
+import type { Lang } from "../constants";
 import { en } from "./en";
 import { hi } from "./hi";
 import type { Content } from "./types";
