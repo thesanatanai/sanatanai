@@ -1,5 +1,5 @@
 import AllContext from "./AllContext";
-import "../globals.css";
+import "./globals.css";
 import { Notification } from "@/components/Notification";
 
 export default function Layout({

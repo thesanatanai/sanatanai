@@ -113,7 +113,7 @@ export default function Hero({ lang, t, hint }: Readonly<HeroProps>) {
         {t.b[1]}
       </p>
 
-      <div className="absolute inset-0 z-20 grid place-items-center px-6 text-center">
+      <div className="absolute inset-0 z-20 grid place-items-center px-5 md:px-6 text-center">
         <div>
           <h1
             id="hero-title"

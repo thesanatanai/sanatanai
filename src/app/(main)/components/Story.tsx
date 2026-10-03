@@ -36,11 +36,11 @@ export default function Story({ t }: Readonly<{ t: Content["story"] }>) {
         </h2>
         <p className="mt-8 max-w-[58ch] text-lg text-ivory/80 md:text-xl">{t.body}</p>
 
-        <ul className="mt-20 space-y-3 md:mt-28 md:space-y-6" aria-label={t.listLabel}>
+        <ul className="mt-20 space-y-3 md:mt-28 md:space-y-6 max-w-screen overflow-hidden" aria-label={t.listLabel}>
           {t.pairs.map(([a, b]) => (
             <li
               key={a}
-              className="meet-row grid grid-cols-[1fr_auto_1fr] items-center gap-3 font-display text-[clamp(1.6rem,5.6vw,4.75rem)] leading-tight md:gap-8"
+              className="meet-row grid grid-cols-[1fr_auto_1fr] items-center gap-2 font-display text-[clamp(1.6rem,5.6vw,4.75rem)] leading-tight md:gap-8"
             >
               <span className="meet-l text-right">{a}</span>
               <span aria-hidden="true" className="relative block h-px w-[clamp(2rem,8vw,7rem)]">

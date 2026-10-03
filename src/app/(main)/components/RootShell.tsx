@@ -1,4 +1,4 @@
-import "@/app/globals.css";
+import "../styles.css";
 import type { Lang } from "../lib/constants";
 
 /** The <html> element for one language. Each language has its own root layout so <html lang> is correct in the served HTML. */

@@ -1,7 +1,7 @@
 import { GetTemplateResponse, Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API);
-const html = `<!DOCTYPE html><html lang="en"><meta charset="utf-8"><meta content="width=device-width,initial-scale=1" name="viewport"><meta name="x-apple-disable-message-reformatting"><title>Sanatan AI - Verify</title><style>@font-face{font-family:Poppins;font-style:normal;font-weight:400;src:url(https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLDz8Z1xlFQ.woff2) format('woff2')}*{font-family:Poppins,Georgia,'Times New Roman',Times,serif}</style><body><table border="0" cellpadding="0" cellspacing="0" role="presentation" align="center"><tbody><tr dir="ltr" lang="en" style="margin:0;margin-left:12px;margin-right:12px"><table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="box-sizing:border-box;padding:8px;"><tbody><tr style="width:100%"><td style="padding-top:1rem;padding-bottom:1rem"><table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="padding:10px;text-align:center;border-radius:24px;background-color:#16100b;background-image:radial-gradient(circle at 12% 14%,rgba(255,138,42,.2),transparent 31rem),radial-gradient(circle at 88% 12%,rgba(47,208,183,.16),transparent 28rem),linear-gradient(145deg,#090706 0,#16100b 46%,#080a0b 100%);border:1px solid rgba(255,229,190,.16)"><tbody><tr><td><h3 style="color:#f2c66d;font-size:.9rem;font-weight:700">PLEASE VERIFY YOUR EMAIL</h3><h1 style="color:#f1f1f1;margin:8px 0 12px;font-size:2.1rem;line-height:1">Sanatan AI</h1><p style="color:#bdb4a6;line-height:1.7;margin:0 auto 26px;max-width:430px">Hello curious!<br>We welcome you to Sanatan AI - The soul of intelligence.<br>This service is secure and hence require authentication<br>Your verification code is:</p><h1 style="color:#f2c66d;margin:8px 0 12px;font-size:2.1rem;line-height:1">{{{OTP}}}</h1><p style="color:#bdb4a6;line-height:1.7;margin:0 auto 26px;max-width:430px">Do not share this code with anyone.<br>It wil be expired within 10 minutes!</p></td></tr></tbody></table></td></tr></tbody></table></tr></tbody></table></body></html>`;
+const html = `<!DOCTYPE html><html lang="en"><meta charset="utf-8" /><meta content="width=device-width,initial-scale=1" name="viewport" /><meta name="x-apple-disable-message-reformatting" /><title>Sanatan AI - Verify </title><body><table border="0" cellpadding="0" cellspacing="0" role="presentation" align="center" ><tbody><tr style="width: 100%"><td style="padding-top: 1rem; padding-bottom: 1rem"><tbody style=" font-family: system-ui, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, Oxygen, Ubuntu, Cantarell, &quot;Open Sans&quot;, &quot;Helvetica Neue&quot;, sans-serif; " ><tr><td align="center"><h3 style=" color: #f2c66d; font-size: 0.9rem; font-weight: 700; text-transform: uppercase; " >Please Verify Your Email </h3><h1 style=" color: #e79d2c; margin: 8px 0 12px; font-size: 2.1rem; line-height: 1; " >Sanatan AI </h1><p style=" color: #777; line-height: 1.7; margin: 0 auto 26px; max-width: 430px; " >Hello, you are welcomed to Sanatan AI.<br />We have a verification code for you. Do not share this code with anyone. It will be expired within 10 minutes.<br />Your verification code is: </p><h1 style=" color: #f2c66d; margin: 8px 0 12px; font-size: 2.1rem; line-height: 1; " >{{{OTP}}} </h1><p style=" color: #777; line-height: 1.7; margin: 0 auto 26px; max-width: 430px; " >If you did not requested, please ignore this message </p></td></tr></tbody></td></tr></tbody></table></body></html>`;
 
 export async function _sendOTP(otp: number, to: string) {
   try {
@@ -34,12 +34,11 @@ export async function _sendOTP(otp: number, to: string) {
           OTP: otp.toString(),
         },
       },
-      subject: "Please Verify your email..",
+      subject: "Verify Your Email",
     });
 
     return true;
   } catch (e) {
-    console.log(otp);
     console.error(e);
     throw e;
   }
