@@ -4,7 +4,7 @@ export const en: Content = {
   meta: {
     title: "Sanatan AI",
     description:
-      "SANATAN AI — The Soul of Intelligence. One of the world's most advanced AI assistants, empowering users with authentic knowledge, spiritual guidance, and deep insights into Sanatan Dharma.",
+  "Sanatan AI is a free Hindi and English AI assistant for Sanatan Dharma. Ask questions, explore scriptures, research current sources, and discover ancient wisdom.",
     keywords: [
       "Sanatan AI",
       "Sanatan Dharma AI",

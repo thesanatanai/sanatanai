@@ -21,5 +21,5 @@ export default async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/(app|hi)"],
+  matcher: ["/(app|hi|)"],
 };

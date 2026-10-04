@@ -1,41 +1,28 @@
-import { GetTemplateResponse, Resend } from "resend";
+import { Resend } from "resend";
+import * as fs from "node:fs";
 
 const resend = new Resend(process.env.RESEND_API);
-const html = `<!DOCTYPE html><html lang="en"><meta charset="utf-8" /><meta content="width=device-width,initial-scale=1" name="viewport" /><meta name="x-apple-disable-message-reformatting" /><title>Sanatan AI - Verify </title><body><table border="0" cellpadding="0" cellspacing="0" role="presentation" align="center" ><tbody><tr style="width: 100%"><td style="padding-top: 1rem; padding-bottom: 1rem"><tbody style=" font-family: system-ui, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, Oxygen, Ubuntu, Cantarell, &quot;Open Sans&quot;, &quot;Helvetica Neue&quot;, sans-serif; " ><tr><td align="center"><h3 style=" color: #f2c66d; font-size: 0.9rem; font-weight: 700; text-transform: uppercase; " >Please Verify Your Email </h3><h1 style=" color: #e79d2c; margin: 8px 0 12px; font-size: 2.1rem; line-height: 1; " >Sanatan AI </h1><p style=" color: #777; line-height: 1.7; margin: 0 auto 26px; max-width: 430px; " >Hello, you are welcomed to Sanatan AI.<br />We have a verification code for you. Do not share this code with anyone. It will be expired within 10 minutes.<br />Your verification code is: </p><h1 style=" color: #f2c66d; margin: 8px 0 12px; font-size: 2.1rem; line-height: 1; " >{{{OTP}}} </h1><p style=" color: #777; line-height: 1.7; margin: 0 auto 26px; max-width: 430px; " >If you did not requested, please ignore this message </p></td></tr></tbody></td></tr></tbody></table></body></html>`;
+const html = fs.readFileSync("./mail.html", "utf-8");
+const otpText = `Confirm your email address\nSanatan AI\nWe're almost there!
+Thank you for signing up for Sanatan AI. To verify your account, we just need to confirm your email address.
+{{{OTP}}}\nIf you didn't request this, ignore this email.`
 
 export async function _sendOTP(otp: number, to: string) {
   try {
-    let template = await resend.templates.get("otp");
-    if (!template.data)
-      template = (await resend.templates.create({
-        name: "otp",
-        html,
-        variables: [
-          {
-            key: "OTP",
-            type: "string",
-            fallbackValue: "No OTP",
-          },
-        ],
-      })) as GetTemplateResponse;
+    const otpHTML = html.replace("{{{OTP}}}", otp.toString());
+    const otpTextFinal = otpText.replace("{{{OTP}}}", otp.toString());
 
-    if (!template.data?.id) {
-      const err = new Error("Missing ID from template");
-      console.error(err);
-      throw err;
-    }
-
-    await resend.emails.send({
+    const { error } = await resend.emails.send({
       to,
       from: "Sanatan AI <sanatan@shivam.click>",
-      template: {
-        id: template.data?.id as string,
-        variables: {
-          OTP: otp.toString(),
-        },
-      },
+      html: otpHTML,
+      text: otpTextFinal,
       subject: "Verify Your Email",
     });
+
+    if (error) {
+      throw error;
+    }
 
     return true;
   } catch (e) {
