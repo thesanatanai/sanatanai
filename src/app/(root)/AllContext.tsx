@@ -83,7 +83,7 @@ export default function AllContext(
 
   return (
     <All.Provider value={values}>
-      {!(fetched || path !== "/") ? <Loading /> : props.children}
+      {!(fetched || path !== "/app") ? <Loading /> : props.children}
       </All.Provider>
   );
 }
@@ -119,7 +119,7 @@ function useOnDb<K extends string>(
     if (val === value) return;
     const final = typeof val == "function" ? val(value as K) : val;
     setValue(final);
-    if (pathname == "/" && onDb) setOnDb(name, final);
+    if (pathname == "/app" && onDb) setOnDb(name, final);
   }
 
   return [value as K, update];

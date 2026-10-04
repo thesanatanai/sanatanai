@@ -1,8 +1,7 @@
 import { Resend } from "resend";
-import * as fs from "node:fs";
+import html from "./mail";
 
 const resend = new Resend(process.env.RESEND_API);
-const html = fs.readFileSync("./mail.html", "utf-8");
 const otpText = `Confirm your email address\nSanatan AI\nWe're almost there!
 Thank you for signing up for Sanatan AI. To verify your account, we just need to confirm your email address.
 {{{OTP}}}\nIf you didn't request this, ignore this email.`

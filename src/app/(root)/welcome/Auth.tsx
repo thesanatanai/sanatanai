@@ -105,6 +105,8 @@ function Email(props: Record<string, Function>) {
       jsCookie.set("setupComplete", "true", {
         expires: 365,
       });
+      props.setIsLoading(false);
+      window.location.href = "/app";
     } catch {
       return setErrMsg(t("errorInvalidOtp"));
     }
