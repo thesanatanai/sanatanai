@@ -32,7 +32,6 @@ export const locales = {
         <a href="mailto:great.sanatan.ai@gmail.com" className="underline">
           great.sanatan.ai@gmail.com
         </a>
-        .
       </>
     ),
     termsList7: (
@@ -56,7 +55,6 @@ export const locales = {
         <a href="/privacy" className="underline">
           Privacy Policy
         </a>
-        .
       </>
     ),
     termsList10:
@@ -111,7 +109,6 @@ export const locales = {
         <a href="mailto:great.sanatan.ai@gmail.com" className="underline">
           great.sanatan.ai@gmail.com
         </a>
-        .
       </>
     ),
     privacyChoices4:
@@ -148,7 +145,7 @@ export const locales = {
     deleteAllMessages: "Delete All Messages",
     profileTooltip: "Customize your Sanatan AI experience",
     searchGeetaTooltip: "Search and explore Bhagavad Gita verses",
-    calendarTooltip: "Expore Hindu Calendar",
+    calendarTooltip: "Explore Hindu Calendar",
     sendMessageOption: "Send message",
     goToNextLine: "Insert newline",
     manageAIMemory: "Manage AI memory",
@@ -170,7 +167,6 @@ export const locales = {
         <a href="/privacy" className="underline">
           privacy policy
         </a>
-        .
       </>
     ),
     deleteAllConfirmation: "Are you sure you want to delete all messages?",

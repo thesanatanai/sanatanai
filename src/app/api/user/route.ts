@@ -6,10 +6,17 @@ import userModel from "../models/user";
 import respondErr, { generateUniqueId } from "../utils/respondErr";
 import verifyUser, { User } from "../utils/verify";
 import dbConnect from "../utils/db";
+import z, { ZodError } from "zod";
 
 const client = new OAuth2Client(process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID);
-const ALLOWED_USER_FIELDS = ["picture", "name", "prefferedLocale", "memories"] as const;
-dbConnect();
+const Update = z.object({
+  memories: z.array(z.string()).optional(),
+  name: z.string().optional(),
+  preferredLocale: z.enum(["en", "hi"]).optional(),
+  picture: z.string().optional()
+});
+
+void dbConnect();
 
 export async function GET() {
   const user = await verifyUser(true) as User;
@@ -21,35 +28,32 @@ export async function GET() {
 }
 
 export async function PUT(request: NextRequest) {
-  const changed = await request.json();
-  if (!Object.keys(changed).length) return respondErr("No changes", 304);
+  try {
+  const updates = Update.parse(await request.json());
+  if (!Object.keys(updates).length) return respondErr("No valid changes", 304);
 
   const user = await verifyUser(true) as User;
   if (typeof user == "function") return user();
-
-// Only apply fields that were actually provided and valid
-  const updates: Record<string, unknown> = {};
-  for (const key of ALLOWED_USER_FIELDS) {
-    if (changed[key] !== undefined) updates[key] = changed[key];
-  }
-
-  if (!Object.keys(updates).length) return respondErr("No valid changes", 304);
 
   await userModel.updateOne({ id: user.id }, { $set: updates});
   return NextResponse.json({
     message: "Done",
   });
+} catch (e) {
+  if(e instanceof ZodError) return respondErr(e.message);
+  respondErr("Sorry Something Went Wrong..");
+}
 }
 
+const PostIncoming = z.object({
+  credential: z.string(),
+  locale: z.enum(["en", "hi"]).optional()
+});
+
 export async function POST(request: NextRequest) {
-  const { credential, locale } = (await request.json()) as {
-    credential: string;
-    locale?: "en" | "hi";
-  };
-
-  if (!credential) return respondErr("Missing credential token");
-
   try {
+    const { credential, locale } = PostIncoming.parse(await request.json());
+
     const ticket = await client.verifyIdToken({
       idToken: credential,
       audience: process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID,
@@ -75,7 +79,7 @@ export async function POST(request: NextRequest) {
         email,
         picture,
         id,
-        prefferedLocale: locale || "hi"
+        preferredLocale: locale || "hi"
       });
       isNewUser = true;
     }
@@ -96,49 +100,10 @@ export async function POST(request: NextRequest) {
       message: isNewUser ? "User registered" : "User logged in",
       userData: user.toJSON(),
     });
-  } catch {
-    return respondErr("Invalid Google Token", 401)
-  }
-}
-
-// logout from all devices
-export async function DELETE(request: NextRequest) {
-  const { credential } = (await request.json()) as {
-    credential: string;
-  };
-
-  if (!credential) {
-    return respondErr("Missing credential token");
-  }
-  try {
-    const ticket = await client.verifyIdToken({
-      idToken: credential,
-      audience: process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID,
-    });
-
-    const payload = ticket.getPayload();
-    if (!payload?.email) {
-      return respondErr("Invalid token payload");
+  } catch (e) {
+    if(e instanceof ZodError) {
+      return respondErr(e.message);
     }
-
-    const cookieManager = await cookies();
-    const token = cookieManager.get("token")?.value;
-    if (!token)
-      return respondErr("Token is required", 401);
-    try {
-      const { id } = jwt.verify(token, process.env.JWT_SECRET as string) as {
-        id: string;
-      };
-      await userModel.updateOne({ id }, { id: await generateUniqueId(userModel) });
-      cookieManager.delete("token");
-      cookieManager.delete("setupComplete");
-    } catch {
-      cookieManager.delete("token");
-      cookieManager.delete("setupComplete");
-      return respondErr("Either token invalid or user not exists..", 406)
-    }
-    return NextResponse.json({ message: "Logged out from all devices" });
-  } catch {
-    return respondErr("Invalid cardential token");
+    return respondErr("Invalid Google Token", 401);
   }
 }

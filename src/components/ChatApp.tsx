@@ -19,7 +19,7 @@ const ChatApp = () => {
   const history = React.useContext(PageContext).userData.chatHistory[0];
   return history?.length ? (
     <>
-      <div className="chat-body col h-full">
+      <div aria-live="polite" className="chat-body col h-full">
         <FormatChat history={history} />
       </div>
       <ScrollBtn />

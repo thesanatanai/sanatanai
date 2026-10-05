@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
   if (typeof user == "function") return user();
 
   const name = user.name;
-  const locale = user.prefferedLocale;
+  const locale = user.preferredLocale;
 
   try {
     const { newMessage } = v2Incoming.parse(await request.json());

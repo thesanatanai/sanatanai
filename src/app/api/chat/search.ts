@@ -21,7 +21,9 @@ async function search(query: string) {
   });
 } catch (e) {
   console.error(e);
-  return {error: "Internal Server Error found and unable to search for query, answer with your latest knowledge"}
+  return {
+    error: "Internal Server Error found and unable to search for query, answer with your latest knowledge"
+  }
 }
 }
 
@@ -39,17 +41,21 @@ const visitUrl = async (url: string) => {
 
 async function deleteMemory(idx: number, id: string) {
   const user = await userModel.findOne({ id });
-  if(!user) return {error: "User not found"}
+  if(!user) return {
+    error: "User not found"
+  }
 
   const memories = user.memories;
   memories.splice(idx, 1);
-  userModel.updateOne({
+  await userModel.updateOne({
     id
   }, { memories });
 }
 async function setMemory(memory: string, id: string) {
   const user = await userModel.findOne({ id });
-  if(!user) return {error: "User not found"}
+  if(!user) return {
+    error: "User not found"
+  }
 
   const memories = user.memories;
   memories.push(memory);
@@ -126,7 +132,7 @@ export const getRequestParams = (
             },
             {
               name: "delete_memory",
-              description: "Delete any irrevelant, wrong or non-useful memory",
+              description: "Delete any irrelevant, wrong or non-useful memory",
               parameters: {
                 type: Type.NUMBER,
                 description: "The index of memory (starts from 0)",

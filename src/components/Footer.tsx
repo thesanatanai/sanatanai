@@ -64,7 +64,7 @@ export default function Footer() {
           <div className="capsule-controls">
             <button
               className="capsule-action-btn close-magic"
-              data-label={t("aiTools")}
+              aria-label={t("aiTools")}
               onClick={() =>
                 menuRef.afterAvail((menu) => menu.classList.toggle("hide"))
               }
@@ -77,7 +77,7 @@ export default function Footer() {
             <button
               className="capsule-action-btn"
               onClick={() => fileRef.afterAvail((i) => i.click())}
-              data-label={t("uploadFile")}
+              aria-label={t("uploadFile")}
             >
               <Lordicon size={24} src="file" target="parent" />
             </button>
@@ -93,7 +93,7 @@ export default function Footer() {
             <button
               className={`capsule-action-btn deepThink${isDeep ? " selected" : ""}`}
               onClick={() => setDeep(!isDeep)}
-              data-label={t("deepThink")}
+              aria-label={t("deepThink")}
             >
               <Lordicon size={24} target="parent" src="brain" />
             </button>
@@ -101,7 +101,7 @@ export default function Footer() {
             {supported && (
               <button
                 className="capsule-action-btn"
-                data-label={t("voice")}
+                aria-label={t("voice")}
                 onClick={() => toggle()}
               >
                 <Lordicon

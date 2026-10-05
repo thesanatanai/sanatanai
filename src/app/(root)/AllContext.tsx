@@ -29,7 +29,7 @@ export default function AllContext(
   const theme = [themeValue, setThemeValue];
   const [mainTheme, setMainTheme] = useState<theme | "auto">(() => globalThis.window && (localStorage.getItem("theme") as theme ?? "auto"));
   const [fetched, setFetched] = useState(false);
-  const language = useOnDb<"en" | "hi">("prefferedLocale", fetched, "en");
+  const language = useOnDb<"en" | "hi">("preferredLocale", fetched, "en");
   const name = useOnDb("name", fetched, "");
   const picture = useOnDb("picture", fetched, "");
   const email = useOnDb("email", fetched, "");
@@ -89,11 +89,11 @@ export default function AllContext(
 }
 
 function handleTheme(setter: (value: theme) => void) {
-  const preffered = globalThis.matchMedia("(prefers-color-scheme: dark)");
-  if (preffered.matches) {
+  const preferred = globalThis.matchMedia("(prefers-color-scheme: dark)");
+  if (preferred.matches) {
     setter("dark"); // Set theme to dark
   } else setter("light"); // Set theme to light
-  preffered.onchange = () => handleTheme(setter);
+  preferred.onchange = () => handleTheme(setter);
 }
 
 export type usedOnDb<K> = [K, (val: K | ((value: K) => K), update?: boolean) => void];
@@ -106,7 +106,7 @@ export type usedOnDb<K> = [K, (val: K | ((value: K) => K), update?: boolean) => 
  * @returns 
  */
 function useOnDb<K extends string>(
-  name: "name" | "email" | "picture" | "prefferedLocale",
+  name: "name" | "email" | "picture" | "preferredLocale",
   fetched: boolean,
   initial = "",
 ): usedOnDb<K> {
@@ -119,7 +119,7 @@ function useOnDb<K extends string>(
     if (val === value) return;
     const final = typeof val == "function" ? val(value as K) : val;
     setValue(final);
-    if (pathname == "/app" && onDb) setOnDb(name, final);
+    if (pathname == "/app" && onDb) void setOnDb(name, final);
   }
 
   return [value as K, update];

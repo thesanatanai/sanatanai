@@ -9,7 +9,7 @@ async function manageSw() {
     const sw = navigator.serviceWorker;
     const isRegistered = await sw.getRegistration("/");
     if (isRegistered) {
-      isRegistered.update();
+      void isRegistered.update();
     } else {
       sw.register("/sw.js")
         .then((reg) =>
@@ -23,12 +23,12 @@ async function manageSw() {
 }
 
 async function _manage(values: any) {
-  manageSw();
+  void manageSw();
   if(!jsCookie.get("setupComplete")) return;
   const { setFetched, name, email, picture, language } = values;
   await login({
-    name, email, picture, prefferedLocale: language
+    name, email, picture, preferredLocale: language
   }, setFetched);
 }
 
-export default function manage(values: any) { _manage(values) }; 
+export default function manage(values: any) { void _manage(values) }; 

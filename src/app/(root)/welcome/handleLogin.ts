@@ -26,6 +26,7 @@ export default async function handleLogin(
       jsCookie.set("setupComplete", "true", {
         expires: 365,
       });
+      window.location.href = "/app";
     } else {
       logger("Backend authentication failed:", data.error);
     }

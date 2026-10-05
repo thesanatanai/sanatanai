@@ -20,7 +20,7 @@ function Google(props: Record<string, Function>) {
         >
           <GoogleLogin
             onSuccess={(response) => handleLogin(response, currentLanguage)}
-            click_listener={() => props.setIsLoading(true)}
+            click_listener={() => props.setIsLoading((loading : boolean) => !loading)}
             shape="pill"
             onError={() => {
               notification("loginError", {
@@ -120,7 +120,7 @@ function Email(props: Record<string, Function>) {
               <Language need="emailLabel" />
             </label>
             <input
-              type="text"
+              type="email"
               id="email"
               value={email}
               className="modern-input"
@@ -150,6 +150,7 @@ function Email(props: Record<string, Function>) {
               type="text"
               id="otp"
               className="modern-input"
+              autoComplete="one-time-code"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
             />

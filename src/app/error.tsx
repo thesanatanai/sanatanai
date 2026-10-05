@@ -43,19 +43,19 @@ export default function Eror({ error: err }: Readonly<{ error: Error }>) {
             </a>
           </p>
           <div className="error-actions">
-            <Link className="error-primary not" data-label="Logout from Sanatan AI" href="/welcome?logout=true">
+            <Link className="error-primary not" aria-label="Logout from Sanatan AI" href="/welcome?logout=true">
               Logout
             </Link>
             <button
               className="error-primary"
-              data-label="Reload this page"
+              aria-label="Reload this page"
               onClick={() => window?.location?.reload?.()}
             >
               Reload
             </button>
             <button
               className="error-primary"
-              data-label="Report about this error!"
+              aria-label="Report about this error!"
               onClick={() => {
                 setReported(true);
                 sendErr(error);

@@ -11,14 +11,20 @@ import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 import { sendOtp } from "../../utils/verify";
 import dbConnect from "../../utils/db";
+import z, { ZodError } from "zod";
 
-dbConnect();
+void dbConnect();
 
+const PostIncoming = z.object({
+  otp: z.string(),
+  email: z.email(),
+  locale: z.enum(["en", "hi"]).optional()
+});
+
+// Verify OTP
 export async function POST(request: NextRequest) {
-  const { otp, email, locale } = await request.json();
-
-  if (!otp) return respondErr("Missing OTP");
-  if (!isValidEmail(email)) return respondErr("Invalid Email");
+  try {
+  const { otp, email, locale } = PostIncoming.parse(await request.json());
 
   const otpHash = await generateHash(otp);
   const registration = await getOtp(email);
@@ -27,34 +33,35 @@ export async function POST(request: NextRequest) {
 
   const { otpHash: OTPHash } = registration;
 
+  // Invalid OTP
   if (OTPHash !== otpHash) {
     const blacklisted = await blackListedModel.findOne({ email });
     if (blacklisted) {
-      if (blacklisted.endTime > Date.now())
+      if (blacklisted.endTime > Date.now()) {
         return respondErr("User Blacklisted");
+      }
       const tries = (blacklisted.tries || 0) + 1;
+
+      // User exceeded tries
       if (tries >= 3) {
-        await blackListedModel.updateOne(
+        await blackListedModel.updateOne({ email },
           {
-            email,
-          },
-          {
-            $set: {
-              endTime: Date.now() + 300000,
-            },
+            endTime: Date.now() + 300000,
           },
         );
         return respondErr("User Blacklisted");
       }
-      await blackListedModel.updateOne(
+
+      // Update new tries
+      await blackListedModel.updateOne({ email },
         {
-          email,
-        },
-        {
-          tries: blacklisted.tries,
+          tries: tries,
         },
       );
+      return respondErr("OTP Invalid");
     }
+
+    // Blacklist user
     await blackListedModel.create({
       email,
       endTime: Date.now(),
@@ -63,12 +70,14 @@ export async function POST(request: NextRequest) {
     return respondErr("OTP Invalid");
   }
 
+  // Delete OTP and blacklisted user
   await blackListedModel.deleteOne({ email });
   await otpModel.deleteOne({ email });
 
   const alreadyExists = await userModel.findOne({ email });
   const cookieStore = await cookies();
 
+  // User already exists
   if (alreadyExists) {
     const token = jwt.sign(
       { id: alreadyExists.id },
@@ -88,13 +97,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(alreadyExists.toJSON());
   }
 
+  // Create new user
   const id = await generateUniqueId(userModel);
   const newUser = await userModel.create({
     name: "Guest",
     email,
     id,
     picture: "user.png",
-    prefferedLocale: locale || "hi",
+    preferredLocale: locale || "hi",
   });
 
   const token = jwt.sign({ id }, process.env.JWT_SECRET as string, {
@@ -109,18 +119,22 @@ export async function POST(request: NextRequest) {
     httpOnly: true,
   });
   return NextResponse.json(newUser.toJSON());
+} catch (e) {
+  if(e instanceof ZodError) return respondErr(e.message);
+  return respondErr("Sorry Something Went Wrong")
+}
 }
 
+// Request an OTP
 export async function PUT(request: NextRequest) {
   const { email } = await request.json();
   if (!isValidEmail(email)) return respondErr("Invalid Email");
+
   try {
     const alreadyExists = await getOtp(email);
-    if (typeof alreadyExists !== "function")
-      return NextResponse.json({ message: "Done" });
+    if (typeof alreadyExists !== "function") return NextResponse.json({ message: "Done" });
 
     const otp = await sendOtp(email);
-
     if (typeof otp == "function") return otp();
 
     const otpHash = await generateHash(otp);
@@ -138,6 +152,7 @@ export async function PUT(request: NextRequest) {
   }
 }
 
+// Get OTP for a specific email
 async function getOtp(email: string) {
   const registration = await otpModel.findOne({ email });
 
@@ -158,6 +173,7 @@ async function getOtp(email: string) {
   return registration;
 }
 
+// OTP delete timer
 function setDelTimer(email: string, timeLeft: number) {
   return setTimeout(async () => await otpModel.deleteOne({ email }), timeLeft);
 }

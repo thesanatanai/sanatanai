@@ -71,7 +71,7 @@ const MenuBar = () => {
           <div className="row gap-2">
             <button
               className="action center-flex text-sm"
-              data-label={t("searchGeetaTooltip")}
+              aria-label={t("searchGeetaTooltip")}
               onClick={() =>
                 window.open(
                   "https://shivamsharma999.github.io/gita",
@@ -84,7 +84,7 @@ const MenuBar = () => {
             </button>
             <button
               className="action center-flex text-sm"
-              data-label={t("calendarTooltip")}
+              aria-label={t("calendarTooltip")}
               onClick={() =>
                 window.open(
                   "https://calendar.shivam.click",
@@ -179,7 +179,7 @@ const listSettions = (
           className="delete-chat"
           onClick={(e) => {
             e.stopPropagation();
-            deleteChat(
+            void deleteChat(
               [setSessions, activeSessionId],
               [sessionId, setSessionId],
             );

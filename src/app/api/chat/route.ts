@@ -14,7 +14,7 @@ const ai = new GoogleGenAI({
   apiKey: process.env.GENAI,
 });
 
-dbConnect();
+void dbConnect();
 
 export async function POST(request: NextRequest) {
   const user = (await verifyUser(true)) as User;
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
 
   const name = user.name;
   const memories = user.memories;
-  const locale = user.prefferedLocale;
+  const locale = user.preferredLocale;
 
   try {
     const {

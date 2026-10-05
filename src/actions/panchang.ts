@@ -8,7 +8,7 @@ function getPanchang() {
   const date = new Date();
   const observer = new Observer(23.1765, 75.7885, 494); // Varanasi
   const panchang = Panchangam.getPanchangam(date, observer, {
-    timezoneOffset: date.getTimezoneOffset(),
+    timezoneOffset: 330, // India
   });
   return `
 ### Today's Panchanga:

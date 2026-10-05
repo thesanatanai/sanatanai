@@ -28,7 +28,12 @@ const copy = {
 } satisfies Record<Lang, Record<string, string>>;
 
 /** The illustrative conversation shown in "Inside the app". Follows the page language and can be toggled to the other one. */
-export default function ChatDemo({ lang, label, note, toggleLabel }: { lang: Lang; label: string; note: string; toggleLabel: string }) {
+export default function ChatDemo({
+  lang,
+  label,
+  note,
+  toggleLabel,
+}: Readonly<{ lang: Lang; label: string; note: string; toggleLabel: string }>) {
   const root = useRef<HTMLDivElement>(null);
   const started = useRef(false);
   const [shown, setShown] = useState<Lang>(lang);
@@ -41,9 +46,15 @@ export default function ChatDemo({ lang, label, note, toggleLabel }: { lang: Lan
       if (!el) return;
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const split = SplitText.create(el.querySelectorAll(".stream"), { type: "words" });
+        const split = SplitText.create(el.querySelectorAll(".stream"), {
+          type: "words",
+        });
         const play = () =>
-          gsap.fromTo(split.words, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.2, stagger: 0.05, ease: "none" });
+          gsap.fromTo(
+            split.words,
+            { autoAlpha: 0 },
+            { autoAlpha: 1, duration: 0.2, stagger: 0.05, ease: "none" },
+          );
 
         if (started.current) {
           play();
@@ -77,12 +88,26 @@ export default function ChatDemo({ lang, label, note, toggleLabel }: { lang: Lan
     >
       <div className="flex items-center justify-between gap-3 border-b border-ivory/10 px-5 py-3">
         <div className="flex items-center gap-3">
-          <Image src="/192x192.png" alt="Sanatana Logo" width={28} height={28} className="size-7" />
-          <span className="font-display text-lg">{shown === "hi" ? "सनातन एआई" : "Sanatan AI"}</span>
+          <Image
+            src="/192x192.png"
+            alt="Sanatana Logo"
+            width={28}
+            height={28}
+            className="size-7"
+          />
+          <span className="font-display text-lg">
+            {shown === "hi" ? "सनातन एआई" : "Sanatan AI"}
+          </span>
         </div>
         <div className="flex items-center gap-2 text-sm">
-          <span className="rounded-full border border-ember/50 px-3 py-1 text-ember hidden sm:flex">Deep Think</span>
-          <div className="flex overflow-hidden rounded-full border border-ivory/20" role="group" aria-label={toggleLabel}>
+          <span className="rounded-full border border-ember/50 px-3 py-1 text-ember hidden sm:flex">
+            Deep Think
+          </span>
+          <div
+            className="flex overflow-hidden rounded-full border border-ivory/20"
+            role="group"
+            aria-label={toggleLabel}
+          >
             {(["en", "hi"] as const).map((l) => (
               <button
                 key={l}
@@ -100,12 +125,17 @@ export default function ChatDemo({ lang, label, note, toggleLabel }: { lang: Lan
 
       <div className="space-y-5 px-5 py-6 md:px-7" key={shown} lang={shown}>
         <div className="flex justify-end">
-          <p className="max-w-[85%] rounded-2xl rounded-br-md bg-lotus/35 px-4 py-3">{t.question}</p>
+          <p className="max-w-[85%] rounded-2xl rounded-br-md bg-lotus/35 px-4 py-3">
+            {t.question}
+          </p>
         </div>
 
         <div className="max-w-[92%]">
           <p className="stream text-ivory/90">{t.answer}</p>
-          <blockquote lang="sa" className="mt-4 rounded-2xl border-l-2 border-ember bg-night/60 px-5 py-4">
+          <blockquote
+            lang="sa"
+            className="mt-4 rounded-2xl border-l-2 border-ember bg-night/60 px-5 py-4"
+          >
             <p className="stream font-display text-xl leading-relaxed md:text-2xl">
               कर्मण्येवाधिकारस्ते मा फलेषु कदाचन।
               <br />
@@ -118,10 +148,17 @@ export default function ChatDemo({ lang, label, note, toggleLabel }: { lang: Lan
         </div>
       </div>
 
-      <div className="border-t border-ivory/10 px-5 py-4 text-sm text-ivory/55" aria-hidden="true">
-        <div className="rounded-full border border-ivory/15 px-4 py-2.5">{t.placeholder}</div>
+      <div
+        className="border-t border-ivory/10 px-5 py-4 text-sm text-ivory/55"
+        aria-hidden="true"
+      >
+        <div className="rounded-full border border-ivory/15 px-4 py-2.5">
+          {t.placeholder}
+        </div>
       </div>
-      <p className="border-t border-ivory/10 px-5 py-2.5 text-xs text-ivory/60">{note}</p>
+      <p className="border-t border-ivory/10 px-5 py-2.5 text-xs text-ivory/60">
+        {note}
+      </p>
     </div>
   );
 }

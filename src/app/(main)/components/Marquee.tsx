@@ -29,7 +29,7 @@ function Row({ items, hidden = false }: Readonly<{ items: string[]; hidden?: boo
 }
 
 /** A band of key phrases that drifts sideways, speeds up with the scroll and reverses when you scroll back up. */
-export default function Marquee({ items }: { items: string[] }) {
+export default function Marquee({ items }: Readonly<{ items: string[] }>) {
   const root = useRef<HTMLDivElement>(null);
 
   useGSAP(

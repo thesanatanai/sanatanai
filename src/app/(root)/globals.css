@@ -63,14 +63,14 @@ body {
     background: color-mix(in srgb, var(--primary-color) 80%, var(--text-color) 20%);
 }
 
-[data-label] {
+[aria-label] {
   position: relative;
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, all 0.1s linear;
   text-align: center;
 }
 
-[data-label]::after {
-  content: attr(data-label);
+[aria-label]::after {
+  content: attr(aria-label);
   position: absolute;
   font-family: 'Poppins', sans-serif;
   bottom: calc(100% + 10px);
@@ -89,7 +89,7 @@ body {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
-[data-label]::before {
+[aria-label]::before {
   content: '';
   position: absolute;
   bottom: 100%;
@@ -104,8 +104,8 @@ body {
 }
 
 
-[data-label]:hover::after,
-[data-label]:hover::before {
+[aria-label]:hover::after,
+[aria-label]:hover::before {
   opacity: 1;
   visibility: visible;
   transform: translateX(-50%);

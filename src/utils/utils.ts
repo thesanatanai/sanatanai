@@ -126,7 +126,7 @@ export async function login(
   } catch (e) {
     logger(e);
     if (!globalThis.window) return fetched(true);
-    cookieStore.delete("setupComplete");
+    void cookieStore.delete("setupComplete");
     open("/welcome?logout=true", "_self");
     fetched(true);
   }
@@ -134,7 +134,7 @@ export async function login(
 
 export function useDb(fetched: boolean) {
   return async function setOnDb(
-    query: "name" | "email" | "picture" | "prefferedLocale",
+    query: "name" | "email" | "picture" | "preferredLocale",
     value: string,
   ) {
     if (!fetched) return;
@@ -176,7 +176,7 @@ export function parentCount(to: any, count: number) {
 
 export function copy(text: string) {
   if (navigator && "clipboard" in navigator) {
-    navigator.clipboard.writeText(text);
+    void navigator.clipboard.writeText(text);
   } else {
     const txt = document.createElement("textarea");
     txt.value = text;

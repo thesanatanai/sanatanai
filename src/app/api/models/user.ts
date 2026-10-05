@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "user.png"
   },
-  prefferedLocale: {
+  preferredLocale: {
     type: String,
     enum: ["en", "hi"],
     default: "en",

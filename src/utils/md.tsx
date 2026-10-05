@@ -16,9 +16,9 @@ setCustomComponents(id, {
   canvas: Canvas,
   mermaid: Mermaid,
   link: (props: Readonly<LinkNodeProps>) => {
-    // We wrap link inside span because passing data-label to a would cause issues with it's styling.
+    // We wrap link inside span because passing aria-label to a would cause issues with it's styling.
     return (
-    <span data-label={props.node.title || props.node.href}>
+    <span aria-label={props.node.title || props.node.href}>
       <a href={props.node.href}>{props.node.text}</a>
     </span>
     )
