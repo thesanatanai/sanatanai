@@ -1,3 +1,8 @@
+# V-2.2.4
+- Improve OTP handling and brute-force protection
+- Optimized chat indexing and database queries
+- Improved SEO by adding Sanatan AI on top.
+
 # V-2.2.3
 - Replaced `data-label` attributes with `aria-label` for better accessibility in various components and styles.
 - Updated service worker management to use `void` for asynchronous calls.

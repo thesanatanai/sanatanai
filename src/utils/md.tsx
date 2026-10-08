@@ -2,19 +2,27 @@
 import { All } from "@/app/(root)/AllContext";
 import Md, {
   LinkNodeProps,
+  MermaidBlockNodeProps,
   setCustomComponents
 } from "markstream-react";
 import "markstream-react/index.css";
+import dynamic from "next/dynamic";
 import { useContext } from "react";
-import Mermaid from "@/components/Mermaid";
 
 const id = "sanatan-md";
+const Mermaid = dynamic(() => import("@/components/Mermaid"), { ssr: false });
+
+// next/dynamic widens the type to ComponentType<...> (function OR class component),
+// which setCustomComponents rejects. A plain function component fixes the type.
+function MermaidBlock(props: Readonly<MermaidBlockNodeProps>) {
+  return <Mermaid {...props} />;
+}
 
 setCustomComponents(id, {
   gita: GeetaBlock,
   "chat-btn": ChatButton,
   canvas: Canvas,
-  mermaid: Mermaid,
+  mermaid: MermaidBlock,
   link: (props: Readonly<LinkNodeProps>) => {
     // We wrap link inside span because passing aria-label to a would cause issues with it's styling.
     return (

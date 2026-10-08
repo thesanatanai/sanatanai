@@ -19,17 +19,20 @@ export async function GET() {
   try {
     const user = (await verifyUser(true)) as User;
     if (typeof user == "function") return user();
-    const chat = await chatModel.find({ id: user.id });
-    const chats: unknown[] = [];
-    if (!chat.length) {
-      chat.push(await createNewChat(user.id));
+    
+    // Only fetch what the sidebar needs; never load the messages array here
+    const rows = await chatModel
+      .find({ id: user.id })
+      .select("title chatId timestamp")
+      .lean();
+    const chats = rows.map((c) => ({
+      title: c.title,
+      id: c.chatId,
+    }));
+    if(!chats.length) {
+      const c = await createNewChat(user.id);
+      chats.push({ title: c.title, id: c.chatId });
     }
-    chat.forEach((c) => {
-      chats.push({
-        title: c.title,
-        id: c.chatId,
-      });
-    });
     return NextResponse.json(chats);
   } catch {
     return respondErr("Invalid token");
@@ -58,7 +61,10 @@ export async function PATCH(request: NextRequest) {
   const { id } = user;
 
   // A new chat already exists
-  const alreadyExists = await chatModel.findOne({ messages: [], id });
+  const alreadyExists = await chatModel
+    .findOne({messages: [], id})
+    .select("chatId")
+    .lean();
   if (alreadyExists) return NextResponse.json({ id: alreadyExists.chatId });
 
   // Create a new chat
@@ -76,18 +82,14 @@ export async function PATCH(request: NextRequest) {
 // Delete a chat
 export async function DELETE(request: NextRequest) {
   const { id: chatId } = await request.json();
-  if (!chatId) return respondErr("Chat Id not provided");
-  const user = (await verifyUser(true)) as User;
-  if (typeof user == "function") return user();
+  if(!chatId) return respondErr("Chat Id not provided");
+  const user = await verifyUser(true) as User;
+  if(typeof user == "function") return user();
   const { id } = user;
-  const chat = await chatModel.findOne({ id, chatId });
-  if (!chat) return respondErr("Chat not found");
-  await chatModel.deleteOne({
-    id,
-    chatId,
-  });
+  const { deletedCount } = await chatModel.deleteOne({ id, chatId });
+  if(!deletedCount) return respondErr("Chat not found");
   return NextResponse.json({
-    message: "Done",
+    message: "Done"
   });
 }
 

@@ -4,7 +4,7 @@ export default function SiteMap(): MetadataRoute.Sitemap {
   return [
     {
       url: "https://sanatan.shivam.click/",
-      lastModified: new Date("10/03/2026"),
+      lastModified: new Date("10/06/2026"),
     },
     {
       url: "https://sanatan.shivam.click/terms",
@@ -18,5 +18,9 @@ export default function SiteMap(): MetadataRoute.Sitemap {
       url: "https://sanatan.shivam.click/welcome",
       lastModified: new Date("09/19/2026"),
     },
+    {
+      url: "https://sanatan.shivam.click/hi",
+      lastModified: new Date("10/06/2026"),
+    }
   ];
 }

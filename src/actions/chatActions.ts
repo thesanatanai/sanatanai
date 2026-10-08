@@ -22,12 +22,12 @@ export type chatJSON = Extract<gotChat, { id: string }>;
 
 export async function updateChat(userId: string, chatId: string, updatedField: AnyKeys<chatJSON>) {
     try {
-        if(!await chatModel.findOne({ id: userId, chatId })) return genResErr("Chat does not exist..");
-        await chatModel.updateOne({
+        const res = await chatModel.updateOne({
             id: userId, chatId
         }, {
             $set: updatedField
         });
+        if(!res.matchedCount) return genResErr("Chat does not exist..");
     }
     catch (e) {
         console.error(e);
@@ -39,19 +39,26 @@ export async function getChats(userId: string) {
     try {
     const userExists = await userModel.findOne({ id: userId });
     if(!userExists) return genResErr("User does not exist..");
-    const chat = await chatModel.find({ id: userId });
-    const chats: Chats = [];
-    if(!chat.length) {
-      chat.push(await createNewChat(userId));
-    }
-    chat.forEach((c) => {
+    // Only fetch what the sidebar needs; never load the messages array here
+    const rows = await chatModel
+      .find({ id: userId })
+      .select("title chatId timestamp")
+      .lean();
+    const chats: Chats = rows.map((c, i) => ({
+      title: c.title,
+      id: c.chatId,
+      timestamp: c.timestamp,
+      index: i + 1
+    }));
+    if(!chats.length) {
+      const c = await createNewChat(userId);
       chats.push({
         title: c.title,
         id: c.chatId,
         timestamp: c.timestamp,
-        index: chats.length + 1
+        index: 1
       });
-    });
+    }
     return chats;
 } catch (e) {
     console.error(e);

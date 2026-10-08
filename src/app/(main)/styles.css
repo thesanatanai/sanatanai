@@ -8,8 +8,12 @@
   --color-lotus: #8f5fd0;
   --color-water: #3a6fb5;
   --color-rose: #c4508f;
-  --font-seasons: var(--font-the-seasons), "Poppins", "Georgia", 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-  --font-sans: "Hanken Grotesk Variable", "Noto Sans Devanagari Variable", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-seasons:
+    var(--font-the-seasons), "Poppins", "Georgia", "Gill Sans", "Gill Sans MT",
+    Calibri, "Trebuchet MS", sans-serif;
+  --font-sans:
+    "Hanken Grotesk Variable", "Noto Sans Devanagari Variable", system-ui,
+    -apple-system, "Segoe UI", sans-serif;
 }
 
 @layer base {
@@ -26,13 +30,20 @@
     overflow-x: clip;
     -webkit-font-smoothing: antialiased;
   }
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     font-family: var(--font-seasons);
     font-weight: 400;
     text-wrap: balance;
   }
-  p { text-wrap: pretty; }
-  ::selection { background: var(--color-ember); color: var(--color-night); }
+  p {
+    text-wrap: pretty;
+  }
+  ::selection {
+    background: var(--color-ember);
+    color: var(--color-night);
+  }
   :focus-visible {
     outline: 2px solid var(--color-ember);
     outline-offset: 3px;
@@ -40,7 +51,11 @@
   }
 }
 
-.font-display, .marquee-word, h1, h2, h3 {
+.font-display,
+.marquee-word,
+h1,
+h2,
+h3 {
   font-weight: 500;
   letter-spacing: 1px;
   font-family: var(--font-seasons);
@@ -48,25 +63,34 @@
 
 /* Devanagari needs more vertical room than Latin: matras above and below the line collide at tight leading.
    Unlayered on purpose, so it wins over Tailwind's leading-* utilities. */
-html[lang="hi"] body { line-height: 1.8; }
+html[lang="hi"] body {
+  line-height: 1.8;
+}
 html[lang="hi"] h1,
 html[lang="hi"] h2,
 html[lang="hi"] h3,
-html[lang="hi"] .font-display { line-height: 1.32; letter-spacing: 0; }
+html[lang="hi"] .font-display {
+  line-height: 1.32;
+  letter-spacing: 0;
+}
 
 /* Lenis smooth scroll */
-html.lenis, html.lenis body { height: auto; }
-.lenis.lenis-smooth { scroll-behavior: auto !important; }
-.lenis.lenis-stopped { overflow: hidden; }
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
 
-/*
- * Progressive enhancement: elements that GSAP reveals are only hidden once the page has confirmed
- * JavaScript runs (the `js` class is set in <head>), so content stays readable for crawlers,
- * no-JS visitors and reduced-motion users.
- */
-.js .hero-brand,
-.js .hero-sub { opacity: 0; }
-.js .draw { stroke-dashoffset: 1; stroke-dasharray: 1; }
+.js .draw {
+  stroke-dashoffset: 1;
+  stroke-dasharray: 1;
+  display: auto;
+}
 
 /* Scroll progress line */
 .progress {
@@ -76,12 +100,21 @@ html.lenis, html.lenis body { height: auto; }
   height: 2px;
   transform-origin: left center;
   transform: scaleX(0);
-  background: linear-gradient(90deg, var(--color-water), var(--color-lotus), var(--color-rose), var(--color-ember));
+  background: linear-gradient(
+    90deg,
+    var(--color-water),
+    var(--color-lotus),
+    var(--color-rose),
+    var(--color-ember)
+  );
   pointer-events: none;
 }
 
 /* Pointer-following light on cards */
-.spot { position: relative; isolation: isolate; }
+.spot {
+  position: relative;
+  isolation: isolate;
+}
 .spot::before {
   content: "";
   position: absolute;
@@ -91,9 +124,15 @@ html.lenis, html.lenis body { height: auto; }
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.3s ease;
-  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(245, 154, 60, 0.16), transparent 62%);
+  background: radial-gradient(
+    420px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(245, 154, 60, 0.16),
+    transparent 62%
+  );
 }
-.spot:hover::before { opacity: 1; }
+.spot:hover::before {
+  opacity: 1;
+}
 
 /* Visit buttons: a slowly turning ring of the mandala's colours around a solid face */
 @property --angle {
@@ -101,49 +140,114 @@ html.lenis, html.lenis body { height: auto; }
   initial-value: 0deg;
   inherits: false;
 }
-@keyframes ring-turn { to { --angle: 360deg; } }
+@keyframes ring-turn {
+  to {
+    --angle: 360deg;
+  }
+}
 .btn-ring {
   position: absolute;
   inset: -2px;
   border-radius: 9999px;
-  background: conic-gradient(from var(--angle), var(--color-ember), var(--color-rose), var(--color-lotus), var(--color-water), var(--color-ember));
+  background: conic-gradient(
+    from var(--angle),
+    var(--color-ember),
+    var(--color-rose),
+    var(--color-lotus),
+    var(--color-water),
+    var(--color-ember)
+  );
   animation: ring-turn 5s linear infinite;
   opacity: 0.9;
-  transition: opacity 0.3s ease, filter 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    filter 0.3s ease;
 }
 .btn:hover .btn-ring,
-.btn:focus-visible .btn-ring { opacity: 1; filter: blur(6px); }
-.btn .btn-face { transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.btn:active .btn-face { transform: scale(0.97); }
-.btn .btn-arrow { transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1); }
-.btn:hover .btn-arrow { transform: translateX(4px); }
+.btn:focus-visible .btn-ring {
+  opacity: 1;
+  filter: blur(6px);
+}
+.btn .btn-face {
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.btn:active .btn-face {
+  transform: scale(0.97);
+}
+.btn .btn-arrow {
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.btn:hover .btn-arrow {
+  transform: translateX(4px);
+}
 
 /* Marquee */
-.marquee-track { display: flex; width: max-content; will-change: transform; }
-.marquee-copy { display: flex; flex-shrink: 0; align-items: center; }
+.marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+.marquee-copy {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+}
 .marquee-word {
   font-size: clamp(2.25rem, 6.5vw, 5.5rem);
   line-height: 1.3;
   white-space: nowrap;
   padding-inline: clamp(1rem, 2.5vw, 2.25rem);
 }
-.marquee-word.outline { color: transparent; -webkit-text-stroke: 1.2px rgba(243, 236, 220, 0.75); }
+.marquee-word.outline {
+  color: transparent;
+  -webkit-text-stroke: 1.2px rgba(243, 236, 220, 0.75);
+}
 
 /* Floating demo chips and the rotating placeholder mandala */
-@keyframes slow-spin { to { transform: rotate(360deg); } }
-.slow-spin { animation: slow-spin 60s linear infinite; }
+@keyframes slow-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.slow-spin {
+  animation: slow-spin 60s linear infinite;
+}
 
 /* FAQ disclosure marker */
-details > summary { list-style: none; }
-details > summary::-webkit-details-marker { display: none; }
-details[open] .faq-plus { transform: rotate(45deg); }
-.faq-plus { transition: transform 0.3s ease; }
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+details[open] .faq-plus {
+  transform: rotate(45deg);
+}
+.faq-plus {
+  transition: transform 0.3s ease;
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .js .draw { stroke-dashoffset: 0; }
-  html { scroll-behavior: auto; }
-  .btn-ring, .slow-spin { animation: none; }
-  .marquee-track { width: auto; flex-wrap: wrap; justify-content: center; }
-  .marquee-copy[aria-hidden="true"] { display: none; }
-  .marquee-copy { flex-wrap: wrap; justify-content: center; }
+  .js .draw {
+    stroke-dashoffset: 0;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+  .btn-ring,
+  .slow-spin {
+    animation: none;
+  }
+  .marquee-track {
+    width: auto;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .marquee-copy[aria-hidden="true"] {
+    display: none;
+  }
+  .marquee-copy {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
 }

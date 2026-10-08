@@ -51,6 +51,8 @@ export default function Hero({ lang, t, hint }: Readonly<HeroProps>) {
         const parts = hindi ? split.words : split.chars;
         // The heading itself becomes visible; its individual pieces are revealed by the timeline below.
         gsap.set(".hero-brand", { autoAlpha: 1 });
+        gsap.set(".hero-a", { xPercent: -70, autoAlpha: 0 });
+        gsap.set(".hero-b", { xPercent: 70, autoAlpha: 0 });
 
         const tl = gsap.timeline({
           scrollTrigger: {
@@ -64,17 +66,19 @@ export default function Hero({ lang, t, hint }: Readonly<HeroProps>) {
           },
         });
 
-        tl.to(".hero-a", { xPercent: -70, autoAlpha: 0, duration: 1.4, ease: "power2.in" }, 0)
-          .to(".hero-b", { xPercent: 70, autoAlpha: 0, duration: 1.4, ease: "power2.in" }, 0)
-          .to(".hero-hint", { autoAlpha: 0, duration: 0.3 }, 0)
-          .to(sceneState, { dim: 0.3, duration: 0.9, ease: "power1.out" }, 2.6)
-          .fromTo(
+        tl.fromTo(
             parts,
-            { autoAlpha: 0, yPercent: 70 },
-            { autoAlpha: 1, yPercent: 0, stagger: hindi ? 0.25 : 0.07, duration: 0.55, ease: "back.out(1.6)" },
-            2.5,
+            { autoAlpha: 1, yPercent: 0 },
+            { autoAlpha: 0, yPercent: 70, stagger: hindi ? 0.25 : 0.07, duration: 0.55, ease: "back.out(1.6)" },
+            2,
           )
-          .fromTo(".hero-sub", { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 3.15)
+          .fromTo(".hero-sub", { autoAlpha: 0, y: 18 }, { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }, 0)
+          .to(".hero-sub", { autoAlpha: 0, y: 18 }, 2)
+          .to(".hero-a, .hero-b", { xPercent: 0, autoAlpha: 1, duration: 1.4, ease: "power2.in" }, 2.14)
+          .to(".hero-hint", { autoAlpha: 0, duration: 0.3 }, 2.14)
+          .to(".hero-a", { xPercent: -70, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 2.5)
+          .to(".hero-b", { xPercent: 70, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 2.5)
+          .to(sceneState, { dim: 0.3, duration: 0.9, ease: "power1.out" }, 3.15)
           .to({}, { duration: 0.8 }, 3.4);
 
         return () => {
@@ -98,21 +102,6 @@ export default function Hero({ lang, t, hint }: Readonly<HeroProps>) {
       className="relative h-svh w-full overflow-hidden"
       style={{ ["--portal" as string]: "min(44svh, 66vw)" }}
     >
-      <p
-        className={`hero-a absolute inset-x-0 top-[9svh] z-10 text-center font-display ${sideSize} leading-[0.92] md:inset-x-auto md:right-[calc(50%+var(--portal)/2+2.5vw)] md:top-1/2 md:-translate-y-1/2 md:text-right`}
-      >
-        {t.a[0]}
-        <br />
-        {t.a[1]}
-      </p>
-      <p
-        className={`hero-b absolute inset-x-0 bottom-[9svh] z-10 text-center font-display ${sideSize} leading-[0.92] md:inset-x-auto md:bottom-auto md:left-[calc(50%+var(--portal)/2+2.5vw)] md:top-1/2 md:-translate-y-1/2 md:text-left`}
-      >
-        {t.b[0]}
-        <br />
-        {t.b[1]}
-      </p>
-
       <div className="absolute inset-0 z-20 grid place-items-center px-5 md:px-6 text-center">
         <div>
           <h1
@@ -130,6 +119,20 @@ export default function Hero({ lang, t, hint }: Readonly<HeroProps>) {
           </p>
         </div>
       </div>
+      <p
+        className={`hero-a absolute inset-x-0 top-[9svh] z-10 text-center font-display ${sideSize} leading-[0.92] md:inset-x-auto md:right-[calc(50%+var(--portal)/2+2.5vw)] md:top-1/2 md:-translate-y-1/2 md:text-right`}
+      >
+        {t.a[0]}
+        <br />
+        {t.a[1]}
+      </p>
+      <p
+        className={`hero-b absolute inset-x-0 bottom-[9svh] z-10 text-center font-display ${sideSize} leading-[0.92] md:inset-x-auto md:bottom-auto md:left-[calc(50%+var(--portal)/2+2.5vw)] md:top-1/2 md:-translate-y-1/2 md:text-left`}
+      >
+        {t.b[0]}
+        <br />
+        {t.b[1]}
+      </p>
 
       <p className="hero-hint absolute bottom-7 left-1/2 z-10 -translate-x-1/2 text-sm text-ivory/70">{hint}</p>
     </section>

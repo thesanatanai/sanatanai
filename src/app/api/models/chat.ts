@@ -40,6 +40,12 @@ const chatSchema = new mongoose.Schema({
     }]
   }]
 });
+
+// Single-chat lookups ({ id, chatId }) and the chat list ({ id }, via the index prefix)
+chatSchema.index({ id: 1, chatId: 1 }, { unique: true });
+// generateUniqueId(chatModel, "chatId") looks up by chatId alone
+chatSchema.index({ chatId: 1 }, { unique: true });
+
 const newModel = () => mongoose.model("chats", chatSchema);
 const chatModel: ReturnType<typeof newModel> = mongoose.models.chats || newModel();
 export default chatModel;
