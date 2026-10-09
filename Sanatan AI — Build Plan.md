@@ -4,8 +4,7 @@
 
 | Layer | Choice | Why |
 |---|---|---|
-| Animation | Framer Motion | micro-interactions + lottie-style icons |
-| State | Zustand | Centralised state |
+| State | Zustand | Centralized state |
 
 ## 2. Core Feature Set (yours + additions)
 

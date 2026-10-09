@@ -1,3 +1,11 @@
+# V-2.3.0
+- Added Streamdown and its related plugins for enhanced markdown support.
+- Removed the custom Mermaid component and replaced it with Streamdown's mermaid integration.
+- Updated package.json to include new Streamdown dependencies.
+- Modified global styles to accommodate new Streamdown components.
+- Refactored markdown processing to utilize Streamdown's capabilities.
+- Adjusted CSS for button styling and removed unused styles.
+
 # V-2.2.4
 - Improve OTP handling and brute-force protection
 - Optimized chat indexing and database queries

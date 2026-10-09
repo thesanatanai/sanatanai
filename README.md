@@ -41,7 +41,7 @@ After sign-in, each user has persistent conversations, profile preferences, and 
 - **Dharma-oriented system guidance.** Every request carries a server-built Sanatan AI persona (guru–śiṣya tone, traditional greeting on new threads) with formatting rules for shlokas, KaTeX mathematics, Markdown, canvas blocks, buttons, Mermaid diagrams, and citations. It is also given the user's name, preferred language, the current time, saved memories, and **today's Panchanga** (tithi, month and paksha, festivals), computed on the server with `@ishubhamx/panchangam-js` using Ujjain coordinates.
 - **Persistent chat sessions.** Chats are stored per user, created automatically when none exist, grouped in the sidebar as Today, Yesterday, Last 7 days, and Older, and can be deleted along with individual messages. A new chat is titled automatically from its first message by a small, separate model call.
 - **Model tools.** The model can search the web (`web_search`) and read a page (`web_fetch`) through Tavily, and add or remove user memories (`set_memory`, `delete_memory`). Server-side tool chaining is capped by `MAX_TOOL_CALLS`.
-- **Rich responses.** Markdown is rendered with `markstream-react`, including syntax-highlighted code, KaTeX, custom Gita shloka blocks, canvas blocks, and interactive Mermaid diagrams with zoom, pan, and pinch support.
+- **Rich responses.** Markdown is rendered with `streamdown`, including syntax-highlighted code, KaTeX, custom Gita shloka blocks, canvas blocks, and interactive Mermaid diagrams.
 - **Prompt enhancement.** A magic-wand menu in the composer rewrites a rough message into a clearer query using a lightweight model (`gemini-3.1-flash-lite`) before you send it.
 
 ### Input and personalization
@@ -113,7 +113,7 @@ Browser
 | Authentication | Google OAuth, JWT cookies, Resend OTP |
 | Search | Tavily |
 | Panchang | `@ishubhamx/panchangam-js` |
-| Rendering | `markstream-react`, KaTeX, Mermaid |
+| Rendering | `streamdown`, KaTeX, Mermaid |
 | UI | Tailwind CSS 4, custom CSS, Lucide, Lordicon |
 | Showcase animation | GSAP (ScrollTrigger, SplitText), Lenis, three.js |
 | Analytics | Google Analytics through `@next/third-parties` |

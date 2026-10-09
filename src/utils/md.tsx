@@ -1,59 +1,19 @@
 "use client";
+
+import { Streamdown } from "streamdown";
+import "streamdown/styles.css";
+import { mermaid } from "@streamdown/mermaid";
+import { code } from "@streamdown/code";
+import { useContext, type ReactNode } from "react";
 import { All } from "@/app/(root)/AllContext";
-import Md, {
-  LinkNodeProps,
-  MermaidBlockNodeProps,
-  setCustomComponents
-} from "markstream-react";
-import "markstream-react/index.css";
-import dynamic from "next/dynamic";
-import { useContext } from "react";
 
-const id = "sanatan-md";
-const Mermaid = dynamic(() => import("@/components/Mermaid"), { ssr: false });
-
-// next/dynamic widens the type to ComponentType<...> (function OR class component),
-// which setCustomComponents rejects. A plain function component fixes the type.
-function MermaidBlock(props: Readonly<MermaidBlockNodeProps>) {
-  return <Mermaid {...props} />;
-}
-
-setCustomComponents(id, {
-  gita: GeetaBlock,
-  "chat-btn": ChatButton,
-  canvas: Canvas,
-  mermaid: MermaidBlock,
-  link: (props: Readonly<LinkNodeProps>) => {
-    // We wrap link inside span because passing aria-label to a would cause issues with it's styling.
-    return (
-    <span aria-label={props.node.title || props.node.href}>
-      <a href={props.node.href}>{props.node.text}</a>
-    </span>
-    )
-  }
-});
-
-function GeetaBlock(props: Readonly<{ node: { content: string } }>) {
-  const txt = props.node.content.split("+");
+function GeetaBlock(props: Readonly<{ children: unknown }>) {
+  const txt = props.children?.toString().split("+");
   return (
     <div className="gita">
-      <h1>{decodeURIComponent(txt[1])}</h1>
-      <h2>{decodeURIComponent(txt[2])}</h2>
-      <h3>{decodeURIComponent(txt[3])}</h3>
-    </div>
-  );
-}
-
-function ChatButton(props: Readonly<{ node: { content: string } }>) {
-  return (
-    <button onClick={() => {}}>{decodeURIComponent(props.node.content)}</button>
-  );
-}
-
-function Canvas(props: Readonly<{ node: { content: string } }>) {
-  return (
-    <div className="canvas">
-      <MarkDown markdown={props.node.content} />
+      <h1>{txt?.[1]}</h1>
+      <h2>{txt?.[2]}</h2>
+      <h3>{txt?.[3]}</h3>
     </div>
   );
 }
@@ -64,9 +24,9 @@ function preprocess(md?: string) {
     /^\[!!gita!!\]\[([^\n]+)\]\[([\s\S]+?)\]\[([\s\S]*?)\]\[!!gita!!\]/gm,
     (_, title, body, meaning) => {
       return `<gita>\n\n
-      +${encodeURIComponent(title.trim())}
-      +${encodeURIComponent(body.trim())}
-      +${encodeURIComponent(meaning.trim())}
+      +${title.trim()}
+      +${body.trim()}
+      +${meaning.trim()}
       \n\n</gita>
       `;
     },
@@ -74,7 +34,7 @@ function preprocess(md?: string) {
 
   md = md
     .replace(/\[!!btn!!\]\[(.*?)\]\[!!btn!!\]/g, (_, text) => {
-      return `<chat-btn>${encodeURIComponent(text)}</chat-btn>`;
+      return `<chat-btn>${text}</chat-btn>`;
     })
     .replace(
       /^````\s*?\n([\s\S]+?)\n\s*?````/gm,
@@ -90,21 +50,38 @@ export default function MarkDown({
   markdown: string;
   streaming?: boolean;
 }>) {
-  const isDark = useContext(All).theme[0] == "dark";
+  const isDark = useContext(All).theme[0] === "dark"
   return (
-    <Md
-      customId={id}
-      typewriter
-      customHtmlTags={["gita", "chat-btn", "canvas"]}
-      content={preprocess(md)}
-      final={!streaming}
-      themes={Array.from(["github-dark", "github-light"])}
-      codeBlockProps={{
-        showFontSizeButtons: false,
-        darkTheme: "github-dark",
-        lightTheme: "github-light",
+    <Streamdown
+      allowedTags={{
+        gita: [],
+        canvas: [],
+        "chat-btn": [],
       }}
-      isDark={isDark}
-    />
+      plugins={{
+        mermaid,
+        code,
+      }}
+      animated={streaming}
+      mode={streaming ? "streaming" : "static"}
+      components={{
+        gita: ({ children }) => <GeetaBlock>{children}</GeetaBlock>,
+        "chat-btn": ({ children }) => (
+          <button className="chat-btn" onClick={() => {}}>{children as ReactNode}</button>
+        ),
+        canvas: ({ children }) => <div className="canvas">{children}</div>,
+      }}
+      literalTagContent={["gita", "chat-btn"]}
+      // Relative and z-0 to prevent other streamdown components from overlapping
+      // current Sanatan AI components.
+      className="not-prose relative z-0"
+      mermaid={{
+        config: {
+          theme: isDark ? "dark" : "default"
+        }
+      }}
+    >
+      {preprocess(md)}
+    </Streamdown>
   );
 }

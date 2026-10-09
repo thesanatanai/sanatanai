@@ -1,8 +1,14 @@
 @import 'tailwindcss';
 @plugin "@tailwindcss/typography";
+@source "../../../node_modules/streamdown/dist/*.js";
+@source "../../../node_modules/@streamdown/mermaid/dist/*.js";
+@source "../../../node_modules/@streamdown/code/dist/*.js";
+@source "../../../node_modules/@streamdown/math/dist/*.js";
+
 
 * {
   box-sizing: border-box;
+  border-color: #7775;
 }
 
 :root {
@@ -24,6 +30,17 @@
   --primary-color: #ffffff;
 }
 
+
+@layer base {
+  :root {
+    --primary: var(--text-color);
+    --primary-foreground: var(--primary-color);
+    --muted: #7775;
+    --muted-foreground: var(--secondary-color);
+    --border: #7775;
+  }
+}
+
 body {
   width: 100%;
   min-height: 100vh;
@@ -35,7 +52,7 @@ body {
   font-family: "Poppins", sans-serif;
 }
 
-.seasons, code, input, .font-display, .welcome-title, .logoTxt {
+.seasons, input, .font-display, .welcome-title, .logoTxt {
   font-weight: 500;
   letter-spacing: 1px;
   font-family: var(--font-seasons);
