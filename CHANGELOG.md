@@ -1,3 +1,8 @@
+# V-2.3.1
+- Implemented chat button working
+- Enhanced gita block
+- Refined styles of code block and mermaid
+
 # V-2.3.0
 - Added Streamdown and its related plugins for enhanced markdown support.
 - Removed the custom Mermaid component and replaced it with Streamdown's mermaid integration.

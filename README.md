@@ -252,7 +252,7 @@ The web app is configured for Vercel-compatible deployment through `vercel.json`
 
 - AI output can be mistaken or incomplete; treat it as assistance rather than authoritative advice.
 - Uploads are sent inline with the chat request and therefore count toward model request size and provider limits.
-- The offline behaviour is an offline fallback page and static-asset caching, not offline chat or locally stored conversations.
+- The offline behavior is an offline fallback page and static-asset caching, not offline chat or locally stored conversations.
 - Custom instructions (the persona field) are stored in the browser's `localStorage`; they are not currently persisted as server-side user preferences.
 - In Settings, "Delete all messages" and "Import chat" are not wired up yet, and "Export current chat" only shows a notification. Assistant-generated buttons render but do not yet send a reply when clicked.
 - Sessions are stateless JWTs; the only server-side revocation is "log out of all devices". The server does not apply per-user rate limiting to chat requests, and OTP guessing is limited by the short-lived blacklist.

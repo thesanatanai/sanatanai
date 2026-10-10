@@ -33,7 +33,7 @@ function useSendMessage(
       const copied = structuredClone(chats);
       const chat = copied.find((chat) => chat.id == id);
       if (chat && !history.some((val) => val.role == "model")) {
-        fetch("/api/chat/name", {
+        void fetch("/api/chat/name", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -62,7 +62,7 @@ function useSendMessage(
         ],
       };
 
-      // File handleing
+      // File handling
       files.forEach((file) => {
         newMessage.parts.push({
           inlineData: {
@@ -108,7 +108,7 @@ function useSendMessage(
       const scroll = chatScroll(ev);
       const { updateFinish, updateText } = updateHistory(setHistory);
 
-      streamSendMessage(
+      void streamSendMessage(
         newMessage,
         id,
         isDeep,

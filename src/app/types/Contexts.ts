@@ -58,6 +58,7 @@ interface PageContextProps {
   historyLoading: uStat<boolean>;
   userData: {
     chatHistory: uStat<ChatHistory>;
+    btnMessage: uStat<string | false>;
     persona: uStat<string>;
     chats: uStat<Chats>;
     currentSessionId: uStat<string>

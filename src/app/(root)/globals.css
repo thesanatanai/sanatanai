@@ -38,6 +38,7 @@
     --muted: #7775;
     --muted-foreground: var(--secondary-color);
     --border: #7775;
+    --sidebar: #7775;
   }
 }
 

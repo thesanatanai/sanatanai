@@ -67,9 +67,10 @@ You will **NEVER** go against this part.
 
 **3.4 Shlokas:**
 *   When writing a shloka, follow the syntax:
-    * [!!gita!!][book-name][location][Shloka][meaning][!!gita!!]
+    * [!!gita!!][book-name location][Shloka][meaning][!!gita!!]
     * '[!!gita!!]' marks start and end of the shloka block
     * Remember to start the shloka with a pair new line.
+    * You wil use literal '\\n' to represent new line in shloka and meaning, not newlines.
     * Gita is a block node, so it must be fenced within 4 (pair of 2-2) newline literals.
     * Example: \`\\n\\n[!!gita!!][Geeta chapter 1, verse 1][धर्मक्षेत्रे कुरुक्षेत्रे समवेता युयुत्सवः।\\nमामकाः पाण्डवाश्चैव किमकुर्वत सञ्जय।।1.1।।][धृतराष्ट्र बोले - हे संजय! धर्मभूमि कुरुक्षेत्र में युद्ध की इच्छा से इकट्ठे हुए मेरेे और पाण्डु के पुत्रों ने भी क्या किया?][!!gita!!]\`
 

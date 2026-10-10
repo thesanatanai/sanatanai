@@ -25,6 +25,7 @@ export function PgContext({
   });
   const [chatHistory, setChatHistory] = useState<ChatHistory>(messages);
   const [historyLoading, setHistoryLoading] = useState(false);
+  const btnMessage = useState<string | false>(false);
   const isPC = useMemo(() => {
     if(globalThis.window) {
       return window.innerWidth / window.innerHeight > 1
@@ -34,7 +35,7 @@ export function PgContext({
   const [chats, setChats] = useState<Chats>(loadedChats);
   const [currentSessionId, setCurrentSessionId] = useReducer<string, [string]>((prevId, newId) => {
     if(prevId == newId) return prevId;
-    loadChat(newId, setChatHistory, setHistoryLoading);
+    void loadChat(newId, setChatHistory, setHistoryLoading);
     return newId
   }, id);
   useEffect(() => {
@@ -45,8 +46,9 @@ export function PgContext({
     chatHistory: [chatHistory, setChatHistory],
     persona: [persona, setPersona],
     chats: [chats, setChats],
-    currentSessionId: [currentSessionId, setCurrentSessionId] as uStat<string>  
-  }), [chatHistory, setChatHistory, persona, setPersona, chats, setChats, currentSessionId, setCurrentSessionId]);
+    currentSessionId: [currentSessionId, setCurrentSessionId] as uStat<string>,
+    btnMessage
+  }), [chatHistory, setChatHistory, persona, setPersona, chats, setChats, currentSessionId, setCurrentSessionId, btnMessage]);
 
   const value = useMemo<PageContextProps>(() => ({
     userData,

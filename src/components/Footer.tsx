@@ -16,6 +16,9 @@ export default function Footer() {
   const {
     isDeep: [isDeep, setDeep],
     isPC,
+    userData: {
+      btnMessage: [btnMessage, setBtnMessage]
+    }
   } = useContext(PageContext);
   const [files, setFiles] = useState<UserFileData[]>([]);
 
@@ -37,7 +40,13 @@ export default function Footer() {
   const sendMessage = useSendMessage(setUserMessage, [files, setFiles], setResponding);
   useEffect(() => typed(placeHolders, setPlaceHolder), [placeHolders]);
 
-  // Use custom React hook for handleing message recordings.
+  useEffect(() => {
+    if(!btnMessage) return;
+    sendMessage(btnMessage);
+    setBtnMessage(false);
+  });
+
+  // Use custom React hook for handling message recordings.
   const { listening, toggle, supported } = useStartRecording(setUserMessage);
   return (
     <div className="chat-footer center-flex">
@@ -48,7 +57,7 @@ export default function Footer() {
           <textarea
             name="message"
             id="message"
-            className="messsage-input capsule-input"
+            className="capsule-input"
             value={userMessage}
             placeholder={placeHolder}
             onChange={(e) => setUserMessage(e.target.value)}
