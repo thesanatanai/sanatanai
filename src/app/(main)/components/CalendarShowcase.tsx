@@ -8,7 +8,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { Content } from "../lib/content";
 import { useTilt } from "../hooks/useTilt";
 import ButtonLink from "./ButtonLink";
-import Icon from "./Lordicon";
+import { Icon } from "@/components/Lordicon";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 

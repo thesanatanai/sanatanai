@@ -7,7 +7,7 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import type { Content } from "../lib/content";
 import { paths, type Lang } from "../lib/constants";
-import Icon from "./Lordicon";
+import { Icon } from "@/components/Lordicon";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 

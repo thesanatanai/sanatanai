@@ -58,7 +58,7 @@ export default function Eror({ error: err }: Readonly<{ error: Error }>) {
               aria-label="Report about this error!"
               onClick={() => {
                 setReported(true);
-                sendErr(error);
+                void sendErr(error);
               }}
               disabled={reported}
             >

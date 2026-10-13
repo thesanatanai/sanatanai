@@ -50,6 +50,9 @@ export async function OPTIONS(request: NextRequest) {
 
   const chat = await getChat(id, chatId);
   if (typeof chat == "function") return chat();
+
+  chat.timestamp = Date.now();
+  void updateChat(id, chatId, { timestamp: chat.timestamp }); //  The chat is being updated in the background, no need to wait for it to finish
   return NextResponse.json(await validateChat(chat));
 }
 

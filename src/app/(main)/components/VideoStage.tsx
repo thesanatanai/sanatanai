@@ -5,7 +5,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useTilt } from "../hooks/useTilt";
-import Icon from "./Lordicon";
+import { Icon } from "@/components/Lordicon";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 

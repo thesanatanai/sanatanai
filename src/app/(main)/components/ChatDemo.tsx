@@ -90,7 +90,7 @@ export default function ChatDemo({
         <div className="flex items-center gap-3">
           <Image
             src="/192x192.png"
-            alt="Sanatana Logo"
+            alt="Sanatan Logo"
             width={28}
             height={28}
             className="size-7"

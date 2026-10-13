@@ -7,8 +7,9 @@ import { logger } from "@/utils/utils";
 
 // Global tracker to ensure @lordicon/element custom element is registered only once
 let isLordiconDefined = false;
+const DEFAULT_COLORS = "primary:#f3ecdc,secondary:#f59a3c";
 
-const Lordicon: React.FC<LordIconProps> = React.memo(({
+export const Icon: React.FC<LordIconProps> = React.memo(({
   src,
   trigger = "hover",
   colors,
@@ -24,9 +25,6 @@ const Lordicon: React.FC<LordIconProps> = React.memo(({
   ...props
 }) => {
   const manager = useRefManager<LordIcon>();
-  // Derive textColor from theme context
-  const { theme: [theme] } = useContext(All);
-  const textColor = theme == "dark" ? "#fff" : "#000";
 
   useEffect(() => {
     let isMounted = true;
@@ -44,7 +42,7 @@ const Lordicon: React.FC<LordIconProps> = React.memo(({
         }
       }
     };
-    initLordicon();
+    void initLordicon();
 
     const handleReady = () => {
       if (onReady) {
@@ -124,12 +122,13 @@ const Lordicon: React.FC<LordIconProps> = React.memo(({
       ref={manager.set}
       src={(() => {
         let realSrc = src;
-        if(!realSrc.endsWith(".json")) realSrc += ".json"
-        if(!realSrc.startsWith("icons/")) realSrc = "icons/" + realSrc
-        return realSrc
+        if (!realSrc.endsWith(".json")) realSrc += ".json";
+        // Absolute path, so it also resolves correctly on /hi.
+        if (!realSrc.startsWith("/icons/")) realSrc = "/icons/" + realSrc.replace(/^icons\//, "");
+        return realSrc;
       })()}
       trigger={trigger}
-      colors={colors || `primary:${textColor},secondary:${textColor}`}
+      colors={colors || DEFAULT_COLORS}
       stroke={stroke}
       state={state}
       speed={speed}
@@ -137,6 +136,45 @@ const Lordicon: React.FC<LordIconProps> = React.memo(({
       loading={loading}
       style={resolvedStyle}
       className={className}
+    />
+  );
+});
+Icon.displayName = "Icon";
+
+const Lordicon: React.FC<LordIconProps> = React.memo(({
+  src,
+  trigger = "hover",
+  colors,
+  stroke = "bold",
+  state,
+  speed,
+  target,
+  loading,
+  style,
+  size,
+  className,
+  onReady,
+  ...props
+}) => {
+  // Derive textColor from theme context
+  const { theme: [theme] } = useContext(All);
+  const textColor = theme == "dark" ? "#fff" : "#000";
+
+  return (
+    <Icon
+      src={src}
+      trigger={trigger}
+      colors={colors || `primary:${textColor},secondary:${textColor}`}
+      stroke={stroke}
+      state={state}
+      speed={speed}
+      target={targetCss(target)}
+      size={size}
+      onReady={onReady}
+      loading={loading}
+      style={style}
+      className={className}
+      {...props}
     />
   );
 });

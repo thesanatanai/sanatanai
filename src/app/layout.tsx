@@ -14,6 +14,25 @@ const poppins = Poppins({
 const theSeasons = localFont({
   variable: "--font-the-seasons",
   display: "swap",
+  preload: true,
+  src: [
+    {
+      path: "./the-seasons/TheSeasons-Regular.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./the-seasons/TheSeasons-Bold.ttf",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+});
+
+const theSeasonsTemp = localFont({
+  variable: "--font-the-seasons",
+  preload: false,
+  display: "swap",
   src: [
     {
       path: "./the-seasons/TheSeasons-Light.ttf",
@@ -26,19 +45,9 @@ const theSeasons = localFont({
       style: "italic",
     },
     {
-      path: "./the-seasons/TheSeasons-Regular.ttf",
-      weight: "400",
-      style: "normal",
-    },
-    {
       path: "./the-seasons/TheSeasons-Italic.ttf",
       weight: "400",
       style: "italic",
-    },
-    {
-      path: "./the-seasons/TheSeasons-Bold.ttf",
-      weight: "700",
-      style: "normal",
     },
     {
       path: "./the-seasons/TheSeasons-BoldItalic.ttf",
@@ -46,7 +55,7 @@ const theSeasons = localFont({
       style: "italic",
     },
   ],
-})
+});
 
 export const viewport: Viewport = {
   themeColor: "#000000",
@@ -62,7 +71,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`h-full antialiased ${poppins.className} ${theSeasons.variable}`}>
+    <html lang="en" className={`h-full antialiased ${poppins.className} ${theSeasons.variable} ${theSeasonsTemp.variable}`}>
       <body>
         <GoogleAnalytics gaId={process.env.GA_ID || "G-104LTZTEH1"} />
         {children}

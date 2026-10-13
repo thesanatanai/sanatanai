@@ -1,6 +1,8 @@
 import type { Content } from "../lib/content";
 import type { Lang } from "../lib/constants";
-import ChatDemo from "./ChatDemo";
+import dynamic from "next/dynamic";
+
+const ChatDemo = dynamic(() => import("./ChatDemo"));
 
 export default function Inside({ lang, t }: Readonly<{ lang: Lang; t: Content["inside"] }>) {
   return (

@@ -1,4 +1,4 @@
-import Icon from "./Lordicon";
+import { Icon } from "@/components/Lordicon";
 
 interface ButtonLinkProps {
   href: string;

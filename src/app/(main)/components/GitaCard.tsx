@@ -1,7 +1,7 @@
 import Image from "next/image";
 import type { Content } from "../lib/content";
 import ButtonLink from "./ButtonLink";
-import Icon from "./Lordicon";
+import { Icon } from "@/components/Lordicon";
 
 /** A small reference to the Bhagavad Gita app: screenshot, one line, and a visit button. */
 export default function GitaCard({ t, externalLabel }: Readonly<{ t: Content["gita"]; externalLabel: string }>) {

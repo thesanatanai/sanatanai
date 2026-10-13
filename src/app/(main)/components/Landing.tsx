@@ -1,3 +1,4 @@
+import "../styles.css";
 import { getContent } from "../lib/content";
 import type { Lang } from "../lib/constants";
 import Cta from "./Cta";
@@ -14,7 +15,9 @@ import Providers from "./Providers";
 import SceneLoader from "./SceneLoader";
 import Stack from "./Stack";
 import Story from "./Story";
-import VideoStage from "./VideoStage";
+import dynamic from "next/dynamic";
+
+const VideoStage = dynamic(() => import("./VideoStage"));
 
 export default function Landing({ lang, prefix }: Readonly<{ lang: Lang, prefix?: boolean }>) {
   const t = getContent(lang);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -9,9 +9,6 @@ import type { Content } from "../lib/content";
 import { sceneState, type Lang } from "../lib/constants";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
-
-const portalSize = () => Math.min(window.innerHeight * 0.44, window.innerWidth * 0.66);
-const fullZoom = () => (Math.hypot(window.innerWidth, window.innerHeight) / portalSize()) * 1.08;
 
 interface HeroProps {
   lang: Lang;
@@ -23,14 +20,6 @@ export default function Hero({ lang, t, hint }: Readonly<HeroProps>) {
   const root = useRef<HTMLElement>(null);
   const hindi = lang === "hi";
 
-  // Keep the CSS size of the porthole identical to the JS one (mobile browser bars change innerHeight).
-  useEffect(() => {
-    const apply = () => root.current?.style.setProperty("--portal", `${portalSize()}px`);
-    apply();
-    window.addEventListener("resize", apply);
-    return () => window.removeEventListener("resize", apply);
-  }, []);
-
   useGSAP(
     () => {
       const el = root.current;
@@ -38,10 +27,8 @@ export default function Hero({ lang, t, hint }: Readonly<HeroProps>) {
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: reduce)", () => {
-        gsap.set(".hero-girl-wrap, .hero-a, .hero-b, .hero-hint", { autoAlpha: 0 });
+        gsap.set(".hero-a, .hero-b, .hero-hint", { autoAlpha: 0 });
         gsap.set(".hero-brand, .hero-sub", { autoAlpha: 1 });
-        sceneState.zoom = fullZoom();
-        sceneState.dim = 0.3;
       });
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
@@ -78,13 +65,12 @@ export default function Hero({ lang, t, hint }: Readonly<HeroProps>) {
           .to(".hero-hint", { autoAlpha: 0, duration: 0.3 }, 2.14)
           .to(".hero-a", { xPercent: -70, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 2.5)
           .to(".hero-b", { xPercent: 70, autoAlpha: 0, duration: 0.3, ease: "power2.out" }, 2.5)
-          .to(sceneState, { dim: 0.3, duration: 0.9, ease: "power1.out" }, 3.15)
-          .to({}, { duration: 0.8 }, 3.4);
+          .to(sceneState, { dim: 1, duration: 0.9, ease: "power1.in" }, 2.5)
+          .to(sceneState, { dim: 0.3, duration: 0.9, ease: "power1.out" }, 4);
 
         return () => {
           split.revert();
-          sceneState.zoom = 1;
-          sceneState.dim = 1;
+          sceneState.dim = 0.3;
         };
       });
     },
@@ -98,7 +84,6 @@ export default function Hero({ lang, t, hint }: Readonly<HeroProps>) {
     <section
       ref={root}
       id="top"
-      aria-labelledby="hero-title"
       className="relative h-svh w-full overflow-hidden"
       style={{ ["--portal" as string]: "min(44svh, 66vw)" }}
     >
@@ -108,7 +93,7 @@ export default function Hero({ lang, t, hint }: Readonly<HeroProps>) {
             id="hero-title"
             className={`hero-brand font-display ${brandSize} leading-[0.95] tracking-[-0.02em] text-shadow-2xs`}
           >
-            <span className="hero-brand-text">{t.brand}</span>
+            <span className="hero-brand-text text-shadow-lg">{t.brand}</span>
             <span className="sr-only">{t.brandSr}</span>
           </h1>
           <p
@@ -120,21 +105,21 @@ export default function Hero({ lang, t, hint }: Readonly<HeroProps>) {
         </div>
       </div>
       <p
-        className={`hero-a absolute inset-x-0 top-[9svh] z-10 text-center font-display ${sideSize} leading-[0.92] md:inset-x-auto md:right-[calc(50%+var(--portal)/2+2.5vw)] md:top-1/2 md:-translate-y-1/2 md:text-right`}
+        className={`hero-a absolute inset-x-0 top-[9svh] z-10 text-center font-display ${sideSize} leading-[0.92] md:inset-x-auto md:right-[calc(50%+var(--portal)/2+2.5vw)] md:top-1/2 md:-translate-y-1/2 md:text-right opacity-0`}
       >
         {t.a[0]}
         <br />
         {t.a[1]}
       </p>
       <p
-        className={`hero-b absolute inset-x-0 bottom-[9svh] z-10 text-center font-display ${sideSize} leading-[0.92] md:inset-x-auto md:bottom-auto md:left-[calc(50%+var(--portal)/2+2.5vw)] md:top-1/2 md:-translate-y-1/2 md:text-left`}
+        className={`hero-b absolute inset-x-0 bottom-[9svh] z-10 text-center font-display ${sideSize} leading-[0.92] md:inset-x-auto md:bottom-auto md:left-[calc(50%+var(--portal)/2+2.5vw)] md:top-1/2 md:-translate-y-1/2 md:text-left opacity-0`}
       >
         {t.b[0]}
         <br />
         {t.b[1]}
       </p>
 
-      <p className="hero-hint absolute bottom-7 left-1/2 z-10 -translate-x-1/2 text-sm text-ivory/70">{hint}</p>
+      <p className="hero-hint absolute bottom-7 left-1/2 z-10 -translate-x-1/2 text-sm text-ivory/70 opacity-0">{hint}</p>
     </section>
   );
 }

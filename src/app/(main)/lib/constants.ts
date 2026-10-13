@@ -16,7 +16,7 @@ export const sceneState = {
   /** 0..1 progress of the whole page scroll. */
   page: 0,
   /** Brightness multiplier, lowered behind body copy for legibility. */
-  dim: 1,
+  dim: 0.3,
   /** 0..1.5 extra glow, raised by the call to action. */
   boost: 0,
   /** Pointer position, -1..1. */

@@ -1,3 +1,9 @@
+# V-2.3.2
+- Deduplicated `Lordicon` and `useRefManager`.
+- Optimized site performance and compressed media files.
+- Early redirect unsigned user
+- Adjust feature component animations and remove unused GSAP code
+
 # V-2.3.1
 - Implemented chat button working
 - Enhanced gita block

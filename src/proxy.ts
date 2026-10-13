@@ -3,6 +3,8 @@ import verifyUser from "./app/api/utils/verify";
 
 export default async function proxy(req: NextRequest) {
   const setupComplete = req.cookies.get("setupComplete")?.value;
+  if(!setupComplete && !req.cookies.has("token") && !req.url.includes("app")) return NextResponse.next();
+
   const user = await verifyUser(true, false);
   if (
     (setupComplete !== "true" || typeof user == "function") && req.nextUrl.pathname == "app"

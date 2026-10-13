@@ -10,7 +10,7 @@ export async function createNewChat(
       method: "PATCH",
     }).then((res) => res.json());
     setCurrentSession(id);
-    getChats(setChats);
+    void getChats(setChats);
   } catch {}
 }
 
@@ -65,7 +65,7 @@ export async function deleteChat([setChats, current]: [(value: Chats) => void, s
     let setId;
     if(id === current) setId = setSession;
     const chats = await getChats(setChats, setId);
-    if (message && !chats.length) createNewChat(setSession, setChats);
+    if (message && !chats.length) void createNewChat(setSession, setChats);
   } catch {}
 }
 

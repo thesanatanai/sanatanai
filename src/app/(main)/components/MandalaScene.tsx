@@ -7,7 +7,11 @@ import { sceneState } from "../lib/constants";
 /** sRGB hex -> vec3 without colour-space conversion (shaders output sRGB directly). */
 const rgb = (hex: string) => {
   const n = Number.parseInt(hex.slice(1), 16);
-  return new THREE.Vector3(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255);
+  return new THREE.Vector3(
+    ((n >> 16) & 255) / 255,
+    ((n >> 8) & 255) / 255,
+    (n & 255) / 255,
+  );
 };
 
 /** Outer petals are cool violet and blue, the core is warm saffron, echoing the logo. */
@@ -115,12 +119,18 @@ export default function MandalaScene() {
 
     let renderer: THREE.WebGLRenderer;
     try {
-      renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
+      renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        powerPreference: "high-performance",
+      });
     } catch {
       return; // No WebGL: the page still works, the backdrop is simply plain.
     }
 
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     const small = window.innerWidth < 768;
 
     renderer.setClearColor(0x0d0b1e, 1);
@@ -166,7 +176,11 @@ export default function MandalaScene() {
       transparent: true,
       depthWrite: false,
       blending: THREE.AdditiveBlending,
-      uniforms: { uReveal: { value: 0 }, uAlpha: { value: 1 }, uBoost: { value: 0 } },
+      uniforms: {
+        uReveal: { value: 0 },
+        uAlpha: { value: 1 },
+        uBoost: { value: 0 },
+      },
     });
     const core = new THREE.Mesh(planeGeo, coreMaterial);
     core.position.z = 0.3;
@@ -178,11 +192,20 @@ export default function MandalaScene() {
     const positions = new Float32Array(count * 3);
     const seeds = new Float32Array(count);
     const colors = new Float32Array(count * 3);
-    const palette = ["#f59a3c", "#f6d58a", "#c4508f", "#8f5fd0", "#3a6fb5"].map(rgb);
+    const palette = ["#f59a3c", "#f6d58a", "#c4508f", "#8f5fd0", "#3a6fb5"].map(
+      rgb,
+    );
     for (let i = 0; i < count; i++) {
       const angle = Math.random() * Math.PI * 2;
       const radius = 0.4 + Math.pow(Math.random(), 0.7) * 5.5;
-      positions.set([Math.cos(angle) * radius, Math.sin(angle) * radius, -12 + Math.random() * 16], i * 3);
+      positions.set(
+        [
+          Math.cos(angle) * radius,
+          Math.sin(angle) * radius,
+          -12 + Math.random() * 16,
+        ],
+        i * 3,
+      );
       seeds[i] = Math.random();
       const c = palette[Math.floor(Math.random() * palette.length)];
       colors.set([c.x, c.y, c.z], i * 3);
@@ -203,7 +226,7 @@ export default function MandalaScene() {
         uSize: { value: 5 },
         uPixelRatio: { value: 1 },
         uAlpha: { value: 1 },
-        uBoost: { value: 0 }
+        uBoost: { value: 0 },
       },
     });
     const dust = new THREE.Points(dustGeo, dustMaterial);
@@ -221,10 +244,7 @@ export default function MandalaScene() {
       camera.updateProjectionMatrix();
       dustMaterial.uniforms.uPixelRatio.value = dpr;
 
-      const worldHeight = 2 * camera.position.z * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
-      const portalPx = Math.min(h * 0.44, w * 0.66); // keep in sync with Hero.tsx
-      const outerRadiusWorld = (portalPx / 2) * 0.92 * (worldHeight / h);
-      baseScale = outerRadiusWorld / RINGS[0].r;
+      baseScale = 1;
     };
     resize();
     window.addEventListener("resize", resize);
@@ -233,12 +253,14 @@ export default function MandalaScene() {
     let last = performance.now();
     let elapsed = 0;
     let raf = 0;
+    let running = false;
     let reveal = reduceMotion ? 1 : 0;
     let boost = 0;
     let camX = 0;
     let camY = 0;
 
     const frame = () => {
+      if (!running || document.hidden) return;
       raf = requestAnimationFrame(frame);
       const now = performance.now();
       const dt = Math.min((now - last) / 1000, 0.05);
@@ -276,13 +298,28 @@ export default function MandalaScene() {
 
       renderer.render(scene, camera);
     };
-    frame();
+
+    function start() {
+      if (running || document.hidden) return;
+
+      running = true;
+      raf = requestAnimationFrame(frame);
+    }
+
+    function stop() {
+      running = false;
+      cancelAnimationFrame(raf);
+    }
+    start();
 
     const onVisibility = () => {
       cancelAnimationFrame(raf);
-      if (!document.hidden) {
-        last = performance.now();
-        frame();
+      if (document.hidden) {
+        stop();
+      } else if (!reduceMotion) {
+        start();
+      } else {
+        renderer.render(scene, camera);
       }
     };
     document.addEventListener("visibilitychange", onVisibility);
@@ -300,5 +337,11 @@ export default function MandalaScene() {
     };
   }, []);
 
-  return <canvas ref={canvasRef} aria-hidden="true" className="fixed inset-0 z-0 h-full w-full" />;
+  return (
+    <canvas
+      ref={canvasRef}
+      aria-hidden="true"
+      className="fixed inset-0 z-0 h-full w-full"
+    />
+  );
 }
