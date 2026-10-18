@@ -1,4 +1,4 @@
-"use server";
+import "server-only";
 import { cookies } from "next/headers";
 import userModel from "../models/user";
 import jwt from "jsonwebtoken";
@@ -6,8 +6,21 @@ import { genResErr, isValidEmail } from "./respondErr";
 import { _sendOTP } from "./sendMail";
 import crypto from "node:crypto";
 import dbConnect from "./db";
+import z from "zod";
+import { io } from "next/cache";
 
-dbConnect();
+z.object({
+  NEXT_PUBLIC_OAUTH_CLIENT_ID: z.string(),
+  MONGO_URI: z.string(),
+  JWT_SECRET: z.string(),
+  GENAI: z.string(),
+  TAVILY_API: z.string(),
+  RESEND_API: z.string(),
+  GA_ID: z.string().optional(),
+  MONGO_DEV: z.string().optional()
+}).parse(process.env);
+ 
+void dbConnect();
 
 const findUser = (id: string) => userModel.findOne({ id }).catch(err => {
     console.error("Error occurred while finding user:", err);
@@ -17,6 +30,7 @@ const findUser = (id: string) => userModel.findOne({ id }).catch(err => {
 type user = ReturnType<typeof findUser | typeof genResErr>;
 
 export default async function verifyUser(deleteCookies = true, find = true): Promise<user | undefined> {
+  await io();
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
   if (!token) {

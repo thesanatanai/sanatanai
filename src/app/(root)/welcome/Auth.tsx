@@ -66,6 +66,7 @@ function Email(props: Record<string, Function>) {
       });
       const { error } = await res.json();
       if (error) {
+      props.setIsLoading(false);
         throw new Error(error);
       }
 
@@ -151,6 +152,8 @@ function Email(props: Record<string, Function>) {
               id="otp"
               className="modern-input"
               autoComplete="one-time-code"
+              maxLength={6}
+              inputMode="numeric"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
             />

@@ -279,6 +279,7 @@
   justify-content: flex-end;
   .message-text {
     white-space: pre-wrap;
+    overflow-wrap: anywhere;
     padding: 16px;
     background: var(--secondary-color);
     max-width: 60%;

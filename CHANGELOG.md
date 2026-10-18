@@ -1,3 +1,14 @@
+# V-2.3.3
+- Updated @google/genai to version 2.30.0 and other dependencies for better performance and features.
+- Removed deprecated postcss.config.mjs file and replaced it with @tailwindcss/turbopack.
+- Fixed typos in push.cmd for better clarity.
+- Refactored chatActions.ts to use "server-only" import and improved loadChat function.
+- Enhanced styles.css and globals.css for better font handling.
+- Updated PageContext.tsx to manage chat sessions more effectively.
+- Improved error handling in user route and added email verification in user creation.
+- Refactored utility functions for better file type handling and removed unnecessary code.
+- Added Google Analytics integration through a new Analytics component.
+
 # V-2.3.2
 - Deduplicated `Lordicon` and `useRefManager`.
 - Optimized site performance and compressed media files.

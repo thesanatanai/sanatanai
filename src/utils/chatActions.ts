@@ -16,8 +16,9 @@ export async function createNewChat(
 
 export async function loadChat(
   id: string,
-  setChatHistory?: (value: ChatHistory) => void,
-  setChatLoading?: (value: boolean) => void
+  setChatHistory: (value: ChatHistory) => void,
+  setChatLoading: (value: boolean) => void,
+  setChats: (value: ((initial: Chats) => Chats)) => void
 ) {
   if(setChatLoading) setChatLoading(true);
   const chat: fullChat = await fetch("api/chats", {
@@ -27,9 +28,16 @@ export async function loadChat(
     },
     body: JSON.stringify({ id }),
   }).then((res) => res.json());
-  if(setChatHistory) setChatHistory(chat.messages);
-  if(setChatLoading) setChatLoading(false);
-  return chat.messages
+  setChatHistory(chat.messages);
+  setChatLoading(false);
+  setChats(chats => {
+    const current = structuredClone(chats);
+    const idx = current.findIndex(chat => chat.id == id);
+    if(idx < 0) return chats;
+    current[idx].timestamp = chat.timestamp;
+    current[idx].title = chat.title;
+    return current;
+  });
 }
 
 export async function getChats(

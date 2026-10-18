@@ -30,7 +30,7 @@ export async function GET() {
 export async function PUT(request: NextRequest) {
   try {
   const updates = Update.parse(await request.json());
-  if (!Object.keys(updates).length) return respondErr("No valid changes", 304);
+  if (!Object.keys(updates).length) return respondErr("No valid changes");
 
   const user = await verifyUser(true) as User;
   if (typeof user == "function") return user();
@@ -41,7 +41,7 @@ export async function PUT(request: NextRequest) {
   });
 } catch (e) {
   if(e instanceof ZodError) return respondErr(e.message);
-  respondErr("Sorry Something Went Wrong..");
+  return respondErr("Sorry Something Went Wrong..");
 }
 }
 
@@ -66,6 +66,8 @@ export async function POST(request: NextRequest) {
     const email = payload.email;
     const name = payload.name || "";
     const picture = payload.picture || "";
+
+    if(!payload.email_verified) return respondErr("Email not Verified to Google");
 
     const cookieStore = await cookies();
 

@@ -1,6 +1,6 @@
 import { useNotification } from "@/components/Notification";
 import { ChangeEvent, useEffect } from "react";
-import { supportedFiles } from "./utils";
+import { fileExtensions } from "./utils";
 import { FileText, X } from "lucide-react";
 import SpeechRecognition, {
   useSpeechRecognition,
@@ -37,18 +37,17 @@ export default function useFileManager([stateFiles, setFiles]: uStat<
     files = files.slice(0, remainingSlots);
     files.forEach((file) => {
       const isImage = file.type.startsWith("image/");
+      const name = file.name;
       const isPlainTextFallback =
         file.type === "" || file.type.startsWith("text/");
-      if (!supportedFiles.includes(file.type) && !isPlainTextFallback) {
+      if (!fileExtensions.includes(name.split(".").at(-1)!) && !isPlainTextFallback) {
         notification("unsupportedFileType", {
           language: true,
           type: "error",
         });
         return;
       }
-      const type = supportedFiles.includes(file.type)
-        ? file.type
-        : "text/plain";
+      const type = file.type || "text/plain";
       const reader = new FileReader();
       reader.onload = (e) => {
         const result = e.target?.result;
@@ -59,11 +58,11 @@ export default function useFileManager([stateFiles, setFiles]: uStat<
             type: type,
             content: result.split(",")[1],
           },
-          filename: file.name,
+          filename: name,
           isImage: isImage,
           wholeData: result,
         };
-        if (!stateFiles.some((f) => f.filename == file.name)) {
+        if (!stateFiles.some((f) => f.filename == name)) {
           setFiles([...stateFiles, fileData]);
         }
       };

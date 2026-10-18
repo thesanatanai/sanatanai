@@ -1,5 +1,4 @@
-"use server";
-
+import "server-only";
 import { Content } from "@google/genai";
 import chatModel from "@/app/api/models/chat";
 import userModel from "@/app/api/models/user";

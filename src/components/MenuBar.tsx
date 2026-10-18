@@ -140,7 +140,7 @@ function chatList(
   });
 
   return Object.keys(groups).map((group) => {
-    const Chats = listSettions(
+    const Chats = listSessions(
       [groups[group], setChats],
       [activeSessionId, setSessionId],
     );
@@ -149,7 +149,7 @@ function chatList(
         {Chats?.length ? (
           <>
             <div className="pt-2.5 pb-2.5 pl-3.75 mt-2.5 text-[0.8rem] pr-3.75 text-(--subheading-color) font-semibold uppercase chat-group-header">
-              {(group[0].toUpperCase() + group.slice(1)).replace("7", " ")}
+              {group.replace("7", " ")}
             </div>
             {Chats}
           </>
@@ -161,11 +161,12 @@ function chatList(
   });
 }
 
-const listSettions = (
+const listSessions = (
   [sessions, setSessions]: uStat<Chats>,
   [activeSessionId, setSessionId]: uStat<string>,
-) =>
-  sessions.map(({ id, title }) => {
+) => {
+  const sorted = sessions.toSorted((a, b) => b.timestamp - a.timestamp);
+  return sorted.map(({ id, title }) => {
     const sessionId = id; // For preventing function values
     return (
       <div
@@ -190,4 +191,5 @@ const listSettions = (
       </div>
     );
   });
+}
 export default MenuBar;

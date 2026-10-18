@@ -35,7 +35,7 @@ export function PgContext({
   const [chats, setChats] = useState<Chats>(loadedChats);
   const [currentSessionId, setCurrentSessionId] = useReducer<string, [string]>((prevId, newId) => {
     if(prevId == newId) return prevId;
-    void loadChat(newId, setChatHistory, setHistoryLoading);
+    void loadChat(newId, setChatHistory, setHistoryLoading, setChats);
     return newId
   }, id);
   useEffect(() => {

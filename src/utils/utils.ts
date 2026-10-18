@@ -1,117 +1,50 @@
 import { usedOnDb } from "@/app/(root)/AllContext";
 import { LordIcon } from "@/app/types/lordicon";
 
-export const supportedFiles = [
-  "application/dart",
-  "application/python",
-  "application/ecmascript",
-  "application/javascript",
-  "application/ms-java",
-  "application/sql",
-  "application/vnd.coffeescript",
-  "application/vnd.dart",
-  "application/x-httpd-php",
-  "application/x-javascript",
-  "application/x-lisp",
-  "application/x-perl",
-  "application/x-php",
-  "application/x-python",
-  "application/x-ruby",
-  "application/x-sql",
-  "application/x-yaml",
-  "text/coffeescript",
-  "text/css",
-  "text/ecmascript",
-  "text/java",
-  "text/javascript",
-  "text/sql",
-  "text/x-c++-cod",
-  "text/x-c++hdr",
-  "text/x-c++src",
-  "text/x-c-code",
-  "text/x-c-header",
-  "text/x-chdr",
-  "text/x-coffeescript",
-  "text/x-csrc",
-  "text/x-emacs-lisp",
-  "text/x-go",
-  "text/x-haskell",
-  "text/x-java",
-  "text/x-java-source",
-  "text/x-lisp",
-  "text/x-literate-haskell",
-  "text/x-markdown",
-  "text/x-objcsrc",
-  "text/x-perl",
-  "text/x-perl-script",
-  "text/x-python",
-  "text/x-python-script",
-  "text/x-ruby",
-  "text/x-ruby-script",
-  "text/x-rust",
-  "text/x-scala",
-  "text/x-sql",
-  "text/x-web-markdown",
-  "text/x-yaml",
-  "application/pdf",
-  "text/csv",
-  "text/markdown",
-  "text/plain",
-  "application/json",
-  "application/xml",
-  "application/yaml",
-  "text/xml",
-  "text/yaml",
-  "text/html",
-  "video/3gpp",
-  "video/3gpp2",
-  "video/avi",
-  "video/flv",
-  "video/mp2t",
-  "video/mp4",
-  "video/mp4v-es",
-  "video/mpeg",
-  "video/ogg",
-  "video/quicktime",
-  "video/vnd.mts",
-  "video/webm",
-  "video/x-flv",
-  "video/x-m4v",
-  "video/x-matroska",
-  "video/x-ms-asf",
-  "video/x-ms-wm",
-  "video/x-ms-wmv",
-  "video/x-ms-wvx",
-  "video/x-msvideo",
-  "video/x-quicktime",
-  "video/mov",
-  "video/mpg",
-  "video/wmv",
-  "image/bmp",
-  "image/gif",
-  "image/heic",
-  "image/heif",
-  "image/jpeg",
-  "image/png",
-  "image/tiff",
-  "image/webp",
-  "image/x-ms-bmp",
-  "image/svg+xml",
-  "audio/flac",
-  "audio/midi",
-  "audio/mp3",
-  "audio/mp4",
-  "audio/mpeg",
-  "audio/ogg",
-  "audio/vnd.wav",
-  "audio/vorbis",
-  "audio/wav",
-  "audio/x-m4a",
-  "audio/x-mid",
-  "audio/x-midi",
-  "audio/x-wav",
-  "audio/aac",
+export const fileExtensions = [
+  // Programming languages
+  "dart", "py", "pyw", "pyi", "ipynb",
+  "js", "mjs", "cjs", "jsx", "ts", "mts", "cts", "tsx", "java", "class",
+  "c", "h", "cc", "hh", "cpp", "hpp", "cxx", "hxx", "cs", "go", "rs",
+  "rb", "rake", "gemspec", "php", "phtml", "pl", "pm", "lisp", "lsp", "cl", "el", "coffee",
+  "scala", "sc", "hs", "lhs", "sql", "sh", "bash", "zsh", "fish", "ps1", "psm1", "bat", "cmd",
+  "r", "R", "swift", "kt", "kts", "kotlin", "m", "mm", "vue", "svelte", "astro",
+
+  // Web and markup
+  "html", "htm", "xhtml", "css", "scss", "sass", "less", "xml", "xsl", "xslt", "xsd", "dtd",
+  "svg", "md", "markdown", "mdown", "mkd", "mdx", "rst",
+  "adoc", "asciidoc", "tex", "latex", "bib", "rtf",
+
+  // Data and configuration
+  "json", "jsonc", "json5", "jsonl", "ndjson",
+  "yaml", "yml", "toml", "ini", "cfg", "conf", "env", "properties", 
+  "csv", "tsv", "txt", "text", "log", "diff", "patch", "graphql", "gql", "proto", 
+  "tf", "tfvars", "dockerfile", "makefile", "gitignore", "editorconfig", "lock",
+
+  // Additional text-based formats
+  "xmls", "sql", "prisma", "graphqls", "wasm", "asm", "s", "S", "vue", "handlebars",
+  "hbs", "mustache", "ejs", "liquid", "pug", "jade", "haml", "erb", "twig", "nix",
+  "ex", "exs", "erl", "hrl", "clj", "cljs", "cljc", "edn", "fs", "fsx", "fsi",
+  "vb", "vbs", "plsql", "psql", "sol", "ipynb",
+  "http", "pem", "crt", "pub", "key",
+
+  // Documents
+  "pdf", "doc", "docx", "odt", "rtf", "tex", "epub",
+
+  // Images
+  "bmp", "dib","gif", "heic", "heif", "jpg", "jpeg", "jpe",
+  "png", "tif", "tiff", "webp", "svg", "ico", "avif", "apng",
+
+  // Video
+  "3gp", "3gpp", "3g2", "3gpp2", "avi", "flv",
+  "ts", "m2ts", "mts", "mp4", "m4v", "mpeg", "mpg", "mpe",
+  "ogv", "ogg", "mov", "qt", "webm", "mkv", "asf", "wm", "wmv", "wvx",
+
+  // Audio
+  "flac", "mid", "midi", "mp3", "m4a", "m4b", "mp4", "mpeg",
+  "oga", "ogg", "opus", "wav", "wave", "aac", "aif", "aiff", "wma", "weba", "amr"
 ];
+;
 export async function login(
   setters: Record<string, usedOnDb<string>>,
   fetched: (value: boolean) => void,
@@ -208,7 +141,7 @@ type global = {
 export function sign() {
   if((globalThis as global).signed) return;
   (globalThis as global).signed = true;
-  const logoStyle = "background: linear-gradient(to right, #ff5e00, #ff9100, #ff3300, #ff1e00, #bc16c2, #5139d8, #2b6ee9, #00ff55); font-size: 20px; font-weight: 1000; background-clip: text; color: transparent; font-family: erdana, Geneva, Tahoma, sans-serif, Georgia";
+  const logoStyle = "background: linear-gradient(to right, #ff5e00, #ff9100, #ff3300, #ff1e00, #bc16c2, #5139d8, #2b6ee9, #00ff55); font-size: 20px; font-weight: 1000; background-clip: text; color: transparent; font-family: Verdana, Geneva, Tahoma, sans-serif, Georgia";
   console.log("%c Sanatan AI", logoStyle);
 }
 
@@ -216,9 +149,9 @@ export function speak(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
   const text = parentCount(e.target, 3)?.querySelector(".message-text")?.textContent;
   if(!text) return;
   const synth = globalThis.speechSynthesis;
-  const utterence = new SpeechSynthesisUtterance(text);
-  utterence.pitch = 1;
-  utterence.volume = 1;
-  utterence.rate = 1;
-  synth.speak(utterence);
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.pitch = 1;
+  utterance.volume = 1;
+  utterance.rate = 1;
+  synth.speak(utterance);
 }

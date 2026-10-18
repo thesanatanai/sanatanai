@@ -11,7 +11,7 @@ cmd /c "npm run test"
 if "%errorLevel%"=="0" (
     echo All Tests Passed
     echo.
-    echo Commiting and pushing to GitHub
+    echo Committing and pushing to GitHub
     echo.
     echo Write 'x' in commit message to skip commit.
     set /p commitMsg="Please enter a commit message (leave blank to auto-update and commit): "
@@ -27,7 +27,7 @@ if "%errorLevel%"=="0" (
         git push
     )
 ) else (
-    echo Error Occured
+    echo Error Occurred
     pause
     exit 0
 )

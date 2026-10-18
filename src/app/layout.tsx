@@ -1,8 +1,8 @@
 import type { Viewport } from "next";
 import { Poppins } from "next/font/google";
-import localFont from "next/font/local"
-import { GoogleAnalytics } from "@next/third-parties/google";
+import localFont from "next/font/local";
 import { buildMetadata } from "./(main)/lib/metadata";
+import Analytics from "@/components/Analytics";
 
 export const metadata = buildMetadata("en");
 
@@ -14,6 +14,7 @@ const poppins = Poppins({
 const theSeasons = localFont({
   variable: "--font-the-seasons",
   display: "swap",
+  fallback: [], // Fallbacks are handled in css
   preload: true,
   src: [
     {
@@ -30,9 +31,10 @@ const theSeasons = localFont({
 });
 
 const theSeasonsTemp = localFont({
-  variable: "--font-the-seasons",
+  variable: "--font-season",
   preload: false,
   display: "swap",
+  fallback: [], // Fallbacks are handled in css
   src: [
     {
       path: "./the-seasons/TheSeasons-Light.ttf",
@@ -73,7 +75,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`h-full antialiased ${poppins.className} ${theSeasons.variable} ${theSeasonsTemp.variable}`}>
       <body>
-        <GoogleAnalytics gaId={process.env.GA_ID || "G-104LTZTEH1"} />
+        <Analytics />
         {children}
       </body>
     </html>

@@ -22,7 +22,7 @@
   --success-color: #2ecc71;
   --error-color: #e74c3c;
   --info-color: #3498db;
-  --font-seasons: var(--font-the-seasons), "Poppins", "Georgia", 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  --font-seasons: var(--font-the-seasons), var(--font-season), "Poppins", "Georgia", 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 .light_mode {

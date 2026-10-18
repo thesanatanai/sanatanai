@@ -57,7 +57,7 @@ export async function OPTIONS(request: NextRequest) {
 }
 
 // Add a new chat
-export async function PATCH(request: NextRequest) {
+export async function PATCH() {
   const user = (await verifyUser(true)) as User;
   if (typeof user == "function") return user();
 
@@ -70,15 +70,7 @@ export async function PATCH(request: NextRequest) {
     .lean();
   if (alreadyExists) return NextResponse.json({ id: alreadyExists.chatId });
 
-  // Create a new chat
-  let title = "New Chat";
-
-  try {
-    const { title: t } = await request.json();
-    if (t) title = t;
-  } catch {}
-
-  const { chatId } = await createNewChat(id, title);
+  const { chatId } = await createNewChat(id);
   return NextResponse.json({ id: chatId });
 }
 
@@ -97,7 +89,6 @@ export async function DELETE(request: NextRequest) {
 }
 
 const Modifications = z.object({
-  id: z.string(),
   title: z.string().optional(),
   timestamp: z.number().optional(),
   messages: z.array(messageModel),
@@ -126,9 +117,9 @@ export async function PUT(request: NextRequest) {
     });
   } catch (e) {
     if (e instanceof ZodError) {
-      respondErr(e.message);
+     return respondErr(e.message);
     }
-    respondErr("Sorry Something Went Wrong");
+   return respondErr("Sorry Something Went Wrong");
   }
 }
 

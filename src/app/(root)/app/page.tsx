@@ -1,4 +1,3 @@
-"use server";
 import { ParticleBackground } from "@/components/Particles";
 import "@/css/extra.css";
 import "@/css/page.css";
@@ -14,13 +13,13 @@ import verifyUser, { User } from "@/app/api/utils/verify";
 import { redirect } from "next/navigation";
 import { getMainChat } from "@/app/api/chat/search";
 
+export const instant = false;
 export default async function Page() {
   const user = await verifyUser() as User;
   if(typeof user == "function") {
     console.error(await user().json());
     redirect("/welcome?logout=true");
   }
-  if(typeof user == "function") redirect("/welcome?logout=true");
   const chats = await getChats(user.id);
   if(typeof chats == "function") redirect("/welcome?logout=true");
   const latestChat = setSession(chats);

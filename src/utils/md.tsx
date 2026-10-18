@@ -4,6 +4,7 @@ import { Streamdown } from "streamdown";
 import "streamdown/styles.css";
 import { mermaid } from "@streamdown/mermaid";
 import { code } from "@streamdown/code";
+import { math } from "@streamdown/math"
 import { Fragment, useContext, type ReactNode } from "react";
 import { All } from "@/app/(root)/AllContext";
 import PageContext from "@/app/(root)/app/PageContext";
@@ -74,6 +75,8 @@ function ChatBtn({ children }: Readonly<Record<string, unknown>>) {
   );
 }
 
+const shiki = (dark: boolean): [string, string] =>
+  dark ? ["slack-dark", "slack-dark"] : ["github-light", "github-light"];
 export default function MarkDown({
   markdown: md,
   streaming,
@@ -92,9 +95,11 @@ export default function MarkDown({
       plugins={{
         mermaid,
         code,
+        math
       }}
       animated={streaming}
-      shikiTheme={["vitesse-dark", "vitesse-light"]}
+      isAnimating={streaming}
+      shikiTheme={shiki(isDark)}
       mode={streaming ? "streaming" : "static"}
       components={{
         gita: ({ children }) => <GeetaBlock>{children}</GeetaBlock>,
