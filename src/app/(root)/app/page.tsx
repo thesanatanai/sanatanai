@@ -27,19 +27,15 @@ export default async function Page() {
   if(typeof chat == "function") redirect("/welcome?logout=true");
   const messages = getMainChat(chat, true);
   return (
-    <>
-      {/* eslint-disable-next-line @next/next/no-css-tags  */}
-      <link rel="stylesheet" href="/katex.min.css" />
-      <PgContext loadedChats={chats} messages={messages as ChatHistory || []} id={latestChat}>
-        <div className="sanatanai-app">
-          <MenuBar />
-          <SideMenu />
-          <ChatApp />
-          <Settings />
-          <Footer />
-          <ParticleBackground particleCount={70} />
-        </div>
-      </PgContext>
-    </>
+    <PgContext loadedChats={chats} messages={messages as ChatHistory || []} id={latestChat}>
+      <div className="sanatanai-app">
+        <MenuBar />
+        <SideMenu />
+        <ChatApp />
+        <Settings />
+        <Footer />
+        <ParticleBackground particleCount={70} />
+      </div>
+    </PgContext>
   );
 }

@@ -105,7 +105,6 @@ export default function VideoStage({ src, poster }: Readonly<VideoStageProps>) {
   return (
     <section
       ref={root}
-      id="demo"
       className="relative px-5 py-28 md:px-8 md:py-40"
     >
       <div className="mx-auto max-w-6xl">

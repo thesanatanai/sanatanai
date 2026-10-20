@@ -31,7 +31,6 @@ export default function Header({ lang, t, prefix }: Readonly<{ lang: Lang; t: Co
   const links = [
     { href: "#about", label: t.nav.about },
     { href: "#features", label: t.nav.features },
-    { href: "#demo", label: t.nav.demo },
     { href: "#calendar", label: t.nav.calendar },
     { href: "#faq", label: t.nav.faq },
   ];

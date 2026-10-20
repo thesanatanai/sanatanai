@@ -12,7 +12,7 @@ export interface ParticleOptions {
   className?: string;
 }
 
-export const ParticleBackground: React.FC<ParticleOptions> = ({
+export const ParticleBackground: React.FC<ParticleOptions> = React.memo(({
   particleCount,
   colors = ["#8e44ad", "#3498db", "#2ecc71", "#f1c40f", "#ffffff"],
   minSize = 2,
@@ -138,4 +138,5 @@ export const ParticleBackground: React.FC<ParticleOptions> = ({
       }}
     />
   );
-};
+});
+ParticleBackground.displayName = "ParticleBackground";

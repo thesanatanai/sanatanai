@@ -6,7 +6,7 @@ import { Language, locales } from "@/utils/i18n";
 import { Check, LucideIcon } from "lucide-react";
 import { useContext } from "react";
 import type { CSSProperties } from "react";
-import styles from "./LegalPage.module.css";
+import "@/css/legalPage.css";
 
 type LanguageKey = keyof typeof locales.en;
 
@@ -32,31 +32,31 @@ export default function LegalPage({
   const [language, setLanguage] = useContext(All).userData.language;
 
   return (
-    <main className={styles.page}>
-      <div className={styles.shell}>
-        <header className={styles.hero}>
+    <main className="page">
+      <div className="shell">
+        <header className="hero">
           <div>
-            <p className={styles.eyebrow}>{eyebrow}</p>
-            <h1 className={styles.title}>
+            <p className="eyebrow">{eyebrow}</p>
+            <h1 className="title">
               <Language need={title} />
             </h1>
-            <p className={styles.intro}>
+            <p className="intro">
               <Language need={intro} />
             </p>
           </div>
 
-          <div className={styles.languageSwitch}>
-            <span className={styles.languageLabel}>
+          <div className="languageSwitch">
+            <span className="languageLabel">
               <Lordicon src="language" target="parent*2" size={24} />
               <span className="font-display">
                 <Language need="languageLabel" />
               </span>
             </span>
-            <div className={styles.languageOptions} role="group" aria-label="Language">
+            <div className="languageOptions" role="group" aria-label="Language">
               <button
                 type="button"
-                className={`${styles.languageButton} ${
-                  language === "en" ? styles.languageButtonActive : ""
+                className={`languageButton ${
+                  language === "en" ? "languageButtonActive" : ""
                 }`}
                 aria-pressed={language === "en"}
                 onClick={() => setLanguage("en")}
@@ -65,8 +65,8 @@ export default function LegalPage({
               </button>
               <button
                 type="button"
-                className={`${styles.languageButton} ${
-                  language === "hi" ? styles.languageButtonActive : ""
+                className={`languageButton ${
+                  language === "hi" ? "languageButtonActive" : ""
                 }`}
                 aria-pressed={language === "hi"}
                 onClick={() => setLanguage("hi")}
@@ -77,37 +77,37 @@ export default function LegalPage({
           </div>
         </header>
 
-        <div className={styles.content}>
+        <div className="content">
           {sections.map((section, sectionIndex) => {
             const Icon = section.icon;
 
             return (
               <section
-                className={styles.panel}
+                className="panel"
                 key={section.title ?? section.items.join("-")}
                 style={{ "--legal-index": sectionIndex } as CSSProperties}
               >
                 {section.title && (
-                  <div className={styles.sectionHeader}>
+                  <div className="sectionHeader">
                     {Icon && (
-                      <span className={styles.sectionIcon} aria-hidden="true">
+                      <span className="sectionIcon" aria-hidden="true">
                         <Icon size={20} strokeWidth={2.2} />
                       </span>
                     )}
-                    <h2 className={styles.sectionTitle}>
+                    <h2 className="sectionTitle">
                       <Language need={section.title} />
                     </h2>
                   </div>
                 )}
 
-                <ul className={styles.list}>
+                <ul className="list">
                   {section.items.map((item, itemIndex) => (
                     <li
-                      className={styles.item}
+                      className="item"
                       key={item}
                       style={{ "--item-index": itemIndex } as CSSProperties}
                     >
-                      <span className={styles.marker} aria-hidden="true">
+                      <span className="marker" aria-hidden="true">
                         <Check size={14} strokeWidth={3} />
                       </span>
                       <span>
@@ -121,11 +121,11 @@ export default function LegalPage({
           })}
         </div>
 
-        <div className={styles.footer}>
+        <div className="footer">
           
         <button
           id="agree-btn"
-          className={`welcomeButton center-flex ${styles.action}`}
+          className={`welcomeButton center-flex action`}
           onClick={() => {
             window.location.href = "/welcome";
           }}
@@ -139,4 +139,3 @@ export default function LegalPage({
   );
 }
 
-export { styles as legalPageStyles };

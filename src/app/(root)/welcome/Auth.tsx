@@ -9,7 +9,7 @@ import Lordicon from "@/components/Lordicon";
 import jsCookie from "js-cookie";
 
 function Google(props: Record<string, Function>) {
-  const notification = useNotification<true>();
+  const notification = useNotification();
   const { userData } = useContext(All);
   const [currentLanguage] = userData.language;
   return (
@@ -22,6 +22,8 @@ function Google(props: Record<string, Function>) {
             onSuccess={(response) => handleLogin(response, currentLanguage)}
             click_listener={() => props.setIsLoading((loading : boolean) => !loading)}
             shape="pill"
+            auto_select
+            useOneTap
             onError={() => {
               notification("loginError", {
                 type: "error",

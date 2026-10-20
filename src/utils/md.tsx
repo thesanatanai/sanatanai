@@ -4,10 +4,11 @@ import { Streamdown } from "streamdown";
 import "streamdown/styles.css";
 import { mermaid } from "@streamdown/mermaid";
 import { code } from "@streamdown/code";
-import { math } from "@streamdown/math"
+import { createMathPlugin } from "@streamdown/math"
 import { Fragment, useContext, type ReactNode } from "react";
 import { All } from "@/app/(root)/AllContext";
 import PageContext from "@/app/(root)/app/PageContext";
+import "katex/dist/katex.min.css";
 
 function GeetaBlock(props: Readonly<{ children: unknown }>) {
   const txt = props.children?.toString().split("+");
@@ -32,7 +33,7 @@ function splitLines(text?: string) {
   if (!text) return;
   const lines = text.split(/\\n/g);
   return lines.map((line, index) => (
-    <Fragment key={index}>
+    <Fragment key={index + 1}>
       {line}
       {lines.length > index + 1 && <br />}
     </Fragment>
@@ -77,6 +78,9 @@ function ChatBtn({ children }: Readonly<Record<string, unknown>>) {
 
 const shiki = (dark: boolean): [string, string] =>
   dark ? ["slack-dark", "slack-dark"] : ["github-light", "github-light"];
+const math = createMathPlugin({
+  singleDollarTextMath: true
+});
 export default function MarkDown({
   markdown: md,
   streaming,

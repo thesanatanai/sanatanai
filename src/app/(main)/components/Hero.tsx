@@ -85,7 +85,6 @@ export default function Hero({ lang, t, hint }: Readonly<HeroProps>) {
       ref={root}
       id="top"
       className="relative h-svh w-full overflow-hidden"
-      style={{ ["--portal" as string]: "min(44svh, 66vw)" }}
     >
       <div className="absolute inset-0 z-20 grid place-items-center px-5 md:px-6 text-center">
         <div>
@@ -98,21 +97,21 @@ export default function Hero({ lang, t, hint }: Readonly<HeroProps>) {
           </h1>
           <p
             aria-hidden="true"
-            className="hero-sub mt-4 font-display text-[clamp(1.25rem,3vw,2.25rem)] text-ivory [text-shadow:0_0_30px_rgba(13,11,30,0.95)]"
+            className="hero-sub mt-4 font-display opacity-0 text-[clamp(1.25rem,3vw,2.25rem)] text-ivory [text-shadow:0_0_30px_rgba(13,11,30,0.95)]"
           >
             {t.sub}
           </p>
         </div>
       </div>
       <p
-        className={`hero-a absolute inset-x-0 top-[9svh] z-10 text-center font-display ${sideSize} leading-[0.92] md:inset-x-auto md:right-[calc(50%+var(--portal)/2+2.5vw)] md:top-1/2 md:-translate-y-1/2 md:text-right opacity-0`}
+        className={`hero-a absolute inset-x-0 top-[9svh] z-10 text-center font-display ${sideSize} leading-[0.92] md:inset-x-auto md:right-[calc(50%+min(22svh,33vw)+2.5vw)] md:top-1/2 md:-translate-y-1/2 md:text-right opacity-0`}
       >
         {t.a[0]}
         <br />
         {t.a[1]}
       </p>
       <p
-        className={`hero-b absolute inset-x-0 bottom-[9svh] z-10 text-center font-display ${sideSize} leading-[0.92] md:inset-x-auto md:bottom-auto md:left-[calc(50%+var(--portal)/2+2.5vw)] md:top-1/2 md:-translate-y-1/2 md:text-left opacity-0`}
+        className={`hero-b absolute inset-x-0 bottom-[9svh] z-10 text-center font-display ${sideSize} leading-[0.92] md:inset-x-auto md:bottom-auto md:left-[calc(50%+min(22svh,33vw)+2.5vw)] md:top-1/2 md:-translate-y-1/2 md:text-left opacity-0`}
       >
         {t.b[0]}
         <br />

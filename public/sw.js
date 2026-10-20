@@ -71,10 +71,12 @@ self.addEventListener("fetch", (event) => {
   const isFont =
     event.request.destination == "font" ||
     /\.(woff2|woff|ttf)$/i.test(url.pathname);
+  const isCacheable = url.href.includes("googleusercontent");
+  const isSelf = url.hostname == location.hostname;
   const isIcon = url.href.includes("icons/");
   const isOfflineAsset = OFFLINE_URLs.includes(url.pathname);
   const cacheKey = isOfflineAsset ? url.pathname : event.request;
-  if (isImage || isFont || isOfflineAsset || isIcon) {
+  if ((isCacheable || isSelf) && (isImage || isFont || isOfflineAsset || isIcon)) {
     event.respondWith(cacheFirstWithTimeout(event.request, cacheKey));
     return;
   }

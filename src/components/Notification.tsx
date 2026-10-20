@@ -54,10 +54,11 @@ interface NotificationProps<K> {
   vars?: Record<string, string>;
   type?: "info" | "success" | "error";
 }
-export default function notification<K extends boolean>(
-  message: K extends true ? keyof typeof locales.en : string,
+
+export default function notification(
+  message: string,
   instance: AllProps["notification"],
-  props?: NotificationProps<K>,
+  props?: NotificationProps<boolean>,
 ) {
   const {
     isOpen: [isOpen, setIsOpen],
@@ -73,14 +74,17 @@ export default function notification<K extends boolean>(
   setTimeout(() => setIsOpen(false), 3500);
 }
 
-export function useNotification<K extends boolean>() {
+export function useNotification() {
   const instance = useContext(All).notification;
-  return function send(
-    message: K extends true ? keyof typeof locales.en : string,
-    props?: NotificationProps<K>,
+  function send(message: keyof typeof locales.en, props?: NotificationProps<true>): void;
+  function send(message: string, props?: NotificationProps<false>): void;
+  function send(
+    message: string,
+    props?: NotificationProps<boolean>,
   ) {
     notification(message, instance, props);
   };
+  return send;
 }
 
 export function SideMenu() {

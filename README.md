@@ -55,7 +55,7 @@ After sign-in, each user has persistent conversations, profile preferences, and 
 ### Identity, storage, and resilience
 
 - **Two sign-in paths.** Google Identity Services OAuth (the ID token is verified on the server) or emailed six-digit one-time passwords sent through Resend. The Google button is hidden inside the desktop app, which uses email sign-in.
-- **Protected routes and signed sessions.** A JWT is issued as an HTTP-only cookie valid for one year. `src/proxy.ts` redirects visitors without a valid session from `/app` to onboarding, and "log out of all devices" rotates the user's internal ID so existing tokens stop working.
+- **Protected routes and signed sessions.** A JWT is issued as an HTTP-only cookie valid for one year. `src/proxy.ts` redirects visitors without a valid session from `/app` to onboarding.
 - **OTP safeguards.** Codes are stored only as SHA-256 hashes, expire after ten minutes, and repeated wrong attempts put an email address on a short-lived blacklist.
 - **MongoDB persistence.** Stores user profiles and memories, chats and messages, OTP records, and OTP attempt blacklist data.
 - **PWA essentials.** A service worker caches the offline page, manifest, images, fonts, and icons, and serves an offline fallback page when a navigation fails. The web manifest includes screenshots and shortcuts.
@@ -69,7 +69,7 @@ After sign-in, each user has persistent conversations, profile preferences, and 
 Browser
   │
   ├─ Public showcase (/, /hi, /home, /home/hi)
-  │    └─ typed content dictionaries → Hero, Story, Features, Demo, FAQ, JSON-LD
+  │    └─ typed content dictionaries → Hero, Story, Features, FAQ, JSON-LD
   │       (GSAP + Lenis scrolling, three.js mandala)
   │
   ├─ Onboarding (/welcome) → terms, language, Google OAuth or email OTP
@@ -84,7 +84,7 @@ Browser
        ├─ /api/chat/name     → short model call that titles a new chat
        ├─ /api/chat/v2       → prompt enhancement
        ├─ /api/chats         → chat session CRUD (GET list, OPTIONS read, PATCH new, PUT update, DELETE)
-       ├─ /api/user          → Google sign-in, profile, log out everywhere
+       ├─ /api/user          → Google sign-in, profile
        ├─ /api/user/otp      → send (PUT) and verify (POST) email codes
        └─ /api/user/memories → read saved memories
               │
@@ -255,7 +255,7 @@ The web app is configured for Vercel-compatible deployment through `vercel.json`
 - The offline behavior is an offline fallback page and static-asset caching, not offline chat or locally stored conversations.
 - Custom instructions (the persona field) are stored in the browser's `localStorage`; they are not currently persisted as server-side user preferences.
 - In Settings, "Delete all messages" and "Import chat" are not wired up yet, and "Export current chat" only shows a notification. Assistant-generated buttons render but do not yet send a reply when clicked.
-- Sessions are stateless JWTs; the only server-side revocation is "log out of all devices". The server does not apply per-user rate limiting to chat requests, and OTP guessing is limited by the short-lived blacklist.
+- Sessions are stateless JWTs;The server does not apply per-user rate limiting to chat requests, and OTP guessing is limited by the short-lived blacklist.
 - API access is designed for the first-party browser interface and authenticated sessions rather than as a public developer API.
 - Conversations are stored in plain form in MongoDB and may be processed by Google, Tavily, Vercel, and MongoDB as described in the in-app Privacy Policy.
 

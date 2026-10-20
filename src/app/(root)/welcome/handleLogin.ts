@@ -3,10 +3,10 @@ import { CredentialResponse } from "@react-oauth/google";
 import jsCookie from "js-cookie";
 
 export default async function handleLogin(
-  cardentialResponse: CredentialResponse,
-  lang: "en" | "hi",
+  credentialResponse: CredentialResponse,
+  lang: "en" | "hi"
 ) {
-  const googleToken = cardentialResponse.credential;
+  const googleToken = credentialResponse.credential;
   if (!googleToken) return;
   try {
     const response = await fetch("/api/user", {

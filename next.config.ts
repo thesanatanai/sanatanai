@@ -18,7 +18,7 @@ const csp = [
   [
     "img-src 'self' data: blob:",
     "https://*.googleusercontent.com",
-    "https://www.google-analytics.com",
+    "https://www.google.co.in/",
     "https://www.googletagmanager.com",
   ].join(" "),
 

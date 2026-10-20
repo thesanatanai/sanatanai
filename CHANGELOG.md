@@ -1,3 +1,23 @@
+# V-2.3.4
+- Removed demo link from Header component.
+- Updated Hero component styles for better responsiveness and opacity handling.
+- Removed demo ID from VideoStage component.
+- Simplified Page component structure by removing unnecessary fragments.
+- Adjusted Google authentication component to use updated notification hook.
+- Fixed typo in handleLogin function parameter name.
+- Enhanced error response utility functions for better type handling.
+- Deleted unused LegalPage.module.css and migrated styles to legalPage.css.
+- Updated LegalPage component to use new CSS classes.
+- Refactored Lordicon component for better performance.
+- Improved MenuBar component to utilize language localization.
+- Adjusted Notification component to simplify notification handling.
+- Updated Particles component to use memoization for performance.
+- Refactored Settings component to align with updated notification hook.
+- Enhanced enhancePrompt utility for better error handling.
+- Updated Markdown utility to improve line splitting logic.
+- Refactored useFileManager utility to align with updated notification hook.
+- Added FooterClient component for better footer management.
+
 # V-2.3.3
 - Updated @google/genai to version 2.30.0 and other dependencies for better performance and features.
 - Removed deprecated postcss.config.mjs file and replaced it with @tailwindcss/turbopack.

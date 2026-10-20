@@ -2,7 +2,7 @@
 import { All } from "@/app/(root)/AllContext";
 import { Fragment, useContext, useEffect, useMemo } from "react";
 import Lordicon from "./Lordicon";
-import { useT } from "@/utils/i18n";
+import { Language, useT } from "@/utils/i18n";
 import useRefManager from "@/utils/useRefManager";
 import { Menu } from "lucide-react";
 import { initGestures } from "@/utils/gestures";
@@ -144,12 +144,16 @@ function chatList(
       [groups[group], setChats],
       [activeSessionId, setSessionId],
     );
+    const isToday = group == "today" ? "historyToday" : null;
+    const isYesterday = group == "yesterday" ? "historyYesterday" : null;
+    const lastDays = group == "last7days" ? "historyLast7Days" : null;
+    const groupName = isToday || isYesterday || lastDays || "historyOlder";
     return (
       <Fragment key={group}>
         {Chats?.length ? (
           <>
             <div className="pt-2.5 pb-2.5 pl-3.75 mt-2.5 text-[0.8rem] pr-3.75 text-(--subheading-color) font-semibold uppercase chat-group-header">
-              {group.replace("7", " ")}
+              <Language need={groupName} />
             </div>
             {Chats}
           </>

@@ -23,14 +23,15 @@ export default function EnhancePrompt({message, setMessage, menuRef}: Readonly<{
 }
 
 function useEnhance(message: string, setMessage: (text: string) => void, setIsEnhancing: (value: boolean) => void) {
-    const notification = useNotification<true>();
+    const notification = useNotification();
     return async function enhance() {
         try {
         setIsEnhancing(true);
         if(!message) {
             setIsEnhancing(false);
             return notification("pleaseEnterTextToEnhance", {
-           type: "error" 
+           language: true,
+           type: "error"
         });
     }
         const enhanced = await fetch("api/chat/v2", {

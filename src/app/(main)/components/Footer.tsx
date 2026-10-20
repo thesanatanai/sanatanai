@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { Content } from "../lib/content";
+import FooterClient from "./FooterClient";
 
 export default function Footer({ t, externalLabel }: Readonly<{ t: Content["footer"]; externalLabel: string }>) {
   const ext = { target: "_blank", rel: "noopener noreferrer" } as const;
@@ -34,7 +35,7 @@ export default function Footer({ t, externalLabel }: Readonly<{ t: Content["foot
           </a>
         </nav>
       </div>
-      <p className="mx-auto mt-10 max-w-6xl text-sm text-ivory/55">{t.rights.replace("{year}", String(new Date().getFullYear()))}</p>
+      <FooterClient rights={t.rights}/>
     </footer>
   );
 }

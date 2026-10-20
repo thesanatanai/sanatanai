@@ -10,7 +10,7 @@ import Image from "next/image";
 export default function useFileManager([stateFiles, setFiles]: uStat<
   UserFileData[]
 >) {
-  const notification = useNotification<true>();
+  const notification = useNotification();
 
   function handleInput(ev: ChangeEvent<HTMLInputElement, HTMLInputElement>) {
     const files = Array.from((ev.target as HTMLInputElement).files as FileList);

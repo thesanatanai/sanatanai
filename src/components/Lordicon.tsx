@@ -52,8 +52,8 @@ export const Icon: React.FC<LordIconProps> = React.memo(({
 
     const play = () => {
       manager.afterAvail((element) => {
-        if (element.playerInstance) {
-          element.playerInstance.playFromStart();
+        if (element.play) {
+          element.play();
         }
       });
     };
@@ -168,7 +168,7 @@ const Lordicon: React.FC<LordIconProps> = React.memo(({
       stroke={stroke}
       state={state}
       speed={speed}
-      target={targetCss(target)}
+      target={target}
       size={size}
       onReady={onReady}
       loading={loading}

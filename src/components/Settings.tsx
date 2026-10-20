@@ -193,7 +193,7 @@ function SettingItem(props: Record<string, React.ReactNode>) {
 function modifySetter<K>(
   setter: (val: K) => void,
   name: string,
-  notification: ReturnType<typeof useNotification<true>>,
+  notification: ReturnType<typeof useNotification>,
 ) {
   return (val: K) => {
     setter(val);
