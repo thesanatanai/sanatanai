@@ -9,11 +9,7 @@ const fallbackLocale = "en";
 export const locales = {
   en: {
     siteTitle: "SANATAN AI",
-    termsTitle: (
-      <>
-        By Using <span className="font-display animated-gradient-text">Sanatan AI</span>
-      </>
-    ),
+    termsTitle: "By Using Sanatan AI",
     termsIntro: "You agree to the following terms and conditions:",
     termsList1:
       "This AI is for informational and educational purposes related to Sanatan Dharma and general-purpose assistance.",
@@ -115,7 +111,7 @@ export const locales = {
       "Revoke Sanatan AI's access to your Google account anytime from your Google Account settings.",
     privacySectionChildren: "Children's Privacy",
     privacyChildren1:
-      "Sanatan AI is intended for use with a parent or guardian's involvement for users under 13. Contact us if you believe a child has shared personal data without appropriate consent.",
+      "Sanatan AI is intended for use with a parent or guardian's involvement for users under 8. Contact us if you believe a child has shared personal data without appropriate consent.",
     privacySectionContact: "Changes & Contact",
     privacyContact1: (
       <>
@@ -219,7 +215,7 @@ export const locales = {
   },
   hi: {
     siteTitle: "सनातन एआई",
-    termsTitle: <><span className="animated-gradient-text">सनातन ऐआई</span> का उपयोग करके,</>,
+    termsTitle: "सनातन ऐआई का उपयोग करके",
     termsIntro: "आप निम्नलिखित नियमों और शर्तों से सहमत होते हैं:",
     termsList1:
       "यह एआई सनातन धर्म से संबंधित जानकारी, शिक्षा और सामान्य सहायता के लिए है।",
@@ -325,7 +321,7 @@ export const locales = {
       "अपने Google खाता सेटिंग्स से कभी भी सनातन एआई की पहुंच वापस लें।",
     privacySectionChildren: "बच्चों की गोपनीयता",
     privacyChildren1:
-      "13 वर्ष से कम उम्र के उपयोगकर्ताओं के लिए सनातन एआई का उपयोग माता-पिता या अभिभावक की भागीदारी के साथ किया जाना चाहिए। यदि आपको लगता है कि किसी बच्चे ने उचित सहमति के बिना व्यक्तिगत डेटा साझा किया है, तो कृपया हमसे संपर्क करें।",
+      "8 वर्ष से कम उम्र के उपयोगकर्ताओं के लिए सनातन एआई का उपयोग माता-पिता या अभिभावक की भागीदारी के साथ किया जाना चाहिए। यदि आपको लगता है कि किसी बच्चे ने उचित सहमति के बिना व्यक्तिगत डेटा साझा किया है, तो कृपया हमसे संपर्क करें।",
     privacySectionContact: "बदलाव और संपर्क",
     privacyContact1: (
       <>
@@ -437,7 +433,7 @@ function formatTemplate(text: string, vars?: Record<string, string>) {
   }, text);
 }
 
-function t<K extends keyof typeof currentTranslations>(
+export function t<K extends keyof typeof currentTranslations>(
   key: K,
   vars?: Record<string, string>,
   lang?: "en" | "hi",

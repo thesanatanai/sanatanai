@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import userModel from "../models/user";
 import chatModel from "../models/chat";
+import crypto from "node:crypto";
 
 export default function respondErr(msg: string, code = 400) {
   console.log(`Responding error: ${msg} with status code: ${code}`);
@@ -27,7 +28,7 @@ export async function generateUniqueId(
   field = "id",
 ) {
   const uuid = crypto.randomUUID() + Date.now();
-  const hashHex = await generateHash(uuid);
+  const hashHex = generateHash(uuid);
   if (
     await (
       model.findOne as (query: Record<string, string>) => Promise<boolean>
@@ -38,14 +39,18 @@ export async function generateUniqueId(
   return hashHex;
 }
 
-export async function generateHash(data: string | number) {
-  const encoded = new TextEncoder().encode(data.toString());
-  const hashBuffer = await crypto.subtle.digest("SHA-256", encoded);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-  return hashHex;
+export function generateHash(data: string, hashed: string): boolean;
+export function generateHash(data: string | number): string;
+export function generateHash(data: string | number, hashed?: string) {
+  const hash = 
+        crypto.createHmac("sha256", process.env.JWT_SECRET!)
+          .update(data.toString())
+          .digest("hex");
+  if(hashed) {
+    const okay = crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(hashed));
+    return okay;
+  }
+  return hash
 }
 
 export const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;

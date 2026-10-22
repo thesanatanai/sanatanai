@@ -9,7 +9,6 @@ import otpModel, { blackListedModel } from "../../models/verify";
 import userModel from "../../models/user";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
-import { timingSafeEqual } from "node:crypto";
 import { sendOtp } from "../../utils/verify";
 import dbConnect from "../../utils/db";
 import z, { ZodError } from "zod";
@@ -55,10 +54,7 @@ export async function POST(request: NextRequest) {
       return respondErr(LOCKED_MSG, 429);
     }
 
-    // 4. Compare (constant time)
-    const otpHash = await generateHash(otp);
-
-    if (!safeEqual(registration.otpHash, otpHash)) {
+    if (!generateHash(otp, registration.otpHash)) {
       // Last allowed guess was wrong: burn the OTP and lock the email.
       if (tries >= MAX_TRIES) {
         await lockOut(email);
@@ -85,12 +81,14 @@ export async function POST(request: NextRequest) {
       );
 
       cookieStore.set({
-        name: "token",
-        value: token,
-        expires: Date.now() + 365 * 24 * 3600 * 1000,
-        path: "/",
-        httpOnly: true,
-      });
+      name: "token",
+      value: token,
+      maxAge: 365 * 24 * 3600,
+      path: "/",
+      secure: process.env.NODE_ENV == "production",
+      sameSite: "lax",
+      httpOnly: true,
+    });
       return NextResponse.json(alreadyExists.toJSON());
     }
 
@@ -111,8 +109,10 @@ export async function POST(request: NextRequest) {
     cookieStore.set({
       name: "token",
       value: token,
-      expires: Date.now() + 365 * 24 * 3600 * 1000,
+      maxAge: 365 * 24 * 3600,
       path: "/",
+      secure: process.env.NODE_ENV == "production",
+      sameSite: "lax",
       httpOnly: true,
     });
     return NextResponse.json(newUser.toJSON());
@@ -141,7 +141,7 @@ export async function PUT(request: NextRequest) {
     const otp = await sendOtp(email);
     if (typeof otp == "function") return otp();
 
-    const otpHash = await generateHash(otp);
+    const otpHash = generateHash(otp);
 
     await otpModel.create({
       otpHash,
@@ -178,13 +178,6 @@ async function lockOut(email: string) {
     { $set: { endTime: Date.now() + LOCK_MS } },
     { upsert: true },
   );
-}
-
-// Constant-time string comparison
-function safeEqual(a: string, b: string) {
-  const x = Buffer.from(a);
-  const y = Buffer.from(b);
-  return x.length === y.length && timingSafeEqual(x, y);
 }
 
 // Get OTP for a specific email

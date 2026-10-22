@@ -73,7 +73,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`h-full antialiased ${poppins.className} ${theSeasons.variable} ${theSeasonsTemp.variable}`}>
+    <html className={`h-full antialiased ${poppins.className} ${theSeasons.variable} ${theSeasonsTemp.variable}`}>
       <body>
         <Analytics />
         {children}

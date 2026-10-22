@@ -28,6 +28,7 @@ export default function Terms() {
       title="termsTitle"
       intro="termsIntro"
       sections={termsSections}
+      t="en"
     />
   );
 }

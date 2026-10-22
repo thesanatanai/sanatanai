@@ -93,8 +93,10 @@ export async function POST(request: NextRequest) {
     cookieStore.set({
       name: "token",
       value: token,
-      expires: Date.now() + 365 * 24 * 3600 * 1000,
+      maxAge: 365 * 24 * 3600,
       path: "/",
+      secure: process.env.NODE_ENV == "production",
+      sameSite: "lax",
       httpOnly: true,
     });
 

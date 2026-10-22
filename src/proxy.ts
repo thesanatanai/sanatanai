@@ -1,27 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import verifyUser from "./app/api/utils/verify";
-
-export default async function proxy(req: NextRequest) {
-  const setupComplete = req.cookies.get("setupComplete")?.value;
-  if(!setupComplete && !req.cookies.has("token") && !req.url.includes("app")) return NextResponse.next();
-
-  const user = await verifyUser(true, false);
-  if (
-    (setupComplete !== "true" || typeof user == "function") && req.url.includes("app")
-  ) {
-    req.cookies.clear();
-    const response = NextResponse.redirect(new URL("/welcome?logout=true", req.url));
-    response.cookies.delete("token");
-    response.cookies.delete("setupComplete");
-    return response;
+import { jwtVerify } from "jose";
+const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
+ 
+export async function proxy(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+  const token = req.cookies.get("token")?.value;
+  let valid = false;
+  if (token) { try { await jwtVerify(token, secret); valid = true; } catch {} }
+  const welcomeRedirect = req.url.includes("welcome") && req.nextUrl.searchParams.get("logout");
+ 
+  if (pathname.startsWith("/app") && !valid) {
+    const res = NextResponse.redirect(new URL("/welcome?logout=true", req.url));
+    res.cookies.delete("token");
+    return res;
   }
-  else if (setupComplete == "true" && typeof user !== "function" && !req.url.includes("app")) {
+  const redirect = pathname === "/" || pathname === "/hi" || pathname === "/welcome";
+  if (redirect && valid && !welcomeRedirect)
     return NextResponse.redirect(new URL("/app", req.url));
-  }
-
   return NextResponse.next();
 }
 
-export const config = {
-  matcher: ["/(app|hi|)"],
-};
+export const config = { matcher: ["/", "/hi", "/app/:path*", "/welcome"] };

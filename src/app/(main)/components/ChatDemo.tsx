@@ -27,6 +27,7 @@ const copy = {
   },
 } satisfies Record<Lang, Record<string, string>>;
 
+export const instant = false;
 /** The illustrative conversation shown in "Inside the app". Follows the page language and can be toggled to the other one. */
 export default function ChatDemo({
   lang,

@@ -1,10 +1,8 @@
 "use client";
 
-import Lordicon from "@/components/Lordicon";
-import { All } from "@/app/(root)/AllContext";
-import { Language, locales } from "@/utils/i18n";
+import { Icon } from "@/components/Lordicon";
+import { locales, t } from "@/utils/i18n";
 import { Check, LucideIcon } from "lucide-react";
-import { useContext } from "react";
 import type { CSSProperties } from "react";
 import "@/css/legalPage.css";
 
@@ -21,16 +19,20 @@ type LegalPageProps = {
   title: LanguageKey;
   intro: LanguageKey;
   sections: LegalSection[];
+  t: "en" | "hi";
+  url?: string;
 };
 
 export default function LegalPage({
   eyebrow,
   title,
   intro,
-  sections
+  sections,
+  t: lang,
+  url
 }: Readonly<LegalPageProps>) {
-  const [language, setLanguage] = useContext(All).userData.language;
-
+  const language = lang;
+  const shell = url || "/terms";
   return (
     <main className="page">
       <div className="shell">
@@ -38,18 +40,18 @@ export default function LegalPage({
           <div>
             <p className="eyebrow">{eyebrow}</p>
             <h1 className="title">
-              <Language need={title} />
+              {t(title, {}, language)}
             </h1>
             <p className="intro">
-              <Language need={intro} />
+              {t(intro, {}, language)}
             </p>
           </div>
 
           <div className="languageSwitch">
             <span className="languageLabel">
-              <Lordicon src="language" target="parent*2" size={24} />
+              <Icon src="language" target="parent*2" size={24} />
               <span className="font-display">
-                <Language need="languageLabel" />
+                {t("languageLabel", {}, language)}
               </span>
             </span>
             <div className="languageOptions" role="group" aria-label="Language">
@@ -59,7 +61,11 @@ export default function LegalPage({
                   language === "en" ? "languageButtonActive" : ""
                 }`}
                 aria-pressed={language === "en"}
-                onClick={() => setLanguage("en")}
+                {...(
+                  language == "hi" &&  {
+                    onClick: () => location.href = shell
+                  }
+                )}
               >
                 English
               </button>
@@ -69,7 +75,11 @@ export default function LegalPage({
                   language === "hi" ? "languageButtonActive" : ""
                 }`}
                 aria-pressed={language === "hi"}
-                onClick={() => setLanguage("hi")}
+                {...(
+                  language == "en" &&  {
+                    onClick: () => location.href = `${shell}/hi`
+                  }
+                )}
               >
                 हिन्दी
               </button>
@@ -79,7 +89,7 @@ export default function LegalPage({
 
         <div className="content">
           {sections.map((section, sectionIndex) => {
-            const Icon = section.icon;
+            const SectionIcon = section.icon;
 
             return (
               <section
@@ -89,13 +99,13 @@ export default function LegalPage({
               >
                 {section.title && (
                   <div className="sectionHeader">
-                    {Icon && (
+                    {SectionIcon && (
                       <span className="sectionIcon" aria-hidden="true">
-                        <Icon size={20} strokeWidth={2.2} />
+                        <SectionIcon size={20} strokeWidth={2.2} />
                       </span>
                     )}
                     <h2 className="sectionTitle">
-                      <Language need={section.title} />
+                      {t(section.title, {}, language)}
                     </h2>
                   </div>
                 )}
@@ -111,7 +121,7 @@ export default function LegalPage({
                         <Check size={14} strokeWidth={3} />
                       </span>
                       <span>
-                        <Language need={item} />
+                        {t(item, {}, language)}
                       </span>
                     </li>
                   ))}
@@ -130,8 +140,8 @@ export default function LegalPage({
             window.location.href = "/welcome";
           }}
         >
-          <Language need="agreeProceed" />
-          <Lordicon src="arrow" target="parent" colors="primary:#ffffff,secondary:#ffffff" />
+          {t("agreeProceed", {}, language)}
+          <Icon src="arrow" target="parent" colors="primary:#ffffff,secondary:#ffffff" />
         </button>
         </div>
       </div>

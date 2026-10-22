@@ -50,6 +50,8 @@ export default function Privacy() {
       title="privacyTitle"
       intro="privacyIntro"
       sections={privacySections}
+      url="/privacy"
+      t="hi"
     />
   );
 }

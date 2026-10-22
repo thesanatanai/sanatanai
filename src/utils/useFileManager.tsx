@@ -1,11 +1,12 @@
 import { useNotification } from "@/components/Notification";
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent, useContext, useEffect } from "react";
 import { fileExtensions } from "./utils";
 import { FileText, X } from "lucide-react";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 import Image from "next/image";
+import { All } from "@/app/(root)/AllContext";
 
 export default function useFileManager([stateFiles, setFiles]: uStat<
   UserFileData[]
@@ -129,6 +130,7 @@ function formatName(name: string) {
 export function useStartRecording(
   setMessage: (val: string) => void,
 ) {
+  const locale = useContext(All).userData.language[0];
   const {
     browserSupportsSpeechRecognition,
     listening,
@@ -145,7 +147,8 @@ export function useStartRecording(
     transcript,
     start: async function () {
       resetTranscript();
-      await SpeechRecognition.startListening();
+      void this.stop();
+      await SpeechRecognition.startListening({ language: locale === "en" ? "en-IN" : "hi-IN" });
     },
     stop: SpeechRecognition.stopListening,
     toggle: listening

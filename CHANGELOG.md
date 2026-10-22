@@ -1,3 +1,10 @@
+# V-2.3.5
+- Optimized terms and privacy page and simplified styles.
+- Enhanced proxy handling and navigation.
+- Boosted security in OTPs.
+- Used app language in speech recognition.
+- Move react-speech-recognition to dependencies from devDependencies.
+
 # V-2.3.4
 - Removed demo link from Header component.
 - Updated Hero component styles for better responsiveness and opacity handling.
