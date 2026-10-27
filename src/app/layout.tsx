@@ -1,15 +1,10 @@
 import type { Viewport } from "next";
-import { Poppins } from "next/font/google";
+import "@/components/Fonts";
 import localFont from "next/font/local";
 import { buildMetadata } from "./(main)/lib/metadata";
 import Analytics from "@/components/Analytics";
 
 export const metadata = buildMetadata("en");
-
-const poppins = Poppins({
-  subsets: ["latin", "devanagari"],
-  weight: ["400", "500", "600", "700"],
-});
 
 const theSeasons = localFont({
   variable: "--font-the-seasons",
@@ -73,7 +68,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className={`h-full antialiased ${poppins.className} ${theSeasons.variable} ${theSeasonsTemp.variable}`}>
+    <html className={`h-full antialiased ${theSeasons.variable} ${theSeasonsTemp.variable}`}>
       <body>
         <Analytics />
         {children}

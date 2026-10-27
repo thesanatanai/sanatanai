@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
       name: "Guest",
       email,
       id,
-      picture: "user.png",
+      picture: "",
       preferredLocale: locale || "hi",
     });
 
@@ -146,7 +146,7 @@ export async function PUT(request: NextRequest) {
     await otpModel.create({
       otpHash,
       email,
-      startTime: Date.now(),
+      createdAt: Date.now(),
     });
 
     // New code => fresh attempt budget, no lock
@@ -187,13 +187,13 @@ async function getOtp(email: string) {
   if (!registration) return genResErr("OTP expired", 401);
 
   const now = Date.now();
-  const { startTime } = registration;
+  const { createdAt } = registration;
 
-  if (startTime + 600000 < now) {
+  if (createdAt.getTime() + 600000 < now) {
     await otpModel.deleteOne({ email });
     return genResErr("OTP Expired", 401);
   } else {
-    const leftTime = now - 600000 - startTime;
+    const leftTime = now - 600000 - createdAt.getTime();
     if (leftTime > 100) {
       setDelTimer(email, leftTime);
     }

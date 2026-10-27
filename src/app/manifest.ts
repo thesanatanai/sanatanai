@@ -9,7 +9,7 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/",
     id: "/",
     scope: "/",
-     categories: ["education", "productivity"],
+    categories: ["education", "productivity"],
     lang: "en",
     theme_color: "#000000",
     background_color: "#000000",
@@ -102,6 +102,45 @@ export default function manifest(): MetadataRoute.Manifest {
         ],
       },
       {
+        name: "Home",
+        short_name: "Home",
+        url: "/home",
+        description: "Open Sanatan AI home",
+        icons: [
+          {
+            src: "192x192.png",
+            type: "image/png",
+            sizes: "192x192",
+          },
+        ],
+      },
+      {
+        name: "Privacy Policy",
+        short_name: "Privacy",
+        url: "/privacy",
+        description: "Open Sanatan AI's privacy policy",
+        icons: [
+          {
+            src: "192x192.png",
+            type: "image/png",
+            sizes: "192x192",
+          },
+        ],
+      },
+      {
+        name: "Terms & Conditions",
+        short_name: "Terms",
+        url: "/terms",
+        description: "Open terms and conditions",
+        icons: [
+          {
+            src: "192x192.png",
+            type: "image/png",
+            sizes: "192x192",
+          },
+        ],
+      },
+      {
         name: "Logout from Sanatan AI",
         short_name: "Logout",
         url: "/welcome?logout=true",
@@ -113,7 +152,7 @@ export default function manifest(): MetadataRoute.Manifest {
             sizes: "192x192",
           },
         ],
-      },
+      }
     ],
   };
 }

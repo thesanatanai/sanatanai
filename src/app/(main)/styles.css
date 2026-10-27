@@ -9,8 +9,8 @@
   --color-water: #3a6fb5;
   --color-rose: #c4508f;
   --font-seasons:
-    var(--font-the-seasons), var(--font-season), "Poppins", "Georgia", "Gill Sans", "Gill Sans MT",
-    Calibri, "Trebuchet MS", sans-serif;
+    var(--font-the-seasons), var(--font-season), "Poppins", "Georgia",
+    "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   --font-sans:
     "Hanken Grotesk Variable", "Noto Sans Devanagari Variable", system-ui,
     -apple-system, "Segoe UI", sans-serif;
@@ -84,6 +84,11 @@ html.lenis body {
 }
 .lenis.lenis-stopped {
   overflow: hidden;
+}
+
+lord-icon {
+  --lord-icon-primary: #f3ecdc;
+  --lord-icon-secondary: #f59a3c;
 }
 
 .js .draw {

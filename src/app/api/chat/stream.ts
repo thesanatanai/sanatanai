@@ -3,15 +3,15 @@ import type { Candidate, GoogleGenAI, Part } from "@google/genai";
 import {
   getNewMessage,
   getSender,
+  mergeParts,
   requestOptions,
-  serverCallMap,
+  runServerTools,
 } from "./search";
 import { setMessages } from "@/actions/chatActions";
 
-// Hard cap on chained server-side tool calls (web_search / web_fetch) per
-// user turn. Without this, a model that keeps requesting tool calls back
-// to back would recurse forever - holding the connection open indefinitely
-// and burning unbounded Gemini/Tavily quota on a single user message.
+// Hard cap on chained tool calls per user turn. Without this, a model that
+// keeps requesting tool calls back to back would hold the connection open
+// forever and burn unbounded Gemini/Tavily quota on a single message.
 const MAX_TOOL_CALL_STEPS = Number(process.env.MAX_TOOL_CALLS || 8);
 
 export default function generateStream(
@@ -25,76 +25,82 @@ export default function generateStream(
       const sendToFrontend = getSender<Candidate | { error: string }>(
         controller,
       );
-      const serverFunctions = Object.keys(serverCallMap);
+
+      // Two separate lists, on purpose:
+      //  - savedContents: what goes to the database (history + this user
+      //    message, later + ONE model message with the visible text).
+      //  - workingContents: what goes to Gemini. It also receives the tool
+      //    turns (functionCall / functionResponse) of THIS request only.
+      const savedContents = [...requestOptions.contents];
+      const workingContents = [...requestOptions.contents];
+
+      // Every piece of answer text the user saw, across all tool steps.
+      const visibleParts: Part[] = [];
+      const save = () =>
+        setMessages(userID, chatID, getNewMessage(savedContents, visibleParts));
 
       async function runTurn(depth: number): Promise<void> {
-        const contents = structuredClone(requestOptions.contents);
-        const result = await ai.models.generateContentStream(requestOptions);
+        const result = await ai.models.generateContentStream({
+          ...requestOptions,
+          contents: workingContents,
+        });
+
+        // Exactly what the model returned in this step, in order. Gemini 3
+        // needs its functionCall parts (with thoughtSignature) replayed.
         const modelParts: Part[] = [];
 
         for await (const chunk of result) {
-          const parts = chunk.candidates?.[0]?.content?.parts || [];
-          for (const part of parts) {
-            if (part.text) modelParts.push({ text: part.text });
-            if (part.functionCall) {
-              const name = part.functionCall.name as string;
-              const args = part.functionCall.args as Record<string, string>;
+          const candidate = chunk.candidates?.[0];
+          if (!candidate) continue;
 
-              if (serverFunctions.includes(name)) {
-                if (depth >= MAX_TOOL_CALL_STEPS) {
-                  // Stop chaining tool calls and let the frontend know why,
-                  // instead of looping (potentially) forever. Persist
-                  // whatever text was generated so far rather than
-                  // silently dropping it.
-                  sendToFrontend([
-                    {
-                      content: {
-                        parts: [{ text: "\n\nSorry! Tool Call limit reached" }],
-                      },
-                    },
-                  ]);
-                  await setMessages(
-                    userID,
-                    chatID,
-                    getNewMessage(contents, modelParts),
-                  );
-                  return;
-                }
-                const functionResult = await serverCallMap[
-                  name as keyof typeof serverCallMap
-                ](args.query as never, userID);
+          const parts = candidate.content?.parts ?? [];
+          modelParts.push(...parts);
 
-                requestOptions.contents.push(
-                  { role: "model", parts: structuredClone(modelParts) },
-                  {
-                    role: "user",
-                    parts: [
-                      {
-                        functionResponse: { name, response: functionResult },
-                      },
-                    ],
-                  },
-                );
-
-                modelParts.length = 0; // Clear modelParts
-                return runTurn(depth + 1);
-              } else {
-                modelParts.push({
-                  functionCall: part.functionCall,
-                  thoughtSignature: part.thoughtSignature,
-                });
-              }
-            }
+          // The browser only gets the answer text: no tool calls, no thoughts.
+          const shown = parts.filter((p) => !p.thought && !p.functionCall);
+          for (const p of shown) {
+            if (p.text) visibleParts.push({ text: p.text });
           }
-          sendToFrontend(chunk.candidates);
+
+          if (shown.length === parts.length) {
+            sendToFrontend([candidate]);
+          } else if (shown.length) {
+            sendToFrontend([
+              {
+                ...candidate,
+                content: { ...candidate.content, parts: shown },
+              },
+            ]);
+          }
         }
 
-        await setMessages(userID, chatID, getNewMessage(contents, modelParts)); // Set messages on database
+        const calls = modelParts
+          .filter((p) => p.functionCall)
+          .map((p) => p.functionCall!);
+
+        // No tool call: this is the final answer. Save it and finish.
+        if (!calls.length) return void (await save());
+
+        if (depth >= MAX_TOOL_CALL_STEPS) {
+          const notice = "\n\nSorry! Tool Call limit reached";
+          sendToFrontend([{ content: { parts: [{ text: notice }] } }]);
+          visibleParts.push({ text: notice });
+          return void (await save());
+        }
+
+        // Run the tools, then give Gemini the model's own turn (with the
+        // functionCall parts) followed by the matching functionResponse parts.
+        const responses = await runServerTools(calls, userID);
+        workingContents.push(
+          { role: "model", parts: mergeParts(modelParts) },
+          { role: "user", parts: responses },
+        );
+        return runTurn(depth + 1);
       }
 
       try {
         await runTurn(0);
-        controller.close(); // Close the controller
+        controller.close();
       } catch (e: any) {
         console.error(e);
         sendToFrontend([{ error: e.message }]);

@@ -12,6 +12,11 @@
   }
 }
 
+lord-icon {
+  --lord-icon-primary: var(--text-color);
+  --lord-icon-secondary: var(--text-color);
+}
+
 .page {
   min-height: 100vh;
   position: relative;
@@ -133,9 +138,6 @@
   overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--text-color) 12%, transparent);
   border-radius: 8px;
-  background:
-    linear-gradient(145deg, color-mix(in srgb, var(--text-color) 9%, transparent), transparent),
-    #000;
   box-shadow: 0 24px 70px rgba(0, 0, 0, 0.26);
   backdrop-filter: blur(18px);
   animation: legalRise 0.5s ease both;

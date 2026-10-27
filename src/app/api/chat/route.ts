@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     const chat = await getChat(id, chatId);
     if (typeof chat == "function") return chat();
 
-    const systemPrompt = prompt(name as string, locale, memories)
+    const systemPrompt = prompt(name as string, locale, memories || []);
     const requestOptions = getRequestParams(chat, newMessage, config, systemPrompt);
     const stream = generateStream(requestOptions, ai, id, chatId);
 

@@ -11,7 +11,7 @@ import PageContext from "@/app/(root)/app/PageContext";
 import "katex/dist/katex.min.css";
 
 function GeetaBlock(props: Readonly<{ children: unknown }>) {
-  const txt = props.children?.toString().split("+");
+  const txt = props.children?.toString().split("\x08");
   const heading = splitLines(txt?.[1]);
   const shloka = splitLines(txt?.[2]);
   const meaning = splitLines(txt?.[3]);
@@ -45,12 +45,11 @@ function preprocess(md?: string) {
   md = md.replace(
     /^\[!!gita!!\]\[([^\n]+)\]\[([^\n]+?)\]\[([^\n]*?)\]\[!!gita!!\]/gm,
     (_, title, body, meaning) => {
-      return `<gita>\n\n
-      +${title.trim()}
-      +${body.trim()}
-      +${meaning.trim()}
-      \n\n</gita>
-      `;
+      return `<gita>
+      \x08${title.trim()}
+      \x08${body.trim()}
+      \x08${meaning.trim()}
+</gita>`;
     },
   );
 

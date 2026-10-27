@@ -83,7 +83,7 @@ Browser
        ├─ /api/chat          → Gemini streaming + server-side tool-call loop
        ├─ /api/chat/name     → short model call that titles a new chat
        ├─ /api/chat/v2       → prompt enhancement
-       ├─ /api/chats         → chat session CRUD (GET list, OPTIONS read, PATCH new, PUT update, DELETE)
+       ├─ /api/chats         → chat session CRUD (GET list, POST read, PATCH new, PUT update, DELETE)
        ├─ /api/user          → Google sign-in, profile
        ├─ /api/user/otp      → send (PUT) and verify (POST) email codes
        └─ /api/user/memories → read saved memories
@@ -254,7 +254,7 @@ The web app is configured for Vercel-compatible deployment through `vercel.json`
 - Uploads are sent inline with the chat request and therefore count toward model request size and provider limits.
 - The offline behavior is an offline fallback page and static-asset caching, not offline chat or locally stored conversations.
 - Custom instructions (the persona field) are stored in the browser's `localStorage`; they are not currently persisted as server-side user preferences.
-- In Settings, "Delete all messages" and "Import chat" are not wired up yet, and "Export current chat" only shows a notification. Assistant-generated buttons render but do not yet send a reply when clicked.
+- In Settings, "Delete all messages" and "Import chat" are not wired up yet, and "Export current chat" only shows a notification.
 - Sessions are stateless JWTs;The server does not apply per-user rate limiting to chat requests, and OTP guessing is limited by the short-lived blacklist.
 - API access is designed for the first-party browser interface and authenticated sessions rather than as a public developer API.
 - Conversations are stored in plain form in MongoDB and may be processed by Google, Tavily, Vercel, and MongoDB as described in the in-app Privacy Policy.

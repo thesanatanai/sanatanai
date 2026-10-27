@@ -20,6 +20,8 @@ const CHIP_POSITIONS = [
   "bottom-[-1.1rem] left-[10%]",
 ];
 
+export const instant = false;
+
 /**
  * A 16:9 app window floating in 3D. It swings in as you scroll, tilts toward the pointer,
  * and carries three chips at different depths.

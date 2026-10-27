@@ -14,16 +14,20 @@ const userSchema = new mongoose.Schema({
   },
   picture: {
     type: String,
-    default: "user.png"
+    default: ""
   },
   preferredLocale: {
     type: String,
     enum: ["en", "hi"],
     default: "en",
   },
-  memories: [{
-    type: String
-  }]
+  memories: {
+    type: [{
+      type: String
+    }],
+    required: false,
+
+  }
 });
 
 const newModel = () => mongoose.model("users", userSchema);

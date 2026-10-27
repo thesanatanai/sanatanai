@@ -6,7 +6,7 @@ import Panchangam, {
 
 function getPanchang() {
   const date = new Date();
-  const observer = new Observer(23.1765, 75.7885, 494); // Varanasi
+  const observer = new Observer(23.1765, 75.7885, 494); // Ujjain
   const panchang = Panchangam.getPanchangam(date, observer, {
     timezoneOffset: 330, // India
   });
@@ -51,7 +51,7 @@ export function getUpcomingFestivals() {
     date,
     observer,
     timezoneOffset: date.getTimezoneOffset(),
-    days: 30,
+    days: 15,
   });
   return formatFestivals(upcoming, true);
 }

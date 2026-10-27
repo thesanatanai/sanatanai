@@ -7,7 +7,6 @@ import { logger } from "@/utils/utils";
 
 // Global tracker to ensure @lordicon/element custom element is registered only once
 let isLordiconDefined = false;
-const DEFAULT_COLORS = "primary:#f3ecdc,secondary:#f59a3c";
 
 export const Icon: React.FC<LordIconProps> = React.memo(({
   src,
@@ -21,17 +20,15 @@ export const Icon: React.FC<LordIconProps> = React.memo(({
   style,
   size,
   className,
-  onReady,
-  ...props
+  onReady
 }) => {
   const manager = useRefManager<LordIcon>();
 
   useEffect(() => {
-    let isMounted = true;
-    let targetElement: HTMLElement | null = null;
+    const controller = new AbortController();
 
     // Define the custom element dynamically
-    const initLordicon = async () => {
+    async function initLordicon() {
       if (!isLordiconDefined) {
         try {
           const { defineElement } = await import("@lordicon/element");
@@ -43,70 +40,34 @@ export const Icon: React.FC<LordIconProps> = React.memo(({
       }
     };
     void initLordicon();
-
-    const handleReady = () => {
-      if (onReady) {
-        onReady();
-      }
-    };
-
-    const play = () => {
-      manager.afterAvail((element) => {
-        if (element.play) {
-          element.play();
-        }
-      });
-    };
+  
     // If target specifies a parent element, attach a mouseenter trigger to that parent
-    if (typeof target === "string" && (target === "parent" || /^parent\*\d+$/.test(target))) {
-      manager.afterAvail((iconEl) => {
-        if (!isMounted) return;
-
-        let currentEl: HTMLElement | null = iconEl.parentElement;
+    if (typeof target === "string") {
+      manager.afterAvail((icon) => {
+        if (controller.signal.aborted) return;
+        let current: HTMLElement | null = icon.parentElement;
         const match = (/^parent\*(\d+)$/).exec(target);
-
         if (match) {
           const depth = Number(match[1]);
           // Ascend 'depth - 1' times since we already took parentElement once
           for (let i = 1; i < depth; i++) {
-            currentEl = currentEl?.parentElement || null;
+            current = current?.parentElement || null;
           }
-        }
+        } else if (target === "parent") void 0;
+        else return;
 
-        if (currentEl) {
-          targetElement = currentEl;
-          targetElement.addEventListener("mouseenter", play);
-        }
+        icon.target = current;
       });
     }
 
     // Attach ready event listener
     manager.afterAvail((iconEl) => {
-      if (!isMounted) return;
-      iconEl.addEventListener("ready", handleReady);
-    });
-
-    // Pass custom arbitrary properties to the custom element safely without explicit 'any' types
-    Object.keys(props).forEach((prop) => {
-      manager.afterAvail((iconEl) => {
-        if (!isMounted) return;
-        const val = (props as Record<string, unknown>)[prop];
-        if (val !== undefined && val !== null) {
-          iconEl.setAttribute(prop, String(val));
-        }
-      });
+      if (controller.signal.aborted || !onReady) return;
+      iconEl.addEventListener("ready", onReady);
     });
 
     // Cleanup event listeners on unmount
-    return () => {
-      isMounted = false;
-      if (targetElement) {
-        targetElement.removeEventListener("mouseenter", play);
-      }
-      manager.afterAvail((iconEl) => {
-        iconEl.removeEventListener("ready", handleReady);
-      });
-    };
+    return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -128,7 +89,7 @@ export const Icon: React.FC<LordIconProps> = React.memo(({
         return realSrc;
       })()}
       trigger={trigger}
-      colors={colors || DEFAULT_COLORS}
+      colors={colors}
       stroke={stroke}
       state={state}
       speed={speed}

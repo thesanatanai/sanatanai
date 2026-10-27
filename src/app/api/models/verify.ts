@@ -10,14 +10,13 @@ const verifyOtpSchema = new Schema({
         type: String,
         required: true
     },
-    startTime: {
-        type: Number,
-        required: true,
-        default: Date.now
+    createdAt: {
+        type: Date,
+        default: Date.now,
+        expires: 600 // Deletes 10 minutes after createdAt
     }
-}, {
-    expires: 600000
 });
+
 
 const blackListedSchema = new Schema({
     email: {
@@ -32,7 +31,9 @@ const blackListedSchema = new Schema({
     },
     tries: Number
 })
-
+verifyOtpSchema.index({
+    otp: 1
+})
 const newModel = () => mongoose.model("otp_verification", verifyOtpSchema);
 const newMdl = () => mongoose.model("blacklisted", blackListedSchema);
 const otpModel: ReturnType<typeof newModel> = mongoose.models.otp_verification || newModel();

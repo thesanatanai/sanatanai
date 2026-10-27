@@ -1,3 +1,9 @@
+# V-2.3.6
+- Refined web search, page extraction, and memory tools with validation and bounded results.
+- Improved saved-memory management in Settings and strengthened memory persistence.
+- Updated chat API methods and validation, OTP expiry storage, and user profile defaults.
+- Added PWA shortcuts and improved legal pages, font loading, Markdown rendering, and UI styling.
+
 # V-2.3.5
 - Optimized terms and privacy page and simplified styles.
 - Enhanced proxy handling and navigation.

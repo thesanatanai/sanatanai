@@ -22,7 +22,7 @@ export async function loadChat(
 ) {
   if(setChatLoading) setChatLoading(true);
   const chat: fullChat = await fetch("api/chats", {
-    method: "OPTIONS",
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },

@@ -30,6 +30,11 @@
   --primary-color: #ffffff;
 }
 
+lord-icon {
+  --lord-icon-primary: var(--text-color);
+  --lord-icon-secondary: var(--text-color);
+}
+
 
 @layer base {
   :root {
@@ -39,6 +44,7 @@
     --muted-foreground: var(--secondary-color);
     --border: #7775;
     --sidebar: #7775;
+    --font-poppins: "Poppins", "Georgia", 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   }
 }
 

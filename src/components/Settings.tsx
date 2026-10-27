@@ -53,9 +53,9 @@ export default function Settings() {
               <SettingItem className="name-input">
                 <label htmlFor="name">
                   <Lordicon src="avatar" target="parent*2" />
-                  <code>
+                  <span>
                     <Language need="nameLabel" />
-                  </code>
+                  </span>
                 </label>
                 <input
                   type="text"
@@ -64,6 +64,7 @@ export default function Settings() {
                   id="name"
                   placeholder={t("enterNameLabel")}
                   defaultValue={name}
+                  maxLength={25}
                   onBlur={(e) => setName(e.target.value)}
                 />
               </SettingItem>
@@ -71,9 +72,9 @@ export default function Settings() {
                 <div className="flex md:gap-[inherit]">
                   <label>
                     <Lordicon src="theme" target="parent*2" />
-                    <code>
+                    <span>
                       <Language need="themeLabel" />:
-                    </code>
+                    </span>
                   </label>
                   <div className="center-flex gap-1 cursor-pointer">
                     <span
@@ -101,9 +102,9 @@ export default function Settings() {
                 <div className="flex gap-[inherit]">
                   <label>
                     <Lordicon src="language" target="parent*2" />
-                    <code>
+                    <span>
                       <Language need="languageLabel" />:
-                    </code>
+                    </span>
                   </label>
                   <div className="center-flex gap-1">
                     <span
@@ -154,9 +155,9 @@ export default function Settings() {
             <SettingItem className="min-w-full mt-5">
               <label>
                 <Lordicon src="persona" target="parent*2" />
-                <code className="flex">
+                <span className="flex font-poppins">
                   <Language need="persona" />:
-                </code>
+                </span>
               </label>
               <textarea
                 value={custom}

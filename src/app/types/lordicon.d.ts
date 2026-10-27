@@ -1,5 +1,5 @@
 import useRefManager from "@/utils/useRefManager";
-import { Player, Element as LordIconElement } from "@lordicon/element";
+import { Player, LordIconElement } from "@lordicon/element";
 interface LordIconProps {
   /** URL path to the icon JSON file */
   src: string;

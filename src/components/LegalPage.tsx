@@ -5,6 +5,8 @@ import { locales, t } from "@/utils/i18n";
 import { Check, LucideIcon } from "lucide-react";
 import type { CSSProperties } from "react";
 import "@/css/legalPage.css";
+import Script from "next/script";
+import AdUnit from "./AdUnit";
 
 type LanguageKey = keyof typeof locales.en;
 
@@ -29,7 +31,7 @@ export default function LegalPage({
   intro,
   sections,
   t: lang,
-  url
+  url,
 }: Readonly<LegalPageProps>) {
   const language = lang;
   const shell = url || "/terms";
@@ -39,12 +41,8 @@ export default function LegalPage({
         <header className="hero">
           <div>
             <p className="eyebrow">{eyebrow}</p>
-            <h1 className="title">
-              {t(title, {}, language)}
-            </h1>
-            <p className="intro">
-              {t(intro, {}, language)}
-            </p>
+            <h1 className="title">{t(title, {}, language)}</h1>
+            <p className="intro">{t(intro, {}, language)}</p>
           </div>
 
           <div className="languageSwitch">
@@ -61,11 +59,9 @@ export default function LegalPage({
                   language === "en" ? "languageButtonActive" : ""
                 }`}
                 aria-pressed={language === "en"}
-                {...(
-                  language == "hi" &&  {
-                    onClick: () => location.href = shell
-                  }
-                )}
+                {...(language == "hi" && {
+                  onClick: () => (location.href = shell),
+                })}
               >
                 English
               </button>
@@ -75,11 +71,9 @@ export default function LegalPage({
                   language === "hi" ? "languageButtonActive" : ""
                 }`}
                 aria-pressed={language === "hi"}
-                {...(
-                  language == "en" &&  {
-                    onClick: () => location.href = `${shell}/hi`
-                  }
-                )}
+                {...(language == "en" && {
+                  onClick: () => (location.href = `${shell}/hi`),
+                })}
               >
                 हिन्दी
               </button>
@@ -120,9 +114,7 @@ export default function LegalPage({
                       <span className="marker" aria-hidden="true">
                         <Check size={14} strokeWidth={3} />
                       </span>
-                      <span>
-                        {t(item, {}, language)}
-                      </span>
+                      <span>{t(item, {}, language)}</span>
                     </li>
                   ))}
                 </ul>
@@ -132,20 +124,29 @@ export default function LegalPage({
         </div>
 
         <div className="footer">
-          
-        <button
-          id="agree-btn"
-          className={`welcomeButton center-flex action`}
-          onClick={() => {
-            window.location.href = "/welcome";
-          }}
-        >
-          {t("agreeProceed", {}, language)}
-          <Icon src="arrow" target="parent" colors="primary:#ffffff,secondary:#ffffff" />
-        </button>
+          <button
+            id="agree-btn"
+            className={`welcomeButton center-flex action`}
+            onClick={() => {
+              window.location.href = "/welcome";
+            }}
+          >
+            {t("agreeProceed", {}, language)}
+            <Icon
+              src="arrow"
+              target="parent"
+              colors="primary:#ffffff,secondary:#ffffff"
+            />
+          </button>
         </div>
+        <Script
+            async
+            strategy="afterInteractive"
+            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3342425038494765"
+            crossOrigin="anonymous"
+          />
+          <AdUnit />
       </div>
     </main>
   );
 }
-

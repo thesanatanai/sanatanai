@@ -11,9 +11,8 @@ import z, { ZodError } from "zod";
 const client = new OAuth2Client(process.env.NEXT_PUBLIC_OAUTH_CLIENT_ID);
 const Update = z.object({
   memories: z.array(z.string()).optional(),
-  name: z.string().optional(),
-  preferredLocale: z.enum(["en", "hi"]).optional(),
-  picture: z.string().optional()
+  name: z.string().max(25).optional(),
+  preferredLocale: z.enum(["en", "hi"]).optional()
 });
 
 void dbConnect();

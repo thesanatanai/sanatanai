@@ -40,7 +40,7 @@ export async function GET() {
 }
 
 // Get a specific chat
-export async function OPTIONS(request: NextRequest) {
+export async function POST(request: NextRequest) {
   const user = (await verifyUser(true)) as User;
   if (typeof user == "function") return user();
 
@@ -77,7 +77,7 @@ export async function PATCH() {
 // Delete a chat
 export async function DELETE(request: NextRequest) {
   const { id: chatId } = await request.json();
-  if(!chatId) return respondErr("Chat Id not provided");
+  if(!chatId || typeof chatId !== "string") return respondErr("Invalid chat id provided");
   const user = await verifyUser(true) as User;
   if(typeof user == "function") return user();
   const { id } = user;
@@ -104,6 +104,7 @@ export async function PUT(request: NextRequest) {
     const { id: chatId, ...changes } = await request.json();
 
     if (!Object.keys(changes).length) return respondErr("No modifications!!");
+    if(!chatId || typeof chatId !== "string") return respondErr("Invalid chat id provided");
 
     const validated = Modifications.parse(changes);
     if (!Object.keys(validated).length)
