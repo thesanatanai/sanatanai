@@ -95,10 +95,8 @@ export function useDeleteMessage() {
   
   return async function deleteMessage(index: number) {
     if(!history[index]) return;
-    const hasFunctionRes = history[index + 1]?.parts[0]?.functionResponse;
-    const deleteCount = hasFunctionRes ? 2 : 1;
     const newHistory = structuredClone(history)
-    newHistory.splice(index, deleteCount);
+    newHistory.splice(index, 1);
     setHistory(newHistory);
     return await updateChat(id, {
       messages: newHistory
