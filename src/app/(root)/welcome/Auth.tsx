@@ -200,7 +200,7 @@ export default function Auth(props: Record<string, Function>) {
       <Email setStep={props.setStep} setIsLoading={setIsLoading} />
       {isLoading && (
         <div className="w-full h-full absolute z-50 backdrop-blur-[1px] center-flex">
-          <div className="w-10 h-10 border-4 border-t-blue-400 animate-spin rounded-[50%] shadow-2xl ring-8 ring-black" />
+          <div className="w-10 h-10 border-4 border-t-blue-400! animate-spin rounded-[50%] shadow-2xl ring-8 ring-black" />
         </div>
       )}
     </>

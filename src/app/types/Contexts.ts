@@ -47,7 +47,6 @@ type ChatHistory = {
       mimeType: string
     },
     text?: string,
-    functionResponse?: unknown
   }[];
 }[];
 

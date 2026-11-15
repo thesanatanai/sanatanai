@@ -37,6 +37,10 @@ export default function useFileManager([stateFiles, setFiles]: uStat<
     }
     files = files.slice(0, remainingSlots);
     files.forEach((file) => {
+      if(file.size > 4096e+3) return notification("fileLimitExceeded", {
+        type: "error",
+        language: true,
+      });
       const isImage = file.type.startsWith("image/");
       const name = file.name;
       const isPlainTextFallback =

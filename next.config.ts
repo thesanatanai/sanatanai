@@ -1,7 +1,6 @@
 import type { NextConfig } from "next";
 
 const isProd = process.env.NODE_ENV === "production";
-const enforceCsp = process.env.CSP_ENFORCE === "true";
 
 const csp = [
   "default-src 'self'",
@@ -28,6 +27,8 @@ const csp = [
     "connect-src 'self'",
     "https://*.google.com",
     "https://*.googletagmanager.com",
+    "https://*.googleusercontent.com",
+    "https://*.gstatic.com",
   ].join(" "),
 
   "frame-src https://accounts.google.com/gsi/", // Google sign-in iframe
@@ -39,7 +40,6 @@ const csp = [
   "form-action 'self'",
   "frame-ancestors 'none'",
 
-  // Would break plain http://localhost in development.
   isProd ? "upgrade-insecure-requests" : "",
 ]
   .filter(Boolean)
@@ -47,9 +47,7 @@ const csp = [
 
 const securityHeaders = [
   {
-    key: enforceCsp
-      ? "Content-Security-Policy"
-      : "Content-Security-Policy-Report-Only",
+    key: "Content-Security-Policy",
     value: csp,
   },
   // Stop MIME sniffing.

@@ -89,7 +89,7 @@ const ChatItem: React.FC<ChatItemProps> = React.memo(
       const isStreaming = chat.streaming;
       const isError = chat.error;
       if(!text && !isStreaming && !isError) return "";
-      if(isError) return <Err />
+      if(isError && !text) return <Err />
       return (
         <div className="bot-message message **:text-(--text-color)">
           <div className="flex">
@@ -122,7 +122,7 @@ const ChatItem: React.FC<ChatItemProps> = React.memo(
               }
             </div>
           </div>
-          <div className="row gap-2 mt-2">
+          {isError ? <Err /> : (<div className="row gap-2 mt-2">
             <button className="icon ml-10" onClick={speak}>
               <Lordicon size={25} src="speak" />
             </button>
@@ -135,7 +135,7 @@ const ChatItem: React.FC<ChatItemProps> = React.memo(
             <button onClick={() => deleteMessage(index)} className="icon">
               <Lordicon size={25} src="trash" />
             </button>
-          </div>
+          </div>)}
         </div>
       );
     }

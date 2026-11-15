@@ -17,5 +17,3 @@
 - Custom Instructions
 - Alerts
 - Search in chat
-
-## 4. Guest Mode
