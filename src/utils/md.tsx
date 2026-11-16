@@ -1,24 +1,25 @@
 "use client";
 
-import { Streamdown } from "streamdown";
+import { Streamdown, defaultRemarkPlugins } from "streamdown";
 import "streamdown/styles.css";
 import { mermaid } from "@streamdown/mermaid";
 import { code } from "@streamdown/code";
-import { createMathPlugin } from "@streamdown/math"
+import { createMathPlugin } from "@streamdown/math";
 import { Fragment, useContext, type ReactNode } from "react";
 import { All } from "@/app/(root)/AllContext";
 import PageContext from "@/app/(root)/app/PageContext";
 import "katex/dist/katex.min.css";
+import remarkCustomBlocks from "./remark";
 
 function GeetaBlock(props: Readonly<{ children: unknown }>) {
   const geetaRegex = /\[([^\n]+?)\]\[([^\n]+?)\]\[([^\n]*?)\]/;
   const txt = props.children?.toString();
-  if(!txt) return;
+  if (!txt) return;
   const result = geetaRegex.exec(txt);
-  if(!result) return;
+  if (!result) return;
 
   const [, heading, shloka, meaning] = result;
-  if(!heading || !shloka) return;
+  if (!heading || !shloka) return;
 
   return (
     <div className="gita">
@@ -54,7 +55,7 @@ function ChatBtn({ children }: Readonly<{ children: unknown }>) {
 const shiki = (dark: boolean): [string, string] =>
   dark ? ["slack-dark", "slack-dark"] : ["github-light", "github-light"];
 const math = createMathPlugin({
-  singleDollarTextMath: true
+  singleDollarTextMath: true,
 });
 export default function MarkDown({
   markdown: md,
@@ -75,8 +76,12 @@ export default function MarkDown({
       plugins={{
         mermaid,
         code,
-        math
+        math,
       }}
+      remarkPlugins={[
+        ...Object.values(defaultRemarkPlugins),
+        [remarkCustomBlocks, { tags: ["gita", "canvas"] }],
+      ]}
       animated={streaming}
       isAnimating={streaming}
       shikiTheme={shiki(isDark)}
