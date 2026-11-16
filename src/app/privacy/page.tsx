@@ -14,32 +14,32 @@ const privacySections: LegalSection[] = [
   {
     title: "privacySectionCollect",
     icon: Database,
-    items: ["privacyCollect1", "privacyCollect2", "privacyCollect3", "privacyCollect4"],
+    items: "privacyCollect",
   },
   {
     title: "privacySectionUse",
     icon: ShieldCheck,
-    items: ["privacyUse1", "privacyUse2", "privacyUse3", "privacyUse4", "privacyUse5"],
+    items: "privacyUse",
   },
   {
     title: "privacySectionShare",
     icon: Handshake,
-    items: ["privacyShare1", "privacyShare2"],
+    items: "privacyShare",
   },
   {
     title: "privacySectionChoices",
     icon: Settings2,
-    items: ["privacyChoices1", "privacyChoices2", "privacyChoices3", "privacyChoices4"],
+    items: "privacyChoices",
   },
   {
     title: "privacySectionChildren",
     icon: Baby,
-    items: ["privacyChildren1"],
+    items: ["privacyChildren"],
   },
   {
     title: "privacySectionContact",
     icon: Contact,
-    items: ["privacyContact1"],
+    items: ["privacyContact"],
   },
 ];
 

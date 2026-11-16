@@ -11,26 +11,26 @@ import PageContext from "@/app/(root)/app/PageContext";
 import "katex/dist/katex.min.css";
 
 function GeetaBlock(props: Readonly<{ children: unknown }>) {
-  const txt = props.children?.toString().split("\x08");
-  const heading = splitLines(txt?.[1]);
-  const shloka = splitLines(txt?.[2]);
-  const meaning = splitLines(txt?.[3]);
-  if (!heading || !shloka)
-    return <div className="gita">Invalid Gita Block</div>;
+  const geetaRegex = /\[([^\n]+?)\]\[([^\n]+?)\]\[([^\n]*?)\]/;
+  const txt = props.children?.toString();
+  if(!txt) return;
+  const result = geetaRegex.exec(txt);
+  if(!result) return;
+
+  const [, heading, shloka, meaning] = result;
+  if(!heading || !shloka) return;
+
   return (
     <div className="gita">
-      <h1>{heading}</h1>
-      <h2>{shloka}</h2>
-      {meaning && <h3>{meaning}</h3>}
+      <h1>{splitLines(heading)}</h1>
+      <h2>{splitLines(shloka)}</h2>
+      {meaning && <h3>{splitLines(meaning)}</h3>}
     </div>
   );
 }
 
-function splitLines(text: undefined): undefined;
 function splitLines(text: string): ReactNode;
-function splitLines(text?: string): ReactNode | undefined;
-function splitLines(text?: string) {
-  if (!text) return;
+function splitLines(text: string) {
   const lines = text.split(/\\n/g);
   return lines.map((line, index) => (
     <Fragment key={index + 1}>
@@ -40,31 +40,7 @@ function splitLines(text?: string) {
   ));
 }
 
-function preprocess(md?: string) {
-  if (!md) return "";
-  md = md.replace(
-    /^\[!!gita!!\]\[([^\n]+)\]\[([^\n]+?)\]\[([^\n]*?)\]\[!!gita!!\]/gm,
-    (_, title, body, meaning) => {
-      return `<gita>
-      \x08${title.trim()}
-      \x08${body.trim()}
-      \x08${meaning.trim()}
-</gita>`;
-    },
-  );
-
-  md = md
-    .replace(/\[!!btn!!\]\[(.*?)\]\[!!btn!!\]/g, (_, text) => {
-      return `<chat-btn>${text}</chat-btn>`;
-    })
-    .replace(
-      /^````\s*?\n([\s\S]+?)\n\s*?````/gm,
-      (_, inner) => `<canvas>${inner}</canvas>`,
-    );
-  return md;
-}
-
-function ChatBtn({ children }: Readonly<Record<string, unknown>>) {
+function ChatBtn({ children }: Readonly<{ children: unknown }>) {
   const setMessage = useContext(PageContext).userData.btnMessage[1];
   const text = children?.toString();
   if (!text) return;
@@ -93,6 +69,7 @@ export default function MarkDown({
       allowedTags={{
         gita: [],
         canvas: [],
+        badge: [],
         "chat-btn": [],
       }}
       plugins={{
@@ -106,10 +83,10 @@ export default function MarkDown({
       mode={streaming ? "streaming" : "static"}
       components={{
         gita: ({ children }) => <GeetaBlock>{children}</GeetaBlock>,
-        "chat-btn": ChatBtn,
+        "chat-btn": ({ children }) => <ChatBtn>{children}</ChatBtn>,
         canvas: ({ children }) => <div className="canvas">{children}</div>,
       }}
-      literalTagContent={["gita", "chat-btn"]}
+      literalTagContent={["gita", "chat-btn", "badge"]}
       // Relative and z-0 to prevent other streamdown components from overlapping
       // current Sanatan AI components.
       className="not-prose relative z-0"
@@ -119,7 +96,7 @@ export default function MarkDown({
         },
       }}
     >
-      {preprocess(md)}
+      {md}
     </Streamdown>
   );
 }

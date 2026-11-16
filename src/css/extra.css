@@ -127,6 +127,20 @@ button,
     cursor: pointer;
 }
 
+/* Badge custom component */
+badge {
+    padding: 2px 10px;
+    background: #2ecc7180;
+    border-radius: 20px;
+}
+
+badge[type="error"] {
+    background: #e74c3c80;
+}
+
+badge[type="neutral"] {
+    background: #2e8bfd70;
+}
 
 /* Improve focus styles for accessibility */
 :not(textarea, input):focus-visible {
@@ -223,8 +237,9 @@ lord-icon {
     color: var(--text-color);
     box-shadow: none;
     border: 0;
-    padding: 5px 10px;
-    margin: 0 10px;
+    border-radius: 20px;
+    padding: 5px 20px;
+    margin: 10px;
 }
 
 .hide {

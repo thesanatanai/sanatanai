@@ -3,7 +3,7 @@
 import { Icon } from "@/components/Lordicon";
 import { locales, t } from "@/utils/i18n";
 import { Check, LucideIcon } from "lucide-react";
-import type { CSSProperties } from "react";
+import type { CSSProperties, JSX } from "react";
 import "@/css/legalPage.css";
 import Script from "next/script";
 import AdUnit from "./AdUnit";
@@ -12,7 +12,7 @@ type LanguageKey = keyof typeof locales.en;
 
 export type LegalSection = {
   title?: LanguageKey;
-  items: LanguageKey[];
+  items: LanguageKey[] | LanguageKey;
   icon?: LucideIcon;
 };
 
@@ -84,11 +84,13 @@ export default function LegalPage({
         <div className="content">
           {sections.map((section, sectionIndex) => {
             const SectionIcon = section.icon;
+            const key2 = typeof section.items == "string" ? section.items : section.items.join("-");
+            const items = (typeof section.items == "string" ? t(section.items, {}, language) : section.items.map(item => t(item, {}, language))) as (string | JSX.Element)[];
 
             return (
               <section
                 className="panel"
-                key={section.title ?? section.items.join("-")}
+                key={section.title ?? key2}
                 style={{ "--legal-index": sectionIndex } as CSSProperties}
               >
                 {section.title && (
@@ -105,16 +107,16 @@ export default function LegalPage({
                 )}
 
                 <ul className="list">
-                  {section.items.map((item, itemIndex) => (
+                  {items.map((item, itemIndex) => (
                     <li
                       className="item"
-                      key={item}
+                      key={typeof item == "string" ? item : itemIndex}
                       style={{ "--item-index": itemIndex } as CSSProperties}
                     >
                       <span className="marker" aria-hidden="true">
                         <Check size={14} strokeWidth={3} />
                       </span>
-                      <span>{t(item, {}, language)}</span>
+                      <span>{item}</span>
                     </li>
                   ))}
                 </ul>
