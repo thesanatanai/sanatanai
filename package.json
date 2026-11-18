@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@fontsource/poppins": "^5.3.0",
-    "@google/genai": "^2.30.0",
+    "@google/genai": "^3.3.0",
     "@gsap/react": "^2.1.2",
     "@ishubhamx/panchangam-js": "^3.0.0",
     "@lordicon/element": "^3.0.2",
