@@ -1,3 +1,10 @@
+# V-2.4.0
+- Added a Vitest test suite (unit, API route, component and HTTP smoke tests) with enforced coverage thresholds for server code.
+- Added GitHub Actions CI (lint, types, tests, build, smoke tests), CodeQL and Dependabot.
+- `npm test` now also runs the type check and the unit tests.
+- Test files are type-checked by `next build`, so the build now also catches type errors in tests.
+- Introduce more custom components like Timeline, meter, badge, etc. for bot
+
 # V-2.3.6
 - Refined web search, page extraction, and memory tools with validation and bounded results.
 - Improved saved-memory management in Settings and strengthened memory persistence.

@@ -12,11 +12,16 @@ import "katex/dist/katex.min.css";
 import remarkCustomBlocks from "./remark";
 
 function GeetaBlock(props: Readonly<{ children: unknown }>) {
-  const geetaRegex = /\[([^\n]+?)\]\[([^\n]+?)\]\[([^\n]*?)\]/;
+  const geetaRegex = /\[([^\n]+?)\\\]\\\[([^\n]+?)\\\]\\\[([^\n]*?)\\\]/;
+  const invalid = (
+    <div className="gita">
+      <h2>Invalid Gita Block</h2>
+    </div>
+  );
   const txt = props.children?.toString();
-  if (!txt) return;
+  if (!txt) return invalid;
   const result = geetaRegex.exec(txt);
-  if (!result) return;
+  if (!result) return invalid;
 
   const [, heading, shloka, meaning] = result;
   if (!heading || !shloka) return;
@@ -32,7 +37,7 @@ function GeetaBlock(props: Readonly<{ children: unknown }>) {
 
 function splitLines(text: string): ReactNode;
 function splitLines(text: string) {
-  const lines = text.split(/\\n/g);
+  const lines = text.split(/\\\\n/g);
   return lines.map((line, index) => (
     <Fragment key={index + 1}>
       {line}
@@ -49,6 +54,38 @@ function ChatBtn({ children }: Readonly<{ children: unknown }>) {
     <button className="chat-btn" onClick={() => setMessage(text)}>
       {text}
     </button>
+  );
+}
+
+export function Timeline({ children }: Readonly<{ children: unknown }>) {
+  const string = children?.toString();
+  if (!string) return;
+
+  const escaped = string.replace(/\\(.)/g, "$1");
+  let parsed: TimelineRaw | undefined;
+  try {
+    parsed = (JSON.parse(escaped) as TimelineRaw).sort(
+      (a, b) => a.index - b.index,
+    );
+  } catch {}
+  if (!parsed) return <div className="canvas">Invalid Timeline</div>;
+  return (
+    <ol className="timeline">
+      {parsed.map((block) => {
+        return (
+          <li className="timeline-block" key={block.index}>
+            <span className="tl-node" aria-hidden="true">
+              <i />
+            </span>
+            {block.time && <time>{block.time}</time>}
+            {block.heading && (
+              <h2 className="timeline-heading">{block.heading}</h2>
+            )}
+            {block.text && <p className="timeline-text">{block.text}</p>}
+          </li>
+        );
+      })}
+    </ol>
   );
 }
 
@@ -71,6 +108,8 @@ export default function MarkDown({
         gita: [],
         canvas: [],
         badge: [],
+        timeline: [],
+        meter: ["high", "low", "optimum", "min", "max", "value"],
         "chat-btn": [],
       }}
       plugins={{
@@ -80,18 +119,19 @@ export default function MarkDown({
       }}
       remarkPlugins={[
         ...Object.values(defaultRemarkPlugins),
-        [remarkCustomBlocks, { tags: ["gita", "canvas"] }],
+        [remarkCustomBlocks, { tags: ["gita", "canvas", "timeline"] }],
       ]}
-      animated={streaming}
-      isAnimating={streaming}
+      animated={true || streaming}
+      isAnimating={true || streaming}
       shikiTheme={shiki(isDark)}
       mode={streaming ? "streaming" : "static"}
       components={{
         gita: ({ children }) => <GeetaBlock>{children}</GeetaBlock>,
         "chat-btn": ({ children }) => <ChatBtn>{children}</ChatBtn>,
         canvas: ({ children }) => <div className="canvas">{children}</div>,
+        timeline: ({ children }) => <Timeline>{children}</Timeline>,
       }}
-      literalTagContent={["gita", "chat-btn", "badge"]}
+      literalTagContent={["gita", "chat-btn", "badge", "meter", "timeline"]}
       // Relative and z-0 to prevent other streamdown components from overlapping
       // current Sanatan AI components.
       className="not-prose relative z-0"

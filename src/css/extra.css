@@ -232,6 +232,97 @@ lord-icon {
     border-radius: 5px;
 }
 
+.timeline {
+  list-style: none;
+  position: relative;
+  max-width: fit-content;
+  margin: 0 auto;
+  padding: 0 0 0 30px;
+}
+
+.timeline-block {
+  align-items: center;
+  padding-block: 1.5rem;
+  margin-top: 10px;
+  padding: clamp(1.1rem, 2.4vw, 1.7rem);
+  border-radius: 1.25rem;
+  border: 1px solid #777;
+  background: #7775;
+  backdrop-filter: blur(10px);
+}
+
+.timeline-block::before {
+    content: "";
+    position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -22px;
+  width: 2px;
+  height: calc(100% + 12px);
+  margin: 0;
+  background: var(--text-color);
+}
+.timeline-block:last-of-type::before {
+    top: calc(-50% - 12px);
+}
+.timeline-block:first-of-type::before {
+    top: 50%;
+}
+
+.timeline-block h2 {
+  margin: 0 0 0.6rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.4rem, 2.6vw, 2.1rem);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  background: linear-gradient(180deg, var(--text-color) 60%, var(--secondary-hover-color));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.timeline-block p {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.3rem);
+  line-height: 1.35;
+  color: color-mix(in srgb, var(--text-color) 70%, #777 30%);
+}
+
+time {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 0.7rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: color-mix(var(--text-color) 50%, #777 50%);
+}
+
+.tl-node {
+  position: absolute;
+  top: 50%;
+  left: -10px;
+  z-index: 2;
+  width: 24px;
+  height: 24px;
+  margin: -12px 0 0 -23px;
+  border-radius: 50%;
+  border: 2px solid var(--text-color);
+  display: grid;
+  place-items: center;
+}
+
+.tl-node i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-color);
+  transition: transform 0.5s;
+}
+
 .message-text button.chat-btn {
     background: var(--secondary-hover-color);
     color: var(--text-color);

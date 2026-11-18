@@ -125,7 +125,7 @@ Browser
 ### Prerequisites
 
 - **Node.js 20.9+** (required by Next.js 16; the project's type definitions target Node 20).
-- **npm** (a committed `package-lock.json` is provided).
+- **npm 11 or newer** (bundled with Node 24; a committed `package-lock.json` is provided). The lockfile is written by a recent npm, and `npm ci` with npm 10 (Node 20/22) reports it as out of sync.
 - A **MongoDB** database. The server throws at startup unless `MONGO_URI` is set (in development, `MONGO_DEV` takes precedence when present).
 - Credentials for Gemini, Google OAuth, Tavily, and Resend if you plan to use the corresponding features.
 
@@ -187,10 +187,34 @@ GA_ID=your_id
 | `npm run build` | Create a production build. |
 | `npm run start` | Serve the production build. |
 | `npm run lint` | Run ESLint across the repository's application code (`desktop/` is ignored). |
-| `npm test` | Run linting followed by a production build. |
+| `npm run typecheck` | Generate Next.js route types and run the TypeScript compiler without emitting files. |
+| `npm run test:unit` | Run the Vitest unit, route-handler and component tests (no network or database needed). |
+| `npm run test:watch` | Run Vitest in watch mode. |
+| `npm run test:coverage` | Run the same tests with coverage; fails if the coverage thresholds are not met. |
+| `npm run test:smoke` | Start the production build (run `npm run build` first) and check it over HTTP. |
+| `npm test` | Run linting, the type check, the unit tests and a production build. |
 | `npm run trace` | Start Next.js with internal tracing enabled. |
 
 `push.cmd` is a Windows helper that runs `npm test` and, if it passes, commits and pushes with a message you supply.
+
+## Testing
+
+The test suite runs without any real credentials, network access or database.
+
+| Layer | Location | What it covers |
+| --- | --- | --- |
+| Unit | `tests/unit/` | Utilities, request schemas, Gemini request building, the streaming and tool-call loop, i18n, content, SEO, Mongoose schemas. |
+| Route handlers | `tests/routes/` | Every API route (auth, sessions, OTP lockout, chats, memories, Gemini endpoints) and the `/app` proxy, with the database and model providers faked. |
+| Components | `tests/dom/` | React components, hooks and providers in jsdom. |
+| Smoke | `tests/smoke/` | HTTP checks against a real production server: pages, SEO tags, security headers, redirects, unauthenticated API behaviour. |
+
+```bash
+npm run test:unit        # unit, route and component tests
+npm run test:coverage    # the same, with coverage and thresholds
+npm run build && npm run test:smoke
+```
+
+`npm run test:smoke` starts `next start` itself. To check an already running server instead, set `SMOKE_BASE_URL` (and `SMOKE_JWT_SECRET` to enable the tests that need a signed-in cookie). See [`tests/README.md`](tests/README.md) for conventions and how known bugs are tracked.
 
 ## Project layout
 
@@ -214,6 +238,8 @@ src/
 ├── css/                    # Feature-specific style sheets
 ├── utils/                  # Client-side chat, streaming, file, i18n, Markdown helpers
 └── proxy.ts                # Route guard for /app and /hi
+tests/                      # unit/, routes/, dom/ (Vitest) and smoke/ (HTTP) tests, plus helpers
+.github/                    # CI, CD and CodeQL workflows, Dependabot, pull request template
 public/                     # Logo, screenshots, demo video, fonts, service worker, offline page
 desktop/                    # Tauri desktop companion
 AGENTS.md, CHANGELOG.md     # Notes for coding agents and release history
@@ -247,6 +273,14 @@ Windows builds are configured for both NSIS and WiX installers and download the 
 ## Deployment
 
 The web app is configured for Vercel-compatible deployment through `vercel.json`, and `.vercelignore` keeps the `desktop/` folder out of the deployment. Supply all production environment variables in the deployment environment, ensure the Google OAuth origin is registered, and use a reachable MongoDB deployment. API responses are served with credentialed CORS headers limited to `https://sanatan.shivam.click`, and the service worker is served as `/sw.js` with no-cache headers so updated worker code can be discovered promptly.
+
+### CI/CD
+
+- **CI** (`.github/workflows/ci.yml`) runs on every pull request: lint and type check, unit/route/component tests with coverage, a production build followed by the smoke tests, and an informational `npm audit`. Require the single **CI passed** check in branch protection.
+- **CD** (`.github/workflows/cd.yml`) runs on pushes to the default branch: the same CI jobs, then an optional Vercel production deploy and a read-only smoke test of the live site. Deployment is off until you add the `VERCEL_TOKEN`, `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` secrets and set the repository variable `ENABLE_VERCEL_DEPLOY` to `true` (and turn off Vercel's automatic Git deployments so a push is not deployed twice).
+- **CodeQL** (`.github/workflows/codeql.yml`) scans the code on pushes, pull requests and weekly. **Dependabot** proposes dependency updates.
+
+CI uses placeholder environment values; production secrets live only in the Vercel project.
 
 ## Limitations and security considerations
 

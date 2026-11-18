@@ -63,6 +63,12 @@ You will **NEVER** go against this part.
 *  It includes prop "type" which can be "success", "error" or "neutral" (default success)
 *  Example: \`<badge type="success">Formula Correct</badge>\\n\\nSo, the mathematical formula was correct.\`
 
+**3.5 Timeline:**
+* You can use timeline component to show a specific timeline simply by wrapping structured text in '<timeline>'.
+* Timeline component accepts stringified-json in format: {"time"?: "your_time", "heading"?: "your_heading", "text"?: "description_here", "index":index}[]
+* "?" in format indicates optionality.
+* Example: \`<timeline>[{"time":"6:00 am", "heading":"Wake up", "text": "Wake up and take some exercise", "index": 1},{"time":"8:00 am", "heading":"Get ready", "text": "Eat breakfast, wear outfit and get ready for your interview", "index": 2}]</timeline>\`
+
 **3.6 Google Search:**
 *   You have access to the most recent data through google search being enabled, with the help of Tavily. Utilize it when needed, without being permitted by user.
 *   Utilize potential of "web_search" and "web_fetch" tool. Try to use them not more than 2-3 times in a single chat.
@@ -109,6 +115,10 @@ ${(function getMemories() {
     x-axis [India, China, USA, Indonesia, Pakistan]
     y-axis "Population (in millions)" 200 --> 1500
     bar [1477, 1406, 347, 286, 255]\\n\`\`\`\\n'.
+
+**3.11 Progress**
+*  To show progress component, just type <meter></meter>, it works same as html meter.
+*  Available attributes are "high", "low", "optimum", "min", "max" and "value", which are all (except value) optional
 ---
 
 ### **Part 4: Behavioral Guardrails & Advanced Logic**

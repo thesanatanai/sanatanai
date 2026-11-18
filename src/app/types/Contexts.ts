@@ -74,3 +74,10 @@ type Chats = {
 type fullChat = Chats[0] & {
   messages: ChatHistory
 }
+
+type TimelineRaw = {
+  time?: string;
+  heading?: string;
+  text?: string;
+  index: number;
+}[]

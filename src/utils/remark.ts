@@ -1,3 +1,4 @@
+// This plugin insures that custom block-level components are rendered as block level elements, not inside <p>
 
 import type { Root, Paragraph, Html } from "mdast";
 import type { Plugin } from "unified";
@@ -10,7 +11,7 @@ interface Options {
 const remarkCustomBlocks: Plugin<[Options?], Root> = (
   options = {},
 ) => {
-  const tags = options.tags ?? ["gita", "canvas"];
+  const tags = options.tags ?? ["gita", "canvas", "timeline"];
 
   return (tree, file) => {
     const source = String(file.value);
@@ -30,7 +31,7 @@ const remarkCustomBlocks: Plugin<[Options?], Root> = (
       const tagPattern = tags.join("|");
 
       const pattern = new RegExp(
-        `^(?:<(?:${tagPattern})\\b[^>]*>[\\s\\S]*?<\\/(?:${tagPattern})\\s*>\\s*)+$`,
+        String.raw`^(?:<(?:${tagPattern})\b[^>]*>[\s\S]*?(?:<\/(?:${tagPattern})\s*>)*\s*)+$`,
         "i",
       );
 
