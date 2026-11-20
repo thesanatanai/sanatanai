@@ -77,7 +77,7 @@ function useDeleteMemory(
 ) {
   const notification = useNotification();
   return function deleteMemory(memory: string) {
-    setMemories((memories) => memories.splice(memories.indexOf(memory), 1));
+    setMemories((memories) => memories.filter((item) => item !== memory));
 
     void fetch("/api/user/memories", {
       method: "DELETE",

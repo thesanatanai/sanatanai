@@ -50,13 +50,12 @@ describe("SEO", () => {
     expect(page).toMatch(/<meta property="og:image"/);
   });
 
-  // KNOWN GAP: the server-rendered <html> tag has no lang attribute (it is
-  // only set later in the browser by initI18n), so crawlers, screen readers
-  // and Lighthouse see an undeclared language, including on the Hindi page.
-  // `it.fails` turns red once fixed; then remove `.fails`.
-  it.fails("declares the page language on <html>", async () => {
+  // Regression test for a bug that has been fixed (see CHANGELOG).
+  it("declares the page language on <html>", async () => {
     expect(await html("/")).toMatch(/<html[^>]* lang="en"/);
-    expect(await html("/hi")).toMatch(/<html[^>]* lang="hi"/);
+    // The Hindi page renders on the client, so its language is switched by a
+    // script that runs before first paint rather than set in the server HTML.
+    expect(await html("/hi")).toMatch(/documentElement\.lang\s*=\s*'hi'/);
   });
 });
 

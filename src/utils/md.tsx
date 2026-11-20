@@ -11,8 +11,13 @@ import PageContext from "@/app/(root)/app/PageContext";
 import "katex/dist/katex.min.css";
 import remarkCustomBlocks from "./remark";
 
+// A shloka that stands in its own paragraph is turned into raw HTML by
+// remarkCustomBlocks after Streamdown has backslash-escaped its text, while one
+// written inside a paragraph arrives unescaped. Undo the escapes so both match.
+const unescapeMarkdown = (text: string) => text.replace(/\\([!-/:-@[-`{-~])/g, "$1");
+
 function GeetaBlock(props: Readonly<{ children: unknown }>) {
-  const geetaRegex = /\[([^\n]+?)\\\]\\\[([^\n]+?)\\\]\\\[([^\n]*?)\\\]/;
+  const geetaRegex = /\[([^\n]+?)\]\[([^\n]+?)\]\[([^\n]*?)\]/;
   const invalid = (
     <div className="gita">
       <h2>Invalid Gita Block</h2>
@@ -20,7 +25,7 @@ function GeetaBlock(props: Readonly<{ children: unknown }>) {
   );
   const txt = props.children?.toString();
   if (!txt) return invalid;
-  const result = geetaRegex.exec(txt);
+  const result = geetaRegex.exec(unescapeMarkdown(txt));
   if (!result) return invalid;
 
   const [, heading, shloka, meaning] = result;
@@ -37,7 +42,7 @@ function GeetaBlock(props: Readonly<{ children: unknown }>) {
 
 function splitLines(text: string): ReactNode;
 function splitLines(text: string) {
-  const lines = text.split(/\\\\n/g);
+  const lines = text.split(/\\n/g);
   return lines.map((line, index) => (
     <Fragment key={index + 1}>
       {line}
@@ -107,7 +112,7 @@ export default function MarkDown({
       allowedTags={{
         gita: [],
         canvas: [],
-        badge: [],
+        badge: ["type"],
         timeline: [],
         meter: ["high", "low", "optimum", "min", "max", "value"],
         "chat-btn": [],

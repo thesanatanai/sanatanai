@@ -91,13 +91,8 @@ describe("MarkDown: shlokas (<gita>)", () => {
     expect(container.querySelector(".gita h3")).toBeNull();
   });
 
-  // KNOWN BUG (src/utils/remark.ts + src/utils/md.tsx): a shloka written as its
-  // OWN paragraph, which is the normal way to write a block, vanishes. The
-  // remarkCustomBlocks plugin promotes the paragraph to raw HTML after
-  // Streamdown has escaped the brackets, so GeetaBlock receives
-  // "\[Title\]\[Shloka\]\[Meaning\]", its regex cannot match "\]\[", and it
-  // renders nothing. `it.fails` turns red once fixed; then remove `.fails`.
-  it.fails("renders a shloka that stands in its own paragraph", async () => {
+  // Regression test for a bug that has been fixed (see CHANGELOG).
+  it("renders a shloka that stands in its own paragraph", async () => {
     const { container } = await renderMarkdown(`Listen:\n\n<gita>${shloka}</gita>`);
     expect(container.querySelector(".gita h1")!.textContent).toBe("Geeta 1.1");
   });
@@ -109,12 +104,40 @@ describe("MarkDown: badges (<badge>)", () => {
     expect(container.querySelector("badge")!.textContent).toBe("Formula Correct");
   });
 
-  // KNOWN BUG (src/utils/md.tsx): src/css/extra.css styles badge[type="error"]
-  // and badge[type="neutral"], but `allowedTags` declares `badge: []`, which
-  // allows no attributes, so the type is stripped and every badge gets the
-  // default style. Allowing "type" fixes it. `it.fails` turns red once fixed.
-  it.fails("keeps the badge type that the stylesheet depends on", async () => {
+  // Regression test for a bug that has been fixed (see CHANGELOG).
+  it("keeps the badge type that the stylesheet depends on", async () => {
     const { container } = await renderMarkdown('<badge type="error">Wrong</badge>');
     expect(container.querySelector('badge[type="error"]')).not.toBeNull();
+  });
+});
+
+describe("MarkDown: timelines (<timeline>)", () => {
+  const events = JSON.stringify([
+    { index: 2, time: "1947", heading: "Independence", text: "India became free." },
+    { index: 1, time: "1857", heading: "First war", text: "A major uprising." },
+  ]);
+
+  it("renders the events in index order", async () => {
+    const { container } = await renderMarkdown(`History:\n\n<timeline>${events}</timeline>`);
+    const items = [...container.querySelectorAll("ol.timeline li")];
+    expect(items.map((item) => item.querySelector("h2")?.textContent)).toEqual(["First war", "Independence"]);
+    expect(items[0].querySelector("time")!.textContent).toBe("1857");
+    expect(items[1].querySelector("p")!.textContent).toBe("India became free.");
+  });
+
+  it("shows a notice instead of crashing when the JSON is invalid", async () => {
+    const { container } = await renderMarkdown("History:\n\n<timeline>not json</timeline>");
+    expect(container.textContent).toContain("Invalid Timeline");
+  });
+});
+
+describe("MarkDown: meters (<meter>)", () => {
+  it("keeps the attributes a meter needs", async () => {
+    const { container } = await renderMarkdown(
+      'Score: <meter value="0.6" min="0" max="1" low="0.3" high="0.8" optimum="1"></meter>',
+    );
+    const meter = container.querySelector("meter")!;
+    expect(meter.getAttribute("value")).toBe("0.6");
+    expect(meter.getAttribute("max")).toBe("1");
   });
 });

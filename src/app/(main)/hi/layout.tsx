@@ -12,7 +12,8 @@ export default function HindiLayout({
     <>
       <script
         dangerouslySetInnerHTML={{
-          __html: "document.documentElement.classList.add('js')",
+          __html:
+            "document.documentElement.classList.add('js');document.documentElement.lang='hi'",
         }}
       />
       {children}

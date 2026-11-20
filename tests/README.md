@@ -32,12 +32,4 @@ Nothing here needs real credentials, network access or a database. `tests/setup/
 
 When a test documents a real bug, it is written to assert the **correct** behaviour and marked `it.fails(...)`, with a comment explaining the bug. CI stays green while the bug exists. As soon as someone fixes it, that test starts passing, Vitest reports it as a failure, and the fix is complete once `.fails` is removed. Search for `KNOWN BUG` / `KNOWN GAP` to list them.
 
-| Where | Problem |
-| --- | --- |
-| `unit/chatModel.test.ts`, `routes/chat.test.ts` | The "Deep Think" setting never reaches Gemini: the browser sends `config.thinkingConfig` in lowercase, the schema expects `config.config.thinkingConfig` in uppercase, and Zod drops the unknown key. |
-| `routes/memories.test.ts` | `DELETE /api/user/memories` stores `memories: null` after deleting one memory (it tests the length of what `splice()` *removed*), so one delete wipes all memories. |
-| `dom/Memory.test.tsx` | After deleting a memory the list shows only the deleted item (`setMemories` returns the result of `splice()`). |
-| `dom/useSendMessage.test.tsx` | If `/api/chat/name` fails, the raw error JSON becomes the chat title. |
-| `dom/md.test.tsx` | A `<gita>` shloka written as its **own paragraph** renders nothing: `remarkCustomBlocks` promotes it to raw HTML after Streamdown escaped the brackets, so `GeetaBlock` receives `\[a\]\[b\]\[c\]` and its regex cannot match. |
-| `dom/md.test.tsx` | `<badge type="error">` / `type="neutral"` are never styled: `allowedTags` declares `badge: []`, so the `type` attribute the CSS selects on is stripped. |
-| `smoke/site.test.ts` | The server-rendered `<html>` has no `lang` attribute (including on `/hi`). |
+There are no open known bugs at the moment.

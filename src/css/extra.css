@@ -290,6 +290,59 @@ lord-icon {
   color: color-mix(in srgb, var(--text-color) 70%, #777 30%);
 }
 
+meter {
+  width: 250px;
+  height: 20px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--secondary-hover-color);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+/* --- WebKit (Chrome, Safari, Edge) --- */
+meter::-webkit-meter-bar {
+  background: color-mix(in srgb, var(--secondary-hover-color) 50%, var(--text-color) 50%);
+  border-radius: 5px;
+  padding: 2px;
+  border: none;
+}
+
+/* Optimal state (Green) */
+meter::-webkit-meter-optimum-value {
+  background: #22c55e;
+  border-radius: 8px;
+}
+
+/* Suboptimal state (Yellow/Orange) */
+meter::-webkit-meter-suboptimum-value {
+  background: #f59e0b;
+  border-radius: 8px;
+}
+
+/* Even less optimal state (Red) */
+meter::-webkit-meter-even-less-good-value {
+  background: #ef4444;
+  border-radius: 8px;
+}
+
+/* --- Firefox --- */
+meter::-moz-meter-bar {
+  border-radius: 8px;
+}
+
+meter:-moz-meter-optimum::-moz-meter-bar {
+  background: #22c55e;
+}
+
+meter:-moz-meter-sub-optimum::-moz-meter-bar {
+  background: #f59e0b;
+}
+
+meter:-moz-meter-sub-sub-optimum::-moz-meter-bar {
+  background: #ef4444;
+}
+
 time {
   display: flex;
   align-items: center;

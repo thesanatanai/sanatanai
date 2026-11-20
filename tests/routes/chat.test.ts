@@ -169,14 +169,10 @@ describe("POST /api/chat: talking to Gemini", () => {
     expect(mocks.setMessages).not.toHaveBeenCalled();
   });
 
-  // KNOWN BUG: the browser's "Deep Think" setting never reaches Gemini. The
-  // browser sends `config.thinkingConfig` (lowercase level), the schema reads
-  // `config.config.thinkingConfig` (uppercase enum) and Zod strips the rest,
-  // so Gemini always runs with its default thinking. See tests/unit/chatModel
-  // for the schema-level version of this test. `it.fails` turns red once fixed.
-  it.fails("forwards the Deep Think level the browser asked for", async () => {
+  // Regression test for a bug that has been fixed (see CHANGELOG).
+  it("forwards the Deep Think level the browser asked for", async () => {
     await readJsonChunks(
-      (await send(body({ config: { thinkingConfig: { thinkingLevel: "high" } } }))).body!,
+      (await send(body({ config: { config: { thinkingConfig: { thinkingLevel: "HIGH" } } } }))).body!,
     );
     expect(mocks.generate.mock.calls[0][0].config.thinkingConfig).toBeDefined();
   });

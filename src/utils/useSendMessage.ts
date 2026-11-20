@@ -43,8 +43,10 @@ function useSendMessage(
             chatId: id,
           }),
         })
-          .then((response) => response.text())
+          .then((response) => (response.ok ? response.text() : ""))
           .then((name) => {
+            // A failed title request must not put an error message in the sidebar.
+            if (!name) return;
             chat.title = name;
             chat.timestamp = Date.now();
             setChats(copied);

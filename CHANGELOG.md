@@ -1,3 +1,12 @@
+# V-2.4.1
+- Fixed: deleting one saved memory wiped all of them (API), and the Memory panel then showed only the deleted item.
+- Fixed: the Deep Think setting never reached Gemini (request shape and enum casing now match the server schema).
+- Fixed: shloka (`<gita>`) blocks render both inline and in their own paragraph.
+- Fixed: a failed chat-title request no longer puts the raw error in the sidebar.
+- Fixed: `<badge type="error|neutral">` keeps its `type`, so it is styled.
+- Fixed: the server HTML declares a language (`<html lang="en">`), and the Hindi page switches it to `hi` before first paint.
+- Pinned TypeScript to 5.x: `typescript-eslint` does not support TypeScript 7 yet, which broke `npm run lint`.
+
 # V-2.4.0
 - Added a Vitest test suite (unit, API route, component and HTTP smoke tests) with enforced coverage thresholds for server code.
 - Added GitHub Actions CI (lint, types, tests, build, smoke tests), CodeQL and Dependabot.

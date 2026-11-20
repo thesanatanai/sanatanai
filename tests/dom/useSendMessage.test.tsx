@@ -226,11 +226,8 @@ describe("useSendMessage: naming new chats", () => {
     expect(fetch).not.toHaveBeenCalled();
   });
 
-  // KNOWN BUG (src/utils/useSendMessage.ts): the response of /api/chat/name is
-  // read with `.text()` without checking `response.ok`, so when title
-  // generation fails (e.g. Gemini quota, status 500) the raw error JSON
-  // becomes the chat's title in the sidebar. `it.fails` turns red once fixed.
-  it.fails("does not use an error response as the chat title", async () => {
+  // Regression test for a bug that has been fixed (see CHANGELOG).
+  it("does not use an error response as the chat title", async () => {
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue(

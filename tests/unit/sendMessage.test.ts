@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({ fetchStream: vi.fn() }));
 vi.mock("@/utils/fetch", () => ({ default: mocks.fetchStream }));
 
+import Incoming from "@/app/api/models/chatModel";
 import sendMessage from "@/utils/message";
 
 const message = { role: "user", index: 0, parts: [{ text: "hello" }] } as ChatHistory[0];
@@ -57,7 +58,7 @@ describe("sendMessage", () => {
     expect(JSON.parse(options.body)).toEqual({
       id: "chat-42",
       newMessage: message,
-      config: { thinkingConfig: { thinkingLevel: "medium" } },
+      config: { config: { thinkingConfig: { thinkingLevel: "MEDIUM" } } },
     });
   });
 
@@ -65,7 +66,14 @@ describe("sendMessage", () => {
     mocks.fetchStream.mockReturnValue(chunks());
     await sendMessage(message, "chat-1", true, vi.fn());
     const body = JSON.parse(mocks.fetchStream.mock.calls[0][1].body);
-    expect(body.config.thinkingConfig.thinkingLevel).toBe("high");
+    expect(body.config.config.thinkingConfig.thinkingLevel).toBe("HIGH");
+  });
+
+  it("sends a payload the server's schema accepts, with the thinking level intact", async () => {
+    mocks.fetchStream.mockReturnValue(chunks());
+    await sendMessage(message, "chat-1", true, vi.fn());
+    const parsed = Incoming.parse(JSON.parse(mocks.fetchStream.mock.calls[0][1].body));
+    expect(parsed.config?.config?.thinkingConfig?.thinkingLevel).toBe("HIGH");
   });
 
   it("returns true when the server streams an error", async () => {

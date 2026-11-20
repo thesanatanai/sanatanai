@@ -27,8 +27,8 @@ export async function DELETE(req: Request) {
     const idx = memories.indexOf(memory);
     if(idx < 0) return respondErr("Invalid request");
 
-    const updated = memories.splice(idx, 1);
-    const final = updated.length ? null : updated;
+    memories.splice(idx, 1);
+    const final = memories.length ? memories : null;
 
     await userModel.updateOne({ id: user.id }, { memories: final });
 

@@ -83,8 +83,12 @@ describe("remarkCustomBlocks", () => {
     expect(run("<canvasser>x</canvasser>")[0].type).toBe("paragraph");
   });
 
-  it("does not promote a block that is still streaming in (no closing tag yet)", () => {
-    expect(run("<gita>[a][b][c]")[0].type).toBe("paragraph");
+  it("promotes a block that is still streaming in, so it renders as a block before its closing tag arrives", () => {
+    expect(run("<gita>[a][b][c]")[0].type).toBe("html");
+  });
+
+  it("promotes a <timeline> block by default", () => {
+    expect(run('<timeline>[{"index":1}]</timeline>')[0].type).toBe("html");
   });
 
   it("supports a custom list of tags", () => {

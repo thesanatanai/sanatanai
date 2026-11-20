@@ -91,20 +91,15 @@ describe("Deep Think request contract between browser and server", () => {
   const browserPayload = (deep: boolean) => ({
     id: "chat-1",
     newMessage: userMessage,
-    config: { thinkingConfig: { thinkingLevel: deep ? "high" : "medium" } },
+    config: { config: { thinkingConfig: { thinkingLevel: deep ? "HIGH" : "MEDIUM" } } },
   });
 
   it("the payload the browser sends is accepted", () => {
     expect(Incoming.safeParse(browserPayload(true)).success).toBe(true);
   });
 
-  // KNOWN BUG: the browser puts `thinkingConfig` directly under `config`,
-  // and in lowercase, while the schema expects it under `config.config` and
-  // in the SDK's uppercase enum. Zod silently strips the unknown key, so the
-  // requested level is dropped before it can reach Gemini and the Deep Think
-  // toggle has no effect. `it.fails` keeps CI green while the bug exists and
-  // turns red as soon as it is fixed, which is the cue to remove `.fails`.
-  it.fails("keeps the thinking level the browser asked for", () => {
+  // Regression test for a bug that has been fixed (see CHANGELOG).
+  it("keeps the thinking level the browser asked for", () => {
     const parsed = Incoming.parse(browserPayload(true));
     expect(JSON.stringify(parsed.config)).toMatch(/high/i);
   });

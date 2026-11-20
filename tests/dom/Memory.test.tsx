@@ -112,12 +112,7 @@ describe("<Memory /> deleting a memory", () => {
     expect(all.notification.type[1]).toHaveBeenCalledWith("error");
   });
 
-  // KNOWN BUG (src/components/Memory.tsx, useDeleteMemory): the state updater
-  // returns `memories.splice(...)`, and splice returns the REMOVED items, so
-  // after deleting "b" the list shows only ["b"] instead of ["a", "c"].
-  // `it.fails` keeps CI green while the bug exists and fails once it is
-  // fixed, which is the cue to remove `.fails`.
-  it.fails("removes only the deleted memory from the list", async () => {
+  it("removes only the deleted memory from the list", async () => {
     stubApi(["a", "b", "c"]);
     renderWithContexts(<Memory setIsOpen={vi.fn()} />);
     await screen.findByText("b");

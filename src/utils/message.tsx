@@ -34,10 +34,13 @@ export async function sendMessage(
       body: JSON.stringify({
         id,
         newMessage: message,
+        // The server reads this as `config.config`, with the SDK's enum values.
         config: {
-          thinkingConfig: {
-            thinkingLevel: deepThink ? "high" : "medium",
-          }
+          config: {
+            thinkingConfig: {
+              thinkingLevel: deepThink ? "HIGH" : "MEDIUM",
+            },
+          },
         }
       }),
       signal: abortController.signal,

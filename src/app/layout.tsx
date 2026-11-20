@@ -68,7 +68,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className={`h-full antialiased ${theSeasons.variable} ${theSeasonsTemp.variable}`}>
+    <html lang="en" className={`h-full antialiased ${theSeasons.variable} ${theSeasonsTemp.variable}`}>
       <body>
         <Analytics />
         {children}

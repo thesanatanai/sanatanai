@@ -68,13 +68,8 @@ describe("DELETE /api/user/memories", () => {
     expect([null, []]).toContainEqual(memories);
   });
 
-  // KNOWN BUG (src/app/api/user/memories/route.ts): `splice()` returns the
-  // REMOVED items, and the handler then tests the length of that array
-  // (always 1) instead of the remaining list, so it stores `memories: null`.
-  // Deleting ONE memory therefore wipes ALL of the user's memories.
-  // `it.fails` keeps CI green while the bug exists and fails once it is
-  // fixed, which is the cue to remove `.fails`.
-  it.fails("keeps the other memories when one is deleted", async () => {
+  // Regression test for a bug that has been fixed (see CHANGELOG).
+  it("keeps the other memories when one is deleted", async () => {
     await del("b");
     expect(mocks.updateOne).toHaveBeenCalledWith({ id: "user-1" }, { memories: ["a", "c"] });
   });
