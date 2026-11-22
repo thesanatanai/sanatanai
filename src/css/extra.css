@@ -276,10 +276,6 @@ lord-icon {
   font-size: clamp(1.4rem, 2.6vw, 2.1rem);
   letter-spacing: -0.03em;
   line-height: 1.05;
-  background: linear-gradient(180deg, var(--text-color) 60%, var(--secondary-hover-color));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
 }
 
 .timeline-block p {

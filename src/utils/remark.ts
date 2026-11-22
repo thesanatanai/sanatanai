@@ -1,7 +1,7 @@
 // This plugin insures that custom block-level components are rendered as block level elements, not inside <p>
 
 import type { Root, Paragraph, Html } from "mdast";
-import type { Plugin } from "unified";
+import type { Pluggable, Plugin } from "unified";
 import { visit } from "unist-util-visit";
 
 interface Options {
@@ -48,4 +48,6 @@ const remarkCustomBlocks: Plugin<[Options?], Root> = (
   };
 };
 
-export default remarkCustomBlocks;
+const customPlugin = [remarkCustomBlocks, { tags: ["gita", "canvas", "timeline"] }] as Pluggable;
+
+export default customPlugin;

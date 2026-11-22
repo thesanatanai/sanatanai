@@ -1,6 +1,6 @@
 {
   "name": "sanatan-ai",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -68,6 +68,11 @@
     "tailwindcss": "^4",
     "typescript": "^5.9.3",
     "vitest": "^5.1.0"
+  },
+  "overrides": {
+    "katex": "$katex",
+    "mermaid": "$mermaid",
+    "postcss-selector-parser": "^6.1.5"
   },
   "allowScripts": {
     "protobufjs@7.6.5": true,

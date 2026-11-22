@@ -9,7 +9,7 @@ import { Fragment, useContext, type ReactNode } from "react";
 import { All } from "@/app/(root)/AllContext";
 import PageContext from "@/app/(root)/app/PageContext";
 import "katex/dist/katex.min.css";
-import remarkCustomBlocks from "./remark";
+import customPlugin from "./remark";
 
 // A shloka that stands in its own paragraph is turned into raw HTML by
 // remarkCustomBlocks after Streamdown has backslash-escaped its text, while one
@@ -17,7 +17,7 @@ import remarkCustomBlocks from "./remark";
 const unescapeMarkdown = (text: string) => text.replace(/\\([!-/:-@[-`{-~])/g, "$1");
 
 function GeetaBlock(props: Readonly<{ children: unknown }>) {
-  const geetaRegex = /\[([^\n]+?)\]\[([^\n]+?)\]\[([^\n]*?)\]/;
+  const geetaRegex = /^\s*\[([^\n]+?)\]\[([^\n]+?)\]\[([^\n]*?)\]/;
   const invalid = (
     <div className="gita">
       <h2>Invalid Gita Block</h2>
@@ -124,10 +124,10 @@ export default function MarkDown({
       }}
       remarkPlugins={[
         ...Object.values(defaultRemarkPlugins),
-        [remarkCustomBlocks, { tags: ["gita", "canvas", "timeline"] }],
+        customPlugin,
       ]}
-      animated={true || streaming}
-      isAnimating={true || streaming}
+      animated={streaming}
+      isAnimating={streaming}
       shikiTheme={shiki(isDark)}
       mode={streaming ? "streaming" : "static"}
       components={{

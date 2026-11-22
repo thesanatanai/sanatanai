@@ -1,3 +1,11 @@
+# V-2.4.2
+- Implemented Email component for OTP handling with countdown timer.
+- Refactored Auth component to remove inline Email logic and use the new Email component.
+- Updated API routes for OTP requests to handle resend logic and response messages.
+- Added new translations for OTP messages in i18n.
+- Enhanced CSS styles for buttons and typography.
+- Introduced overrides in package.json for dependency management.
+
 # V-2.4.1
 - Fixed: deleting one saved memory wiped all of them (API), and the Memory panel then showed only the deleted item.
 - Fixed: the Deep Think setting never reached Gemini (request shape and enum casing now match the server schema).

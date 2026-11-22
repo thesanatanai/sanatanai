@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
 import { useContext, useMemo, useState } from "react";
 import { All } from "../AllContext";
-import { Language, useT } from "@/utils/i18n";
+import { Language } from "@/utils/i18n";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import handleLogin from "./handleLogin";
 import { useNotification } from "@/components/Notification";
-import Lordicon from "@/components/Lordicon";
-import jsCookie from "js-cookie";
+import Email from "./Email";
 
 function Google(props: Record<string, Function>) {
   const notification = useNotification();
@@ -35,140 +34,6 @@ function Google(props: Record<string, Function>) {
         </GoogleOAuthProvider>
       </div>
     </div>
-  );
-}
-
-function Email(props: Record<string, Function>) {
-  const [otp, setOtp] = useState("");
-  const [email, setEmail] = useState("");
-  const [otpGot, setOtpGot] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
-  const t = useT();
-  const { userData } = useContext(All);
-  const [currentLanguage] = userData.language;
-  const userEmail = userData.email[1];
-
-  async function getOtp() {
-    try {
-      if (otpGot) return;
-
-      // First reset error message
-      setErrMsg("");
-      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      if (!emailRegex.exec(email)) return setErrMsg(t("errorInvalidEmail")); // If email is invalid, show an error
-
-      // Show loading until the OTP is being sent
-      props.setIsLoading(true);
-      const res = await fetch("api/user/otp", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
-      const { error } = await res.json();
-      if (error) {
-      props.setIsLoading(false);
-        throw new Error(error);
-      }
-
-      // Set user's information after sending OTP
-      userEmail(email);
-      setOtpGot(true);
-      props.setIsLoading(false);
-    } catch {
-      props.setIsLoading(false);
-      setErrMsg(t("sorrySomethingWrong"));
-    }
-  }
-  async function validateOtp() {
-    if (!otp || !email || errMsg || !otpGot) return;
-
-    try {
-      // Reset Error message
-      setErrMsg("");
-
-      // Show loading UI until the OTP verifies
-      props.setIsLoading(true);
-      const user = await fetch("api/user/otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          otp,
-          locale: currentLanguage,
-        }),
-      }).then((res) => res.json());
-
-      // Send error message if caught
-      if (user.error) return setErrMsg(user.error);
-
-      jsCookie.set("setupComplete", "true", {
-        expires: 365,
-      });
-      props.setIsLoading(false);
-      window.location.href = "/app";
-    } catch {
-      return setErrMsg(t("errorInvalidOtp"));
-    }
-  }
-  return (
-    <>
-      {!otpGot && (
-        <>
-          <div className="flex gap-2 mt-2 items-center justify-center">
-            <label htmlFor="email">
-              <Language need="emailLabel" />
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              className="modern-input"
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
-            />
-          </div>
-          <button
-            className="btn-gradient mt-2 welcomeButton center-flex"
-            onClick={getOtp}
-          >
-            <Language need="sendOTP" />
-            <Lordicon
-              src="arrow"
-              target="parent"
-              colors="primary:#ffffff,secondary:#ffffff"
-            />
-          </button>
-        </>
-      )}
-      <p className="text-red-400 mt-2">{errMsg}</p>
-      {otpGot && (
-        <>
-          <div className="flex gap-2 mt-2">
-            <label htmlFor="otp">OTP: </label>
-            <input
-              type="text"
-              id="otp"
-              className="modern-input"
-              autoComplete="one-time-code"
-              maxLength={6}
-              inputMode="numeric"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-            />
-          </div>
-          <button
-            className="btn-gradient mt-2 welcomeButton"
-            onClick={validateOtp}
-          >
-            <Language need="submit" />
-          </button>
-        </>
-      )}
-    </>
   );
 }
 

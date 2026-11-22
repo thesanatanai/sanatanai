@@ -22,7 +22,10 @@ const LOCK_MS = 15 * 60 * 1000;
 const LOCKED_MSG = "Too many attempts. Please try again later.";
 
 const PostIncoming = z.object({
-  otp: z.string().trim().regex(/^\d{6}$/),
+  otp: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/),
   email: z.email(),
   locale: z.enum(["en", "hi"]).optional(),
 });
@@ -81,14 +84,14 @@ export async function POST(request: NextRequest) {
       );
 
       cookieStore.set({
-      name: "token",
-      value: token,
-      maxAge: 365 * 24 * 3600,
-      path: "/",
-      secure: process.env.NODE_ENV == "production",
-      sameSite: "lax",
-      httpOnly: true,
-    });
+        name: "token",
+        value: token,
+        maxAge: 365 * 24 * 3600,
+        path: "/",
+        secure: process.env.NODE_ENV == "production",
+        sameSite: "lax",
+        httpOnly: true,
+      });
       return NextResponse.json(alreadyExists.toJSON());
     }
 
@@ -123,7 +126,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Request an OTP
+// Request or resend an OTP
 export async function PUT(request: NextRequest) {
   try {
     const { email } = await request.json();
@@ -133,10 +136,18 @@ export async function PUT(request: NextRequest) {
     // be pointless: the attacker would just ask for a new code and keep going)
     if (await isLocked(email)) return respondErr(LOCKED_MSG, 429);
 
-    // A live OTP already exists: don't send another one
-    const alreadyExists = await getOtp(email);
-    if (typeof alreadyExists !== "function")
-      return NextResponse.json({ message: "Done" });
+    const existingOtp = await getOtp(email);
+    if (typeof existingOtp !== "function") {
+      const left = existingOtp.createdAt.getTime() + 120000 - Date.now();
+      if (left > 10) {
+        return NextResponse.json(
+          { message: "OTP already sent. Please wait for 2 minutes before requesting a new one.", newIn: Math.floor(left / 1000) },
+          { status: 429 }
+        );
+      }
+
+      await otpModel.deleteOne({ email });
+    }
 
     const otp = await sendOtp(email);
     if (typeof otp == "function") return otp();
@@ -157,7 +168,7 @@ export async function PUT(request: NextRequest) {
     );
 
     setDelTimer(email, 600000);
-    return NextResponse.json({ message: "Done" });
+    return NextResponse.json({ message: "Done", newIn: 120 });
   } catch (e) {
     console.error(e);
     return respondErr("Something Went Wrong in Server", 500);
