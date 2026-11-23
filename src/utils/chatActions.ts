@@ -7,7 +7,7 @@ export async function createNewChat(
 ) {
   try {
     const { id } = await fetch("api/chats", {
-      method: "PATCH",
+      method: "POST",
     }).then((res) => res.json());
     setCurrentSession(id);
     void getChats(setChats);
@@ -21,13 +21,7 @@ export async function loadChat(
   setChats: (value: ((initial: Chats) => Chats)) => void
 ) {
   if(setChatLoading) setChatLoading(true);
-  const chat: fullChat = await fetch("api/chats", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ id }),
-  }).then((res) => res.json());
+  const chat: fullChat = await fetch("api/chats/" + id).then((res) => res.json());
   setChatHistory(chat.messages);
   setChatLoading(false);
   setChats(chats => {
@@ -63,13 +57,10 @@ export function setSession(chats: Chats, setCurrentSession?: (value: string) => 
 
 export async function deleteChat([setChats, current]: [(value: Chats) => void, string], [id, setSession]: uStat<string>) {
   try {
-    const { message } = await fetch("api/chats", {
+    const { message } = await fetch("api/chats/" + id, {
       method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: `{"id":"${id}"}`,
     }).then((res) => res.json());
+
     let setId;
     if(id === current) setId = setSession;
     const chats = await getChats(setChats, setId);
@@ -79,12 +70,12 @@ export async function deleteChat([setChats, current]: [(value: Chats) => void, s
 
 export async function updateChat<K extends keyof fullChat>(id: string, changes: Record<K, fullChat[K]>) {
   try {
-    await fetch("api/chats", {
+    await fetch(`api/chats/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({id, ...changes})
+      body: JSON.stringify(changes)
     })
   }
   catch {}

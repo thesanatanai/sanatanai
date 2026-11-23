@@ -62,31 +62,194 @@ function ChatBtn({ children }: Readonly<{ children: unknown }>) {
   );
 }
 
+// <partial-json>
+type Json = string | number | boolean | null | Json[] | { [key: string]: Json };
+
+/**
+ * Parses JSON that may be cut off part-way, e.g. while the bot is still typing
+ * it. Everything that has arrived is returned: an unfinished string keeps the
+ * characters typed so far, while a dangling key or value is dropped. Complete,
+ * valid JSON is parsed with plain JSON.parse, so the result is identical.
+ */
+function parsePartialJson(src: string): Json | undefined {
+  try {
+    return JSON.parse(src) as Json;
+  } catch {}
+
+  let i = 0;
+  const literalRe = /-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?|true|false|null/y;
+  const escapes: Record<string, string> = {
+    n: "\n",
+    t: "\t",
+    r: "\r",
+    b: "\b",
+    f: "\f",
+  };
+
+  function skipSpace() {
+    while (i < src.length && /\s/.test(src.charAt(i))) i++;
+  }
+
+  // Always returns what has been read so far, even if the closing quote has
+  // not arrived yet.
+  function readString(): string {
+    i++; // opening quote
+    let out = "";
+    while (i < src.length) {
+      const c = src.charAt(i++);
+      if (c === '"') return out;
+      if (c !== "\\") {
+        out += c;
+        continue;
+      }
+      if (i >= src.length) return out; // dangling backslash
+      const next = src.charAt(i++);
+      if (next !== "u") {
+        out += escapes[next] ?? next;
+        continue;
+      }
+      const hex = src.slice(i, i + 4);
+      if (/^[0-9a-fA-F]{4}$/.test(hex)) {
+        out += String.fromCharCode(parseInt(hex, 16));
+        i += 4;
+      } else if (i + 4 > src.length) {
+        i = src.length; // \uXXXX is still arriving
+        return out;
+      } else {
+        out += "u";
+      }
+    }
+    return out;
+  }
+
+  function readLiteral(): Json | undefined {
+    literalRe.lastIndex = i;
+    const match = literalRe.exec(src);
+    if (!match) {
+      i++; // unrecognised or still-arriving character, skip it
+      return undefined;
+    }
+    i += match[0].length;
+    return JSON.parse(match[0]) as Json;
+  }
+
+  function readObject(): Json {
+    i++; // {
+    const obj: { [key: string]: Json } = {};
+    while (i < src.length) {
+      skipSpace();
+      const c = src.charAt(i);
+      if (c === "}") {
+        i++;
+        break;
+      }
+      if (c !== '"') {
+        i++; // "," or a stray character
+        continue;
+      }
+      const key = readString();
+      skipSpace();
+      if (src.charAt(i) !== ":") break; // key is still arriving
+      i++;
+      const value = readValue();
+      if (value !== undefined) obj[key] = value;
+    }
+    return obj;
+  }
+
+  function readArray(): Json {
+    i++; // [
+    const arr: Json[] = [];
+    while (i < src.length) {
+      skipSpace();
+      const c = src.charAt(i);
+      if (c === "]") {
+        i++;
+        break;
+      }
+      if (c === ",") {
+        i++;
+        continue;
+      }
+      const value = readValue();
+      if (value !== undefined) arr.push(value);
+    }
+    return arr;
+  }
+
+  function readValue(): Json | undefined {
+    skipSpace();
+    switch (src.charAt(i)) {
+      case "":
+        return undefined;
+      case "{":
+        return readObject();
+      case "[":
+        return readArray();
+      case '"':
+        return readString();
+      default:
+        return readLiteral();
+    }
+  }
+
+  return readValue();
+}
+// </partial-json>
+
+type TimelineBlock = {
+  index?: unknown;
+  time?: unknown;
+  heading?: unknown;
+  text?: unknown;
+};
+
+const asText = (value: unknown) =>
+  typeof value === "string" || typeof value === "number"
+    ? String(value)
+    : undefined;
+
+// Blocks that have not received their index yet (still being typed) go last.
+const rank = (block: TimelineBlock) =>
+  typeof block.index === "number" ? block.index : Infinity;
+
 export function Timeline({ children }: Readonly<{ children: unknown }>) {
   const string = children?.toString();
-  if (!string) return;
+  if (!string?.trim()) return;
 
   const escaped = string.replace(/\\(.)/g, "$1");
-  let parsed: TimelineRaw | undefined;
-  try {
-    parsed = (JSON.parse(escaped) as TimelineRaw).sort(
-      (a, b) => a.index - b.index,
-    );
-  } catch {}
-  if (!parsed) return <div className="canvas">Invalid Timeline</div>;
+  // While the bot is typing, the JSON is incomplete. Parse what has arrived so
+  // the timeline grows block by block instead of showing an error.
+  const parsed = parsePartialJson(escaped);
+  if (!Array.isArray(parsed)) return <div className="canvas">Invalid Timeline</div>;
+
+  const blocks = parsed
+    .flatMap((item, pos) =>
+      item && typeof item === "object" && !Array.isArray(item)
+        ? [{ block: item as TimelineBlock, pos }]
+        : [],
+    )
+    .sort((a, b) => {
+      const x = rank(a.block);
+      const y = rank(b.block);
+      return x === y ? 0 : x < y ? -1 : 1;
+    });
+  if (blocks.length === 0) return;
+
   return (
     <ol className="timeline">
-      {parsed.map((block) => {
+      {blocks.map(({ block, pos }) => {
+        const time = asText(block.time);
+        const heading = asText(block.heading);
+        const text = asText(block.text);
         return (
-          <li className="timeline-block" key={block.index}>
+          <li className="timeline-block" key={pos}>
             <span className="tl-node" aria-hidden="true">
               <i />
             </span>
-            {block.time && <time>{block.time}</time>}
-            {block.heading && (
-              <h2 className="timeline-heading">{block.heading}</h2>
-            )}
-            {block.text && <p className="timeline-text">{block.text}</p>}
+            {time && <time>{time}</time>}
+            {heading && <h2 className="timeline-heading">{heading}</h2>}
+            {text && <p className="timeline-text">{text}</p>}
           </li>
         );
       })}
