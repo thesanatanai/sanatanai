@@ -5,9 +5,9 @@ import MenuBar from "@/components/MenuBar";
 import Footer from "@/components/Footer";
 import Settings from "@/components/Settings";
 import ChatApp from "@/components/ChatApp";
-import { PgContext } from "./PageContext";
+import { ChatStoreProvider } from "./ChatStoreProvider";
 import { SideMenu } from "@/components/Notification";
-import { setSession } from "@/utils/chatActions";
+import { setSession } from "@/utils/session";
 import { getChat, getChats } from "@/actions/chatActions";
 import verifyUser, { User } from "@/app/api/utils/verify";
 import { redirect } from "next/navigation";
@@ -27,7 +27,7 @@ export default async function Page() {
   if(typeof chat == "function") redirect("/welcome?logout=true");
   const messages = getMainChat(chat, true);
   return (
-    <PgContext loadedChats={chats} messages={messages as ChatHistory || []} id={latestChat}>
+    <ChatStoreProvider loadedChats={chats} messages={messages as ChatHistory || []} id={latestChat}>
       <div className="sanatanai-app">
         <MenuBar />
         <SideMenu />
@@ -36,6 +36,6 @@ export default async function Page() {
         <Footer />
         <ParticleBackground particleCount={70} />
       </div>
-    </PgContext>
+    </ChatStoreProvider>
   );
 }

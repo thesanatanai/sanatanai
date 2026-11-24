@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import PageContext from "@/app/(root)/app/PageContext";
-import { useCallback, useContext } from "react";
+import { useChatStore } from "@/stores/chatStore";
+import { useCallback } from "react";
 import { parentCount } from "./utils";
 import streamSendMessage from "./message";
 
@@ -15,19 +15,20 @@ function useSendMessage(
   [files, setFiles]: uStat<UserFileData[]>,
   setResponding: (value: boolean) => void,
 ) {
-  const {
-    userData: {
-      chatHistory: [history, setHistory],
-      chats: [chats, setChats],
-      currentSessionId: [id],
-    },
-    isDeep: [isDeep],
-  } = useContext(PageContext);
-
   // Use a callback to prevent performance issue.
   return useCallback(
     function sendMessage(message: string, ev?: any) {
       if (!message) return;
+
+      // Read at the moment of sending, so a message never goes out with stale chat state.
+      const {
+        chatHistory: history,
+        setChatHistory: setHistory,
+        chats,
+        setChats,
+        currentSessionId: id,
+        isDeep,
+      } = useChatStore.getState();
 
       setResponding(true);
       const copied = structuredClone(chats);
@@ -121,18 +122,7 @@ function useSendMessage(
         if (error) updateFinish(undefined, true);
       });
     },
-    [
-      chats,
-      files,
-      history,
-      id,
-      isDeep,
-      setChats,
-      setFiles,
-      setHistory,
-      setMessage,
-      setResponding,
-    ],
+    [files, setFiles, setMessage, setResponding],
   );
 }
 

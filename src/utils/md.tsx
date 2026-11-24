@@ -5,9 +5,9 @@ import "streamdown/styles.css";
 import { mermaid } from "@streamdown/mermaid";
 import { code } from "@streamdown/code";
 import { createMathPlugin } from "@streamdown/math";
-import { Fragment, useContext, type ReactNode } from "react";
-import { All } from "@/app/(root)/AllContext";
-import PageContext from "@/app/(root)/app/PageContext";
+import { Fragment, type ReactNode } from "react";
+import { useAppStore } from "@/stores/appStore";
+import { useChatStore } from "@/stores/chatStore";
 import "katex/dist/katex.min.css";
 import customPlugin from "./remark";
 
@@ -52,7 +52,7 @@ function splitLines(text: string) {
 }
 
 function ChatBtn({ children }: Readonly<{ children: unknown }>) {
-  const setMessage = useContext(PageContext).userData.btnMessage[1];
+  const setMessage = useChatStore((s) => s.setBtnMessage);
   const text = children?.toString();
   if (!text) return;
   return (
@@ -269,7 +269,7 @@ export default function MarkDown({
   markdown: string;
   streaming?: boolean;
 }>) {
-  const isDark = useContext(All).theme[0] === "dark";
+  const isDark = useAppStore((s) => s.theme === "dark");
   return (
     <Streamdown
       allowedTags={{

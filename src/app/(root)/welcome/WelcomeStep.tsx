@@ -1,7 +1,6 @@
 "use client";
 import { Language } from "@/utils/i18n";
-import { useContext } from "react";
-import { All } from "../AllContext";
+import { useAppStore } from "@/stores/appStore";
 import Lordicon from "@/components/Lordicon";
 import Auth from "./Auth";
 
@@ -25,7 +24,8 @@ export default function Step(
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function Terms(props: any) {
-  const [language, setLanguage] = useContext(All).userData.language;
+  const language = useAppStore((s) => s.language);
+  const setLanguage = useAppStore((s) => s.setLanguage);
   return (
     <>
       <h1 className="logoTxt welcome-title animated-gradient-text">

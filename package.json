@@ -1,6 +1,6 @@
 {
   "name": "sanatan-ai",
-  "version": "2.4.2",
+  "version": "2.4.3",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,6 +10,7 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test:unit": "vitest run",
     "test:watch": "vitest",
+    "preinstall": "npx only-allow pnpm",
     "test:coverage": "vitest run --coverage",
     "test:smoke": "vitest run --config vitest.smoke.config.mts",
     "test": "npm run lint && npm run typecheck && npm run test:unit && npm run build",
@@ -46,7 +47,8 @@
     "streamdown": "^2.7.1",
     "three": "^0.187.0",
     "unist-util-visit": "^5.2.0",
-    "zod": "^4.6.7"
+    "zod": "^4.6.7",
+    "zustand": "^5.1.0"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",

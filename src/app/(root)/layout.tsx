@@ -1,4 +1,4 @@
-import AllContext from "./AllContext";
+import AppBootstrap from "./AppBootstrap";
 import "./globals.css";
 import { Notification } from "@/components/Notification";
 
@@ -9,9 +9,9 @@ export default function Layout({
 }>) {
     
     return (
-    <AllContext>
+    <AppBootstrap>
         <Notification />
         {children}
-    </AllContext>
+    </AppBootstrap>
     )
 }

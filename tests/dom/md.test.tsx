@@ -1,15 +1,15 @@
-import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import MarkDown from "@/utils/md";
-import { makeAll, makePage, renderWithContexts } from "../helpers/contexts";
+import { useChatStore } from "@/stores/chatStore";
+import { setApp } from "../helpers/stores";
 
 /** Renders markdown and waits until its last line (the sentinel) is on screen. */
 async function renderMarkdown(markdown: string, options: { dark?: boolean } = {}) {
-  const page = makePage();
-  const all = makeAll({ theme: options.dark ? "dark" : "light" });
-  const result = renderWithContexts(<MarkDown markdown={`${markdown}\n\nDone.`} />, { all, page });
+  setApp({ theme: options.dark ? "dark" : "light" });
+  const result = render(<MarkDown markdown={`${markdown}\n\nDone.`} />);
   await screen.findByText("Done.");
-  return { ...result, page };
+  return result;
 }
 
 describe("MarkDown: standard markdown", () => {
@@ -45,9 +45,9 @@ describe("MarkDown: quick-reply buttons (<chat-btn>)", () => {
   });
 
   it("sends the button's text as the user's next message when clicked", async () => {
-    const { page } = await renderMarkdown("Continue? <chat-btn>Yes</chat-btn>");
+    await renderMarkdown("Continue? <chat-btn>Yes</chat-btn>");
     fireEvent.click(screen.getByRole("button", { name: "Yes" }));
-    expect(page.userData.btnMessage[1]).toHaveBeenCalledWith("Yes");
+    expect(useChatStore.getState().btnMessage).toBe("Yes");
   });
 });
 

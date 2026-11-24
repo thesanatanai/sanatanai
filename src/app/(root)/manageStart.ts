@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { logger, login } from "@/utils/utils";
+import { logger } from "@/utils/utils";
+import { useAppStore } from "@/stores/appStore";
 import jsCookie from "js-cookie";
 
 async function manageSw() {
@@ -22,13 +22,10 @@ async function manageSw() {
   }
 }
 
-async function _manage(values: any) {
+async function _manage() {
   void manageSw();
   if(!jsCookie.get("setupComplete")) return;
-  const { setFetched, name, email, picture, language } = values;
-  await login({
-    name, email, picture, preferredLocale: language
-  }, setFetched);
+  await useAppStore.getState().loadProfile();
 }
 
-export default function manage(values: any) { void _manage(values) }; 
+export default function manage() { void _manage() }

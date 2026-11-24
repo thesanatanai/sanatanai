@@ -1,9 +1,8 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
-import type { ReactNode } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import PageContext from "@/app/(root)/app/PageContext";
+import { useChatStore } from "@/stores/chatStore";
 import useSendMessage from "@/utils/useSendMessage";
-import { makePage, type PageOverrides } from "../helpers/contexts";
+import { setChat } from "../helpers/stores";
 
 const mocks = vi.hoisted(() => ({ stream: vi.fn() }));
 vi.mock("@/utils/message", () => ({ default: mocks.stream }));
@@ -12,25 +11,17 @@ const msg = (role: "user" | "model", text: string, index: number, extra = {}) =>
   ({ role, index, parts: [{ text }], ...extra }) as ChatHistory[0];
 const chat = (id: string, title = "New Chat") => ({ id, title, timestamp: 1, index: 1 });
 
-function setup(overrides: PageOverrides = {}, files: UserFileData[] = []) {
-  const page = makePage({ currentSessionId: "chat-1", chats: [chat("chat-1")], ...overrides });
+type Overrides = Partial<{ chatHistory: ChatHistory; chats: Chats; isDeep: boolean }>;
+/** The chat history the store holds right now. */
+const history = () => useChatStore.getState().chatHistory;
+
+function setup(overrides: Overrides = {}, files: UserFileData[] = []) {
+  setChat({ currentSessionId: "chat-1", chats: [chat("chat-1")], ...overrides });
   const setMessage = vi.fn();
   const setFiles = vi.fn();
   const setResponding = vi.fn();
-  const wrapper = ({ children }: { children: ReactNode }) => (
-    <PageContext.Provider value={page}>{children}</PageContext.Provider>
-  );
-  const { result } = renderHook(() => useSendMessage(setMessage, [files, setFiles], setResponding), {
-    wrapper,
-  });
-  const setHistory = page.userData.chatHistory[1];
-  /** Applies every functional setHistory update, in order, to a starting history. */
-  const applyUpdates = (start: ChatHistory) =>
-    setHistory.mock.calls
-      .map(([arg]) => arg)
-      .filter((arg): arg is (h: ChatHistory) => ChatHistory => typeof arg === "function")
-      .reduce((state, update) => update(state), start);
-  return { page, send: result.current, setMessage, setFiles, setResponding, setHistory, applyUpdates };
+  const { result } = renderHook(() => useSendMessage(setMessage, [files, setFiles], setResponding));
+  return { send: result.current, setMessage, setFiles, setResponding };
 }
 
 const file = (name: string, type: string, content: string): UserFileData => ({
@@ -48,22 +39,22 @@ beforeEach(() => {
 
 describe("useSendMessage: sending", () => {
   it("does nothing for an empty message", () => {
-    const { send, setResponding, setHistory } = setup();
+    const { send, setResponding } = setup();
     send("");
     expect(setResponding).not.toHaveBeenCalled();
-    expect(setHistory).not.toHaveBeenCalled();
+    expect(history()).toEqual([]);
     expect(mocks.stream).not.toHaveBeenCalled();
   });
 
   it("shows the user's message and an empty, streaming reply straight away", () => {
-    const history = [msg("user", "first", 0), msg("model", "reply", 1)];
-    const { send, setHistory, setMessage, setFiles, setResponding } = setup({ chatHistory: history });
+    const before = [msg("user", "first", 0), msg("model", "reply", 1)];
+    const { send, setMessage, setFiles, setResponding } = setup({ chatHistory: before });
 
     send("second");
 
     expect(setResponding).toHaveBeenCalledWith(true);
-    expect(setHistory).toHaveBeenCalledWith([
-      ...history,
+    expect(history()).toEqual([
+      ...before,
       msg("user", "second", 2),
       { role: "model", index: 3, parts: [{ text: "" }], streaming: true },
     ]);
@@ -104,18 +95,17 @@ describe("useSendMessage: sending", () => {
 });
 
 describe("useSendMessage: the streamed answer", () => {
-  const start = [msg("user", "q", 0), { role: "model", index: 1, parts: [{ text: "" }], streaming: true }] as ChatHistory;
-
   it("fills in the reply as text arrives, then marks it finished", () => {
-    const { send, applyUpdates } = setup({ chatHistory: [msg("user", "a", 0), msg("model", "b", 1)] });
+    const { send } = setup({ chatHistory: [msg("user", "a", 0), msg("model", "b", 1)] });
     send("q");
     const [, , , onUpdate, onFinish] = mocks.stream.mock.calls[0];
 
     act(() => onUpdate("Jai Shri"));
-    expect(applyUpdates(start).at(-1)!.parts[0].text).toBe("Jai Shri");
+    expect(history().at(-1)!.parts[0].text).toBe("Jai Shri");
+    expect(history().at(-1)!.streaming).toBe(true);
 
     act(() => onFinish("Jai Shri Ram"));
-    const done = applyUpdates(start).at(-1)!;
+    const done = history().at(-1)!;
     expect(done.parts[0].text).toBe("Jai Shri Ram");
     expect(done.streaming).toBe(false);
     expect(done.error).toBe(false);
@@ -129,64 +119,67 @@ describe("useSendMessage: the streamed answer", () => {
 
   it("marks the reply as failed when the stream reports an error", async () => {
     mocks.stream.mockResolvedValue(true);
-    const { send, setResponding, applyUpdates } = setup({ chatHistory: [msg("user", "a", 0), msg("model", "b", 1)] });
+    const { send, setResponding } = setup({ chatHistory: [msg("user", "a", 0), msg("model", "b", 1)] });
     send("q");
 
     await waitFor(() => expect(setResponding).toHaveBeenLastCalledWith(false));
-    const failed = applyUpdates(start).at(-1)!;
+    const failed = history().at(-1)!;
     expect(failed.error).toBe(true);
     expect(failed.streaming).toBe(false);
   });
 
   it("only ever edits a model message, never the user's", () => {
-    const { send, applyUpdates } = setup({ chatHistory: [msg("user", "a", 0), msg("model", "b", 1)] });
+    const { send } = setup({ chatHistory: [msg("user", "a", 0), msg("model", "b", 1)] });
     send("q");
     const onUpdate = mocks.stream.mock.calls[0][3];
-    act(() => onUpdate("oops"));
     const onlyUser = [msg("user", "mine", 0)];
-    expect(applyUpdates(onlyUser)).toEqual(onlyUser);
+    setChat({ chatHistory: onlyUser });
+    act(() => onUpdate("oops"));
+    expect(history()).toEqual(onlyUser);
   });
 
   it("does not modify the history it is updating", () => {
-    const { send, applyUpdates } = setup({ chatHistory: [msg("user", "a", 0), msg("model", "b", 1)] });
+    const { send } = setup({ chatHistory: [msg("user", "a", 0), msg("model", "b", 1)] });
     send("q");
+    const before = history();
+    const snapshot = structuredClone(before);
     act(() => mocks.stream.mock.calls[0][3]("changed"));
-    const snapshot = structuredClone(start);
-    applyUpdates(start);
-    expect(start).toEqual(snapshot);
+    expect(before).toEqual(snapshot);
+    expect(history()).not.toBe(before);
   });
 
   it("ignores updates for an empty history", () => {
-    const { send, applyUpdates } = setup({ chatHistory: [msg("user", "a", 0), msg("model", "b", 1)] });
+    const { send } = setup({ chatHistory: [msg("user", "a", 0), msg("model", "b", 1)] });
     send("q");
+    setChat({ chatHistory: [] });
     act(() => mocks.stream.mock.calls[0][3]("x"));
-    expect(applyUpdates([])).toEqual([]);
+    expect(history()).toEqual([]);
   });
 });
 
 describe("useSendMessage: retrying after a failed answer", () => {
   it("replaces the failed question and answer instead of stacking new ones", () => {
-    const history = [
+    const before = [
       msg("user", "ok question", 0),
       msg("model", "ok answer", 1),
       msg("user", "failed question", 2),
       msg("model", "", 3, { error: true }),
     ];
-    const { send, setHistory } = setup({ chatHistory: history });
+    const { send } = setup({ chatHistory: before });
 
     send("retry");
 
-    const next = setHistory.mock.calls[0][0] as ChatHistory;
+    const next = history();
     expect(next).toHaveLength(4);
-    expect(next.slice(0, 2)).toEqual(history.slice(0, 2));
+    expect(next.slice(0, 2)).toEqual(before.slice(0, 2));
     expect(next[2].parts[0].text).toBe("retry");
     expect(next[3]).toMatchObject({ role: "model", streaming: true });
   });
 
   it("handles a chat whose only message is the failed answer", () => {
-    const { send, setHistory } = setup({ chatHistory: [msg("model", "", 0, { error: true })] });
+    const { send } = setup({ chatHistory: [msg("model", "", 0, { error: true })] });
     send("retry");
-    const next = setHistory.mock.calls[0][0] as ChatHistory;
+    const next = history();
     expect(next).toHaveLength(2);
     expect(next[0].parts[0].text).toBe("retry");
     expect(next[1]).toMatchObject({ role: "model", streaming: true });
@@ -196,7 +189,7 @@ describe("useSendMessage: retrying after a failed answer", () => {
 describe("useSendMessage: naming new chats", () => {
   it("asks for a title after the first message and puts it in the sidebar", async () => {
     const chats = [chat("chat-1"), chat("chat-2", "Other")];
-    const { send, page } = setup({ chats, chatHistory: [] });
+    const { send } = setup({ chats, chatHistory: [] });
 
     send("What is dharma?");
 
@@ -205,9 +198,8 @@ describe("useSendMessage: naming new chats", () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ newMessage: "What is dharma?", chatId: "chat-1" }),
     });
-    const setChats = page.userData.chats[1];
-    await waitFor(() => expect(setChats).toHaveBeenCalled());
-    const updated = setChats.mock.calls[0][0] as Chats;
+    await waitFor(() => expect(useChatStore.getState().chats[0].title).toBe("A Chat Title"));
+    const updated = useChatStore.getState().chats;
     expect(updated[0].title).toBe("A Chat Title");
     expect(updated[0].timestamp).toBeGreaterThan(1);
     expect(updated[1]).toEqual(chats[1]);
@@ -234,12 +226,10 @@ describe("useSendMessage: naming new chats", () => {
         new Response(JSON.stringify({ error: "Sorry, something went wrong" }), { status: 500 }),
       ),
     );
-    const { send, page } = setup({ chatHistory: [] });
+    const { send } = setup({ chatHistory: [] });
     send("hello");
 
-    const setChats = page.userData.chats[1];
     await new Promise((resolve) => setTimeout(resolve, 50));
-    const titles = setChats.mock.calls.map(([updated]) => (updated as Chats)[0].title);
-    expect(titles.every((title) => !title.includes("error"))).toBe(true);
+    expect(useChatStore.getState().chats[0].title).toBe("New Chat");
   });
 });

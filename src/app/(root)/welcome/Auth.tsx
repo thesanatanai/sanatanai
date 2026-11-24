@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
-import { useContext, useMemo, useState } from "react";
-import { All } from "../AllContext";
+import { useMemo, useState } from "react";
+import { useAppStore } from "@/stores/appStore";
 import { Language } from "@/utils/i18n";
 import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import handleLogin from "./handleLogin";
@@ -9,8 +9,7 @@ import Email from "./Email";
 
 function Google(props: Record<string, Function>) {
   const notification = useNotification();
-  const { userData } = useContext(All);
-  const [currentLanguage] = userData.language;
+  const currentLanguage = useAppStore((s) => s.language);
   return (
     <div className="login-container center-flex">
       <div id="google-login-btn">

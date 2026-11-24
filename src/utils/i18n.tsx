@@ -1,7 +1,6 @@
 "use client";
 
-import { All } from "@/app/(root)/AllContext";
-import { useContext } from "react";
+import { useAppStore } from "@/stores/appStore";
 
 const defaultLocale = "en";
 const fallbackLocale = "en";
@@ -433,9 +432,7 @@ export function Language(
   props: Readonly<LanguageProps<keyof typeof currentTranslations>>,
 ) {
   const { need: key, vars } = props;
-  const {
-    language: [lang],
-  } = useContext(All).userData;
+  const lang = useAppStore((s) => s.language);
   const locale = locales[lang];
   const value = locale[key] ?? locales[fallbackLocale][key] ?? key;
   if (key == "samplePrompts" && Array.isArray(value)) return value;
@@ -444,7 +441,7 @@ export function Language(
 }
 
 export function useT() {
-  const language = useContext(All).userData.language[0];
+  const language = useAppStore((s) => s.language);
   return <K extends keyof typeof currentTranslations>(
     key: K,
     vars?: Record<string, string>,

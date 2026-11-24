@@ -1,12 +1,12 @@
 import { useNotification } from "@/components/Notification";
-import { ChangeEvent, useContext, useEffect } from "react";
+import { ChangeEvent, useEffect } from "react";
 import { fileExtensions } from "./utils";
 import { FileText, X } from "lucide-react";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 import Image from "next/image";
-import { All } from "@/app/(root)/AllContext";
+import { useAppStore } from "@/stores/appStore";
 
 export default function useFileManager([stateFiles, setFiles]: uStat<
   UserFileData[]
@@ -134,7 +134,7 @@ function formatName(name: string) {
 export function useStartRecording(
   setMessage: (val: string) => void,
 ) {
-  const locale = useContext(All).userData.language[0];
+  const locale = useAppStore((s) => s.language);
   const {
     browserSupportsSpeechRecognition,
     listening,

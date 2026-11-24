@@ -15,9 +15,9 @@ Nothing here needs real credentials, network access or a database. `tests/setup/
 | --- | --- | --- |
 | `unit/` | Node | Pure logic: utilities, Zod schemas, request building, the streaming/tool loop, i18n, content, SEO, Mongoose schema validation (in memory). |
 | `routes/` | Node | API route handlers called directly with `NextRequest`, plus the `/app` proxy. |
-| `dom/` | jsdom | React components, hooks and context providers (Testing Library). |
+| `dom/` | jsdom | React components, hooks and Zustand stores (Testing Library). |
 | `smoke/` | Node | Real HTTP requests to `next start` (or to `SMOKE_BASE_URL`). Configured by `vitest.smoke.config.mts`. |
-| `helpers/`, `setup/` | | Shared builders (`request.ts`, `stream.ts`, `contexts.tsx`, `tools.ts`) and per-run setup. |
+| `helpers/`, `setup/` | | Shared builders (`request.ts`, `stream.ts`, `stores.ts`, `tools.ts`) and per-run setup. |
 
 ## Conventions
 

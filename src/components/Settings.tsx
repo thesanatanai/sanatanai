@@ -2,27 +2,24 @@
 import "@/css/settings.css";
 import { SettingsIcon } from "lucide-react";
 import Lordicon from "./Lordicon";
-import { All } from "@/app/(root)/AllContext";
-import { useContext, useState } from "react";
+import { useAppStore } from "@/stores/appStore";
+import { useChatStore } from "@/stores/chatStore";
+import { useState } from "react";
 import { Language, useT } from "@/utils/i18n";
 import { useNotification } from "./Notification";
-import PageContext from "@/app/(root)/app/PageContext";
 import Memory from "./Memory";
 
 export default function Settings() {
-  const {
-    userData: {
-      language: [language, setTheLanguage],
-      name: [name, setName],
-      mainTheme: [theme, setTheTheme],
-    },
-  } = useContext(All);
-  const {
-    settingsOpen: [open, setShow],
-    userData: {
-      persona: [custom, setCustom],
-    },
-  } = useContext(PageContext);
+  const language = useAppStore((s) => s.language);
+  const setTheLanguage = useAppStore((s) => s.setLanguage);
+  const name = useAppStore((s) => s.name);
+  const setName = useAppStore((s) => s.setName);
+  const theme = useAppStore((s) => s.mainTheme);
+  const setTheTheme = useAppStore((s) => s.setMainTheme);
+  const open = useChatStore((s) => s.settingsOpen);
+  const setShow = useChatStore((s) => s.setSettingsOpen);
+  const custom = useChatStore((s) => s.persona);
+  const setCustom = useChatStore((s) => s.setPersona);
 
   const notification = useNotification();
   const t = useT();

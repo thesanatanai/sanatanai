@@ -1,33 +1,25 @@
 "use client";
-import { All } from "@/app/(root)/AllContext";
-import { Fragment, useContext, useEffect, useMemo } from "react";
+import { useAppStore } from "@/stores/appStore";
+import { useChatStore } from "@/stores/chatStore";
+import { Fragment, useEffect, useMemo } from "react";
 import Lordicon from "./Lordicon";
 import { Language, useT } from "@/utils/i18n";
 import useRefManager from "@/utils/useRefManager";
 import { Menu } from "lucide-react";
 import { initGestures } from "@/utils/gestures";
-import PageContext from "@/app/(root)/app/PageContext";
 import { deleteChat } from "@/utils/chatActions";
 import Image from "next/image";
 
 const MenuBar = () => {
-  const {
-    userData: {
-      picture: [src],
-      name: [name],
-    },
-  } = useContext(All);
-  const {
-    settingsOpen: [, setShow],
-    userData: {
-      chats: [chats, setChats],
-      currentSessionId: [sessionId, setSessionId],
-    },
-  } = useContext(PageContext);
+  const src = useAppStore((s) => s.picture);
+  const name = useAppStore((s) => s.name);
+  const setShow = useChatStore((s) => s.setSettingsOpen);
+  const chats = useChatStore((s) => s.chats);
+  const sessionId = useChatStore((s) => s.currentSessionId);
+  const setSessionId = useChatStore((s) => s.setCurrentSessionId);
   const t = useT();
   const menuRef = useRefManager<HTMLDivElement>();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const chatSections = useMemo(() => chatList([chats, setChats], [sessionId, setSessionId]), [chats, sessionId]);
+  const chatSections = useMemo(() => chatList(chats, sessionId, setSessionId), [chats, sessionId, setSessionId]);
 
   useEffect(() => {
     return menuRef.afterAvail(initGestures);
@@ -108,8 +100,9 @@ export function toggleMenu(
 }
 
 function chatList(
-  [chats, setChats]: uStat<Chats>,
-  [activeSessionId, setSessionId]: uStat<string>,
+  chats: Chats,
+  activeSessionId: string,
+  setSessionId: (id: string) => void,
 ) {
   const groups: Record<string, Chats> = {
     today: [],
@@ -140,10 +133,7 @@ function chatList(
   });
 
   return Object.keys(groups).map((group) => {
-    const Chats = listSessions(
-      [groups[group], setChats],
-      [activeSessionId, setSessionId],
-    );
+    const Chats = listSessions(groups[group], activeSessionId, setSessionId);
     const isToday = group == "today" ? "historyToday" : null;
     const isYesterday = group == "yesterday" ? "historyYesterday" : null;
     const lastDays = group == "last7days" ? "historyLast7Days" : null;
@@ -166,8 +156,9 @@ function chatList(
 }
 
 const listSessions = (
-  [sessions, setSessions]: uStat<Chats>,
-  [activeSessionId, setSessionId]: uStat<string>,
+  sessions: Chats,
+  activeSessionId: string,
+  setSessionId: (id: string) => void,
 ) => {
   const sorted = sessions.toSorted((a, b) => b.timestamp - a.timestamp);
   return sorted.map(({ id, title }) => {
@@ -184,10 +175,7 @@ const listSessions = (
           className="delete-chat"
           onClick={(e) => {
             e.stopPropagation();
-            void deleteChat(
-              [setSessions, activeSessionId],
-              [sessionId, setSessionId],
-            );
+            void deleteChat(sessionId);
           }}
         >
           <Lordicon src="trash" target="parent" size={24} />

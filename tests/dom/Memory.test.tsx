@@ -1,7 +1,7 @@
-import { fireEvent, screen, waitFor, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import Memory from "@/components/Memory";
-import { makeAll, renderWithContexts } from "../helpers/contexts";
+import { recordNotifications } from "../helpers/stores";
 
 vi.mock("@/components/Lordicon", () => ({ default: () => null, Icon: () => null }));
 
@@ -26,7 +26,7 @@ beforeEach(() => {
 describe("<Memory />", () => {
   it("lists what the AI remembers about the user", async () => {
     stubApi(["Likes the Gita", "Lives in Jaipur"]);
-    renderWithContexts(<Memory setIsOpen={vi.fn()} />);
+    render(<Memory setIsOpen={vi.fn()} />);
 
     expect(await screen.findByText("Likes the Gita")).toBeDefined();
     expect(screen.getByText("Lives in Jaipur")).toBeDefined();
@@ -35,40 +35,40 @@ describe("<Memory />", () => {
 
   it("asks the server for the memories of the signed-in user", async () => {
     const fetchMock = stubApi([]);
-    renderWithContexts(<Memory setIsOpen={vi.fn()} />);
+    render(<Memory setIsOpen={vi.fn()} />);
     await screen.findByText("No memories found.");
     expect(fetchMock).toHaveBeenCalledWith("/api/user/memories");
   });
 
   it("shows a placeholder while loading", () => {
     vi.stubGlobal("fetch", vi.fn(() => new Promise(() => {})));
-    const { container } = renderWithContexts(<Memory setIsOpen={vi.fn()} />);
+    const { container } = render(<Memory setIsOpen={vi.fn()} />);
     expect(container.querySelectorAll(".skeleton").length).toBeGreaterThan(0);
     expect(screen.queryByText("No memories found.")).toBeNull();
   });
 
   it("says when there is nothing to show", async () => {
     stubApi([]);
-    renderWithContexts(<Memory setIsOpen={vi.fn()} />);
+    render(<Memory setIsOpen={vi.fn()} />);
     expect(await screen.findByText("No memories found.")).toBeDefined();
   });
 
   it("shows an error when the server rejects the request", async () => {
     stubApi({ error: "Token not found" });
-    renderWithContexts(<Memory setIsOpen={vi.fn()} />);
+    render(<Memory setIsOpen={vi.fn()} />);
     expect(await screen.findByText("Failed to load memories.")).toBeDefined();
   });
 
   it("shows an error when the request fails", async () => {
     vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
-    renderWithContexts(<Memory setIsOpen={vi.fn()} />);
+    render(<Memory setIsOpen={vi.fn()} />);
     expect(await screen.findByText("Failed to load memories.")).toBeDefined();
   });
 
   it("closes from the close button", async () => {
     stubApi([]);
     const setIsOpen = vi.fn();
-    renderWithContexts(<Memory setIsOpen={setIsOpen} />);
+    render(<Memory setIsOpen={setIsOpen} />);
     fireEvent.click(screen.getByText("✕"));
     expect(setIsOpen).toHaveBeenCalledWith(false);
     await screen.findByText("No memories found.");
@@ -78,7 +78,7 @@ describe("<Memory />", () => {
 describe("<Memory /> deleting a memory", () => {
   it("asks the server to delete exactly that memory", async () => {
     const fetchMock = stubApi(["a", "b", "c"]);
-    renderWithContexts(<Memory setIsOpen={vi.fn()} />);
+    render(<Memory setIsOpen={vi.fn()} />);
     await screen.findByText("b");
 
     fireEvent.click(trashIcons()[1]);
@@ -90,31 +90,29 @@ describe("<Memory /> deleting a memory", () => {
 
   it("confirms success with a notification", async () => {
     stubApi(["a"]);
-    const all = makeAll();
-    renderWithContexts(<Memory setIsOpen={vi.fn()} />, { all });
+    const { sent } = recordNotifications();
+    render(<Memory setIsOpen={vi.fn()} />);
     await screen.findByText("a");
 
     fireEvent.click(trashIcons()[0]);
 
-    await waitFor(() => expect(all.notification.message[1]).toHaveBeenCalledWith("deletedMemory"));
-    expect(all.notification.type[1]).toHaveBeenCalledWith("success");
+    await waitFor(() => expect(sent).toEqual([{ message: "deletedMemory", type: "success", vars: {} }]));
   });
 
   it("reports a failed deletion with an error notification", async () => {
     stubApi(["a"], 400);
-    const all = makeAll();
-    renderWithContexts(<Memory setIsOpen={vi.fn()} />, { all });
+    const { sent } = recordNotifications();
+    render(<Memory setIsOpen={vi.fn()} />);
     await screen.findByText("a");
 
     fireEvent.click(trashIcons()[0]);
 
-    await waitFor(() => expect(all.notification.message[1]).toHaveBeenCalledWith("errorMemory"));
-    expect(all.notification.type[1]).toHaveBeenCalledWith("error");
+    await waitFor(() => expect(sent).toEqual([{ message: "errorMemory", type: "error", vars: {} }]));
   });
 
   it("removes only the deleted memory from the list", async () => {
     stubApi(["a", "b", "c"]);
-    renderWithContexts(<Memory setIsOpen={vi.fn()} />);
+    render(<Memory setIsOpen={vi.fn()} />);
     await screen.findByText("b");
 
     fireEvent.click(trashIcons()[1]);

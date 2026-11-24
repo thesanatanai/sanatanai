@@ -1,3 +1,12 @@
+# 4.2.3
+- Migrated client state management from React Context to Zustand. `AllContext` and `PageContext` are replaced by two stores in `src/stores/`: `appStore` (theme, user profile, notifications) and `chatStore` (chats, messages, settings panel, Deep Think, persona).
+- Components read what they need with selectors, so they re-render only when that value changes. Chat actions (`createNewChat`, `deleteChat`, `deleteMessage`, ...) no longer take setter arguments.
+- `AppBootstrap` runs start-up and the `/app` loading screen; `ChatStoreProvider` fills the chat store with the server's data once, and the store keeps its state when Next.js hides and re-shows the page.
+- `setSession` moved to `src/utils/session.ts` so server components do not import the store.
+- A theme the user picks in Settings is no longer overridden when the system theme changes later.
+- Tests: the chat action tests now match the `/api/chats/:id` routes the client calls; added store, provider and full chat page tests.
+- Migrated from npm to pnpm
+
 # V-2.4.2
 - Implemented Email component for OTP handling with countdown timer.
 - Refactored Auth component to remove inline Email logic and use the new Email component.

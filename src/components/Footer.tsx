@@ -1,11 +1,11 @@
 "use client";
 /*eslint-disable react-hooks/refs*/
-import { useContext, useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Lordicon from "./Lordicon";
 import useRefManager from "@/utils/useRefManager";
 import { useT } from "@/utils/i18n";
 import typed from "@/utils/typed";
-import PageContext from "@/app/(root)/app/PageContext";
+import { useChatStore } from "@/stores/chatStore";
 import { initGestures } from "@/utils/gestures";
 import useFileManager, { useStartRecording } from "@/utils/useFileManager";
 import useSendMessage from "@/utils/useSendMessage";
@@ -13,13 +13,11 @@ import EnhancePrompt from "@/utils/enhancePrompt";
 
 export default function Footer() {
   // Default context values for the footer component, including deep thinking mode and file management.
-  const {
-    isDeep: [isDeep, setDeep],
-    isPC,
-    userData: {
-      btnMessage: [btnMessage, setBtnMessage]
-    }
-  } = useContext(PageContext);
+  const isDeep = useChatStore((s) => s.isDeep);
+  const setDeep = useChatStore((s) => s.setIsDeep);
+  const isPC = useChatStore((s) => s.isPC);
+  const btnMessage = useChatStore((s) => s.btnMessage);
+  const setBtnMessage = useChatStore((s) => s.setBtnMessage);
   const [files, setFiles] = useState<UserFileData[]>([]);
 
   // Custom hook to manage file uploads and previews.

@@ -4,13 +4,9 @@ import {
   copyListener,
   fileExtensions,
   logger,
-  login,
   parentCount,
   speak,
-  useDb,
 } from "@/utils/utils";
-
-const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status });
 
 describe("logger", () => {
   it("logs outside production", () => {
@@ -87,71 +83,6 @@ describe("copyListener", () => {
     vi.advanceTimersByTime(1000);
     expect(icon.src).toBe("icons/copy.json");
     expect(icon.trigger).toBe("hover");
-  });
-});
-
-describe("login", () => {
-  const setters = () => ({
-    name: ["", vi.fn()] as [string, ReturnType<typeof vi.fn>],
-    email: ["", vi.fn()] as [string, ReturnType<typeof vi.fn>],
-  });
-
-  beforeEach(() => {
-    vi.spyOn(console, "log").mockImplementation(() => {});
-  });
-
-  it("copies the signed-in user's profile into the app state without writing it back", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(json({ userData: { name: "Shivam", email: "s@example.com" } })));
-    const state = setters();
-    const fetched = vi.fn();
-
-    await login(state as never, fetched);
-
-    expect(state.name[1]).toHaveBeenCalledWith("Shivam", false);
-    expect(state.email[1]).toHaveBeenCalledWith("s@example.com", false);
-    expect(fetched).toHaveBeenCalledWith(true);
-  });
-
-  it("signs the user out when the session is not valid", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(json({ error: "Invalid token" }, 401)));
-    const cookieDelete = vi.fn();
-    vi.stubGlobal("cookieStore", { delete: cookieDelete });
-    const open = vi.fn();
-    vi.stubGlobal("open", open);
-    const fetched = vi.fn();
-
-    await login(setters() as never, fetched);
-
-    expect(cookieDelete).toHaveBeenCalledWith("setupComplete");
-    expect(open).toHaveBeenCalledWith("/welcome?logout=true", "_self");
-    expect(fetched).toHaveBeenCalledWith(true);
-  });
-});
-
-describe("useDb", () => {
-  it("saves a profile change with PUT /api/user", async () => {
-    const fetchMock = vi.fn().mockResolvedValue(json({ message: "Done" }));
-    vi.stubGlobal("fetch", fetchMock);
-
-    await useDb(true)("name", "Shivam");
-
-    expect(fetchMock).toHaveBeenCalledWith("api/user", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: "Shivam" }),
-    });
-  });
-
-  it("does nothing until the profile has been loaded", async () => {
-    const fetchMock = vi.fn();
-    vi.stubGlobal("fetch", fetchMock);
-    await useDb(false)("name", "Shivam");
-    expect(fetchMock).not.toHaveBeenCalled();
-  });
-
-  it("ignores network failures", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("offline")));
-    await expect(useDb(true)("preferredLocale", "hi")).resolves.toBeUndefined();
   });
 });
 

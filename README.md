@@ -75,7 +75,7 @@ Browser
   ├─ Onboarding (/welcome) → terms, language, Google OAuth or email OTP
   │
   ├─ Chat app (/app, guarded by src/proxy.ts)
-  │    ├─ AllContext (theme, user profile, notifications) + PageContext (chats, history)
+  │    ├─ Zustand stores: appStore (theme, user profile, notifications) + chatStore (chats, history)
   │    ├─ composer: attachments, speech input, Deep Think, prompt enhancement
   │    └─ streamed JSON parser → Markdown / KaTeX / Mermaid renderer
   │
@@ -114,6 +114,7 @@ Browser
 | Search | Tavily |
 | Panchang | `@ishubhamx/panchangam-js` |
 | Rendering | `streamdown`, KaTeX, Mermaid |
+| State | Zustand (`src/stores/`) |
 | UI | Tailwind CSS 4, custom CSS, Lucide, Lordicon |
 | Showcase animation | GSAP (ScrollTrigger, SplitText), Lenis, three.js |
 | Analytics | Google Analytics through `@next/third-parties` |
@@ -222,19 +223,20 @@ npm run build && npm run test:smoke
 src/
 ├── app/
 │   ├── (main)/             # Public showcase site: components, bilingual content, metadata
-│   ├── (root)/             # Chat app shell: contexts, /app, /welcome, /terms, /privacy, globals.css
+│   ├── (root)/             # Chat app shell: start-up (AppBootstrap), /app, /welcome, /terms, /privacy, globals.css
 │   ├── api/
 │   │   ├── chat/           # Gemini request options, streaming, tools; name/ and v2/ helpers
 │   │   ├── chats/          # Conversation CRUD and validation
 │   │   ├── models/         # Mongoose schemas and Zod request models
 │   │   ├── user/           # Google sign-in, profile, OTP, memories routes
 │   │   └── utils/          # Database, auth, mail, system prompt
-│   ├── types/              # Shared context and Lordicon type declarations
+│   ├── types/              # Shared type declarations (chats, messages, files) and Lordicon types
 │   ├── manifest.ts         # Web app manifest
 │   ├── robots.ts           # Crawler rules
 │   └── sitemap.ts          # Sitemap
 ├── actions/                # Server actions: chats, Panchanga, error reporting
 ├── components/             # Chat, menu, settings, notifications, Mermaid, visuals
+├── stores/                 # Zustand state: appStore (theme, profile, notifications), chatStore (chats, messages)
 ├── css/                    # Feature-specific style sheets
 ├── utils/                  # Client-side chat, streaming, file, i18n, Markdown helpers
 └── proxy.ts                # Route guard for /app and /hi

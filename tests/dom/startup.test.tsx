@@ -2,6 +2,7 @@ import jsCookie from "js-cookie";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import handleLogin from "@/app/(root)/welcome/handleLogin";
 import manage from "@/app/(root)/manageStart";
+import { useAppStore } from "@/stores/appStore";
 
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status });
 
@@ -61,14 +62,6 @@ describe("handleLogin (Google sign-in button)", () => {
 });
 
 describe("manage (app start-up)", () => {
-  const setters = () => ({
-    name: ["", vi.fn()],
-    email: ["", vi.fn()],
-    picture: ["", vi.fn()],
-    language: ["en", vi.fn()],
-    setFetched: vi.fn(),
-  });
-
   function stubServiceWorker(registration: unknown) {
     const serviceWorker = {
       getRegistration: vi.fn().mockResolvedValue(registration),
@@ -81,14 +74,14 @@ describe("manage (app start-up)", () => {
 
   it("registers the service worker on the first visit", async () => {
     const serviceWorker = stubServiceWorker(undefined);
-    manage(setters());
+    manage();
     await vi.waitFor(() => expect(serviceWorker.register).toHaveBeenCalledWith("/sw.js"));
   });
 
   it("checks for a newer service worker when one is already installed", async () => {
     const update = vi.fn().mockResolvedValue(undefined);
     const serviceWorker = stubServiceWorker({ update });
-    manage(setters());
+    manage();
     await vi.waitFor(() => expect(update).toHaveBeenCalled());
     expect(serviceWorker.register).not.toHaveBeenCalled();
   });
@@ -97,9 +90,10 @@ describe("manage (app start-up)", () => {
     stubServiceWorker(undefined);
     const fetchMock = vi.fn();
     vi.stubGlobal("fetch", fetchMock);
-    manage(setters());
+    manage();
     await new Promise((resolve) => setTimeout(resolve, 20));
     expect(fetchMock).not.toHaveBeenCalled();
+    expect(useAppStore.getState().fetched).toBe(false);
   });
 
   it("loads the profile of a returning user", async () => {
@@ -111,12 +105,10 @@ describe("manage (app start-up)", () => {
         json({ userData: { name: "Shivam", email: "s@example.com", picture: "", preferredLocale: "hi" } }),
       ),
     );
-    const state = setters();
 
-    manage(state);
+    manage();
 
-    await vi.waitFor(() => expect(state.setFetched).toHaveBeenCalledWith(true));
-    expect(state.name[1]).toHaveBeenCalledWith("Shivam", false);
-    expect(state.language[1]).toHaveBeenCalledWith("hi", false);
+    await vi.waitFor(() => expect(useAppStore.getState().fetched).toBe(true));
+    expect(useAppStore.getState()).toMatchObject({ name: "Shivam", email: "s@example.com", language: "hi" });
   });
 });

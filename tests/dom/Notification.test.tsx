@@ -1,98 +1,98 @@
-import { act, renderHook, screen } from "@testing-library/react";
-import type { ReactNode } from "react";
+import { act, render, renderHook, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { All } from "@/app/(root)/AllContext";
 import notification, { Notification, useNotification } from "@/components/Notification";
-import { makeAll, renderWithContexts } from "../helpers/contexts";
+import { useAppStore } from "@/stores/appStore";
+import { recordNotifications, setApp } from "../helpers/stores";
 
 // Lordicon registers a custom element lazily; icons are irrelevant here.
 vi.mock("@/components/Lordicon", () => ({ default: () => null, Icon: () => null }));
 
+const show = (patch: Partial<ReturnType<typeof useAppStore.getState>["notification"]>) =>
+  useAppStore.getState().setNotification(patch);
+
 describe("<Notification />", () => {
   it("shows an untranslated message as it is", () => {
-    const all = makeAll({ notification: { message: "Saved!", isLang: true } });
-    renderWithContexts(<Notification />, { all });
+    show({ message: "Saved!", isLang: true });
+    render(<Notification />);
     expect(screen.getByText("Saved!")).toBeDefined();
   });
 
   it("translates the message key when it is not already translated", () => {
-    const all = makeAll({ language: "hi", notification: { message: "languageLabel", isLang: false } });
-    renderWithContexts(<Notification />, { all });
+    setApp({ language: "hi" });
+    show({ message: "languageLabel", isLang: false });
+    render(<Notification />);
     expect(screen.getByText("भाषा")).toBeDefined();
   });
 
   it("fills in translation variables", () => {
-    const all = makeAll({
-      notification: { message: "changedSetting", isLang: false, vars: { setting: "Theme" } },
-    });
-    renderWithContexts(<Notification />, { all });
+    show({ message: "changedSetting", isLang: false, vars: { setting: "Theme" } });
+    render(<Notification />);
     expect(screen.getByText(/Theme/)).toBeDefined();
   });
 
   it.each(["info", "success", "error"] as const)("styles a %s notification", (type) => {
-    const all = makeAll({ notification: { message: "x", isLang: true, type } });
-    const { container } = renderWithContexts(<Notification />, { all });
+    show({ message: "x", isLang: true, type });
+    const { container } = render(<Notification />);
     expect(container.firstElementChild!.classList.contains(type)).toBe(true);
   });
 
   it("is only visible while open", () => {
-    const closed = renderWithContexts(<Notification />, {
-      all: makeAll({ notification: { message: "x", isLang: true, isOpen: false } }),
-    });
-    expect(closed.container.firstElementChild!.classList.contains("active")).toBe(false);
-    closed.unmount();
+    show({ message: "x", isLang: true, isOpen: false });
+    const { container } = render(<Notification />);
+    expect(container.firstElementChild!.classList.contains("active")).toBe(false);
 
-    const open = renderWithContexts(<Notification />, {
-      all: makeAll({ notification: { message: "x", isLang: true, isOpen: true } }),
-    });
-    expect(open.container.firstElementChild!.classList.contains("active")).toBe(true);
+    act(() => show({ isOpen: true }));
+    expect(container.firstElementChild!.classList.contains("active")).toBe(true);
   });
 });
 
 describe("notification()", () => {
-  beforeEach(() => vi.useFakeTimers());
-  afterEach(() => vi.useRealTimers());
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+  const current = () => useAppStore.getState().notification;
 
   it("sets the content straight away, shows it after 0.5s and hides it after 3.5s", () => {
-    const all = makeAll();
-    notification("deletedMemory", all.notification, { language: false, type: "success", vars: { a: "b" } });
+    notification("deletedMemory", { language: false, type: "success", vars: { a: "b" } });
 
-    expect(all.notification.type[1]).toHaveBeenCalledWith("success");
-    expect(all.notification.vars[1]).toHaveBeenCalledWith({ a: "b" });
-    expect(all.notification.message[1]).toHaveBeenCalledWith("deletedMemory");
-    expect(all.notification.isOpen[1]).not.toHaveBeenCalled();
+    expect(current()).toMatchObject({ type: "success", vars: { a: "b" }, message: "deletedMemory", isOpen: false });
 
     vi.advanceTimersByTime(500);
-    expect(all.notification.isOpen[1]).toHaveBeenLastCalledWith(true);
+    expect(current().isOpen).toBe(true);
     vi.advanceTimersByTime(3000);
-    expect(all.notification.isOpen[1]).toHaveBeenLastCalledWith(false);
+    expect(current().isOpen).toBe(false);
   });
 
   it("defaults to an info notification without variables", () => {
-    const all = makeAll();
-    notification("hello", all.notification);
-    expect(all.notification.type[1]).toHaveBeenCalledWith("info");
-    expect(all.notification.vars[1]).toHaveBeenCalledWith({});
+    notification("hello");
+    expect(current()).toMatchObject({ type: "info", vars: {}, message: "hello" });
   });
 
   it("closes a notification that is already showing before replacing it", () => {
-    const all = makeAll({ notification: { isOpen: true } });
-    notification("next", all.notification);
-    expect(all.notification.isOpen[1]).toHaveBeenCalledWith(false);
+    show({ isOpen: true, message: "previous" });
+    notification("next");
+    expect(current()).toMatchObject({ isOpen: false, message: "next" });
   });
 });
 
 describe("useNotification", () => {
   it("returns a sender wired to the app's notification state", () => {
-    const all = makeAll();
-    const wrapper = ({ children }: { children: ReactNode }) => (
-      <All.Provider value={all}>{children}</All.Provider>
-    );
-    const { result } = renderHook(() => useNotification(), { wrapper });
+    const { result } = renderHook(() => useNotification());
     vi.useFakeTimers();
+    const { sent, stop } = recordNotifications();
     act(() => result.current("fileLimitExceeded", { language: true, type: "error" }));
-    expect(all.notification.message[1]).toHaveBeenCalledWith("fileLimitExceeded");
-    expect(all.notification.type[1]).toHaveBeenCalledWith("error");
+    expect(sent).toEqual([{ message: "fileLimitExceeded", type: "error", vars: {} }]);
+    stop();
     vi.useRealTimers();
+  });
+
+  it("returns the same sender on every render", () => {
+    const { result, rerender } = renderHook(() => useNotification());
+    const first = result.current;
+    rerender();
+    expect(result.current).toBe(first);
   });
 });

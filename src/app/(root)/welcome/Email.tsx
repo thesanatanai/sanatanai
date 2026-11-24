@@ -1,6 +1,6 @@
 import { Language, useT } from "@/utils/i18n";
-import { useContext, useEffect, useState } from "react";
-import { All } from "../AllContext";
+import { useEffect, useState } from "react";
+import { useAppStore } from "@/stores/appStore";
 import jsCookie from "js-cookie";
 import Lordicon from "@/components/Lordicon";
 import { Edit3 } from "lucide-react";
@@ -12,9 +12,8 @@ export default function Email(props: Record<string, Function>) {
   const [otpGot, setOtpGot] = useState(false);
   const [errMsg, setErrMsg] = useState("");
   const t = useT();
-  const { userData } = useContext(All);
-  const [currentLanguage] = userData.language;
-  const userEmail = userData.email[1];
+  const currentLanguage = useAppStore((s) => s.language);
+  const userEmail = useAppStore((s) => s.setEmail);
   const [timeLeft, setTimeLeft] = useState(120);
 
   // Single countdown timer. It stops when the user goes back to edit the

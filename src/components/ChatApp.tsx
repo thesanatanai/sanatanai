@@ -1,13 +1,13 @@
 "use client";
-import { All } from "@/app/(root)/AllContext";
+import { useAppStore } from "@/stores/appStore";
+import { useChatStore } from "@/stores/chatStore";
 import React from "react";
 import Lordicon from "./Lordicon";
 import Image from "next/image";
 import Markdown from "@/utils/md";
 import { Language, useT } from "@/utils/i18n";
-import PageContext from "@/app/(root)/app/PageContext";
 import { FileText } from "lucide-react";
-import { useDeleteMessage } from "@/utils/chatActions";
+import { deleteMessage } from "@/utils/chatActions";
 import { copyListener, sign, speak } from "@/utils/utils";
 import { Err } from "./Notification";
 import Messages from "./skeletons/Messages";
@@ -16,7 +16,7 @@ sign();
 
 //#region Chat
 const ChatApp = () => {
-  const history = React.useContext(PageContext).userData.chatHistory[0];
+  const history = useChatStore((s) => s.chatHistory);
   return history?.length ? (
     <>
       <div aria-live="polite" className="chat-body col h-full">
@@ -37,7 +37,6 @@ interface ChatItemProps {
 }
 const ChatItem: React.FC<ChatItemProps> = React.memo(
   ({ chat, isPC, index }) => {
-    const deleteMessage = useDeleteMessage();
     if (chat.role == "user") {
       const text = chat.parts.map((part) => part.text).join("");
       if (!text) return "";
@@ -149,10 +148,8 @@ const FormatChat = React.memo(function FormatChat({
 }: {
   history: ChatHistory;
 }) {
-  const {
-    isPC,
-    historyLoading: [loading],
-  } = React.useContext(PageContext);
+  const isPC = useChatStore((s) => s.isPC);
+  const loading = useChatStore((s) => s.historyLoading);
   if (loading) return <Messages />;
   return history.map((chat, i) => (
     <ChatItem
@@ -165,7 +162,7 @@ const FormatChat = React.memo(function FormatChat({
 });
 
 function Home() {
-  const initialName = React.useContext(All).userData.name[0];
+  const initialName = useAppStore((s) => s.name);
   const t = useT();
   const name = initialName || t("guestName");
   return (

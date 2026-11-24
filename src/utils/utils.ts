@@ -1,4 +1,3 @@
-import { usedOnDb } from "@/app/(root)/AllContext";
 import { LordIcon } from "@/app/types/lordicon";
 
 export const fileExtensions = [
@@ -44,46 +43,6 @@ export const fileExtensions = [
   "flac", "mid", "midi", "mp3", "m4a", "m4b", "mp4", "mpeg",
   "oga", "ogg", "opus", "wav", "wave", "aac", "aif", "aiff", "wma", "weba", "amr"
 ];
-;
-export async function login(
-  setters: Record<string, usedOnDb<string>>,
-  fetched: (value: boolean) => void,
-) {
-  try {
-    const data = await fetch("api/user");
-    const { userData } = await data.json();
-    Object.keys(setters).forEach((setter) => {
-      setters[setter][1](userData[setter], false);
-    });
-    fetched(true);
-  } catch (e) {
-    logger(e);
-    if (!globalThis.window) return fetched(true);
-    void cookieStore.delete("setupComplete");
-    open("/welcome?logout=true", "_self");
-    fetched(true);
-  }
-}
-
-export function useDb(fetched: boolean) {
-  return async function setOnDb(
-    query: "name" | "email" | "picture" | "preferredLocale",
-    value: string,
-  ) {
-    if (!fetched) return;
-    try {
-      await fetch("api/user", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          [query]: value,
-        }),
-      });
-    } catch {}
-  };
-}
 
 export function logger(...data: unknown[]) {
   const { log } = console;

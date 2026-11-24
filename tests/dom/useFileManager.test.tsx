@@ -1,9 +1,8 @@
 import { renderHook, waitFor } from "@testing-library/react";
-import type { ChangeEvent, ReactNode } from "react";
+import type { ChangeEvent } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { All } from "@/app/(root)/AllContext";
 import useFileManager from "@/utils/useFileManager";
-import { makeAll } from "../helpers/contexts";
+import { recordNotifications } from "../helpers/stores";
 
 vi.mock("@/components/Lordicon", () => ({ default: () => null, Icon: () => null }));
 
@@ -15,16 +14,13 @@ const existing = (filename: string): UserFileData => ({
 });
 
 function setup(current: UserFileData[] = []) {
-  const all = makeAll();
+  const { sent } = recordNotifications();
   const setFiles = vi.fn();
-  const wrapper = ({ children }: { children: ReactNode }) => (
-    <All.Provider value={all}>{children}</All.Provider>
-  );
-  const { result } = renderHook(() => useFileManager([current, setFiles]), { wrapper });
+  const { result } = renderHook(() => useFileManager([current, setFiles]));
   const pick = (...files: File[]) =>
     result.current.handleInput({ target: { files } } as unknown as ChangeEvent<HTMLInputElement>);
-  const notified = () => all.notification.message[1].mock.calls.map(([key]) => key);
-  return { pick, setFiles, notified, all };
+  const notified = () => sent.map(({ message }) => message);
+  return { pick, setFiles, notified, sent };
 }
 
 beforeEach(() => vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] }));
@@ -105,9 +101,9 @@ describe("useFileManager: limits and validation", () => {
   });
 
   it("reports the failure notification as an error", () => {
-    const { pick, all } = setup([existing("1.txt"), existing("2.txt"), existing("3.txt")]);
+    const { pick, sent } = setup([existing("1.txt"), existing("2.txt"), existing("3.txt")]);
     pick(new File(["x"], "4.txt", { type: "text/plain" }));
-    expect(all.notification.type[1]).toHaveBeenCalledWith("error");
+    expect(sent.map(({ type }) => type)).toContain("error");
   });
 });
 
@@ -121,10 +117,10 @@ describe("useFileManager: file size limit", () => {
   };
 
   it("refuses a file larger than the limit", () => {
-    const { pick, setFiles, notified, all } = setup();
+    const { pick, setFiles, notified, sent } = setup();
     pick(sized("big.txt", LIMIT + 1));
     expect(notified()).toEqual(["fileLimitExceeded"]);
-    expect(all.notification.type[1]).toHaveBeenCalledWith("error");
+    expect(sent.map(({ type }) => type)).toContain("error");
     expect(setFiles).not.toHaveBeenCalled();
   });
 

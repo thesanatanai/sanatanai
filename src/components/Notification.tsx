@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/refs */
 "use client";
-import { All } from "@/app/(root)/AllContext";
+import { useAppStore, type NotificationProps } from "@/stores/appStore";
+import { useChatStore } from "@/stores/chatStore";
 import { Language, locales } from "@/utils/i18n";
 import {
   CheckCircle,
@@ -10,21 +11,13 @@ import {
   EllipsisVertical,
   Search,
 } from "lucide-react";
-import { useContext } from "react";
 import Lordicon from "./Lordicon";
-import PageContext from "@/app/(root)/app/PageContext";
 import { createNewChat, deleteChat } from "@/utils/chatActions";
 import useRefManager from "@/utils/useRefManager";
 import { initGestures } from "@/utils/gestures";
 
 export const Notification = () => {
-  const {
-    isOpen: [isOpen],
-    type: [type],
-    message: [message],
-    isLang: [isLang],
-    vars: [vars],
-  } = useContext(All).notification;
+  const { isOpen, type, message, isLang, vars } = useAppStore((s) => s.notification);
   return (
     <div
       className={`notification backdrop-blur-[10px] glass-effect ${type}${isOpen ? " active" : ""}`}
@@ -49,46 +42,21 @@ export const Notification = () => {
   );
 };
 
-interface NotificationProps<K> {
-  language?: K;
-  vars?: Record<string, string>;
-  type?: "info" | "success" | "error";
+/** Shows a notification. With `language: true` the message is a translation key. */
+function notification(message: keyof typeof locales.en, props?: NotificationProps<true>): void;
+function notification(message: string, props?: NotificationProps<false>): void;
+function notification(message: string, props?: NotificationProps<boolean>) {
+  useAppStore.getState().notify(message, props);
 }
+export default notification;
 
-export default function notification(
-  message: string,
-  instance: AllProps["notification"],
-  props?: NotificationProps<boolean>,
-) {
-  const {
-    isOpen: [isOpen, setIsOpen],
-    message: [, setMessage],
-    type: [, setType],
-    vars: [, setVars],
-  } = instance;
-  if (isOpen) setIsOpen(false);
-  setType(props?.type || "info");
-  setVars(props?.vars || {});
-  setMessage(message);
-  setTimeout(() => setIsOpen(true), 500);
-  setTimeout(() => setIsOpen(false), 3500);
-}
-
+/** Returns the function that shows notifications. It never changes between renders. */
 export function useNotification() {
-  const instance = useContext(All).notification;
-  function send(message: keyof typeof locales.en, props?: NotificationProps<true>): void;
-  function send(message: string, props?: NotificationProps<false>): void;
-  function send(
-    message: string,
-    props?: NotificationProps<boolean>,
-  ) {
-    notification(message, instance, props);
-  };
-  return send;
+  return notification;
 }
 
 export function SideMenu() {
-  const { chats, currentSessionId } = useContext(PageContext).userData;
+  const currentSessionId = useChatStore((s) => s.currentSessionId);
   const sideRef = useRefManager<HTMLDivElement>();
   sideRef.afterAvail((side) => initGestures(side, false, "hide", "btn-toggle"));
   return (
@@ -115,7 +83,7 @@ export function SideMenu() {
         </button>
         <button
           className="chat-options-item"
-          onClick={() => createNewChat(currentSessionId[1], chats[1])}
+          onClick={() => createNewChat()}
           type="button"
         >
           <Edit />
@@ -127,9 +95,7 @@ export function SideMenu() {
         </button>
         <button
           className="chat-options-item danger"
-          onClick={() =>
-            deleteChat([chats[1], currentSessionId[0]], currentSessionId)
-          }
+          onClick={() => deleteChat(currentSessionId)}
           type="button"
         >
           <Lordicon src="trash" target="parent" />

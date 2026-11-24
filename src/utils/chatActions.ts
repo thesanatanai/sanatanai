@@ -1,70 +1,43 @@
-import PageContext from "@/app/(root)/app/PageContext";
-import { useContext } from "react";
+import { useChatStore } from "@/stores/chatStore";
+import { setSession } from "./session";
 
-export async function createNewChat(
-  setCurrentSession: (value: string) => void,
-  setChats?: (value: Chats) => void
-) {
+export async function createNewChat() {
   try {
     const { id } = await fetch("api/chats", {
       method: "POST",
     }).then((res) => res.json());
-    setCurrentSession(id);
-    void getChats(setChats);
+    useChatStore.getState().setCurrentSessionId(id);
+    void getChats();
   } catch {}
 }
 
-export async function loadChat(
-  id: string,
-  setChatHistory: (value: ChatHistory) => void,
-  setChatLoading: (value: boolean) => void,
-  setChats: (value: ((initial: Chats) => Chats)) => void
-) {
-  if(setChatLoading) setChatLoading(true);
-  const chat: fullChat = await fetch("api/chats/" + id).then((res) => res.json());
-  setChatHistory(chat.messages);
-  setChatLoading(false);
-  setChats(chats => {
-    const current = structuredClone(chats);
-    const idx = current.findIndex(chat => chat.id == id);
-    if(idx < 0) return chats;
-    current[idx].timestamp = chat.timestamp;
-    current[idx].title = chat.title;
-    return current;
-  });
+/** Opens the chat {@link id}: shows a loading state, loads its messages and refreshes its title in the list. */
+export function loadChat(id: string) {
+  return useChatStore.getState().loadChat(id);
 }
 
-export async function getChats(
-  setChats?: (value: Chats) => void,
-  setSessionId?: (value: string) => void
-) {
+/**
+ * Loads the chat list into the store.
+ * @param selectLatest Also open the most recently used chat
+ */
+export async function getChats(selectLatest = false) {
+  const { setChats, setCurrentSessionId } = useChatStore.getState();
   const chats: Chats = await fetch("api/chats").then((c) => c.json());
-  if (chats && setSessionId) setSession(chats, setSessionId);
-  if(setChats) setChats(chats || []);
-  return chats || []
+  if (chats && selectLatest) setSession(chats, setCurrentSessionId);
+  setChats(chats || []);
+  return chats || [];
 }
 
-export function setSession(chats: Chats, setCurrentSession?: (value: string) => void) {
-  let latestChat = chats[0];
-    chats.forEach(
-      (chat) =>
-        (latestChat =
-          latestChat.timestamp < chat.timestamp ? chat : latestChat),
-    );
-   if(setCurrentSession) setCurrentSession(latestChat.id);
-   return latestChat.id;
-}
-
-export async function deleteChat([setChats, current]: [(value: Chats) => void, string], [id, setSession]: uStat<string>) {
+export async function deleteChat(id: string) {
+  // Whether the open chat is the deleted one has to be decided before the request.
+  const isOpen = id === useChatStore.getState().currentSessionId;
   try {
     const { message } = await fetch("api/chats/" + id, {
       method: "DELETE",
     }).then((res) => res.json());
 
-    let setId;
-    if(id === current) setId = setSession;
-    const chats = await getChats(setChats, setId);
-    if (message && !chats.length) void createNewChat(setSession, setChats);
+    const chats = await getChats(isOpen);
+    if (message && !chats.length) void createNewChat();
   } catch {}
 }
 
@@ -81,16 +54,14 @@ export async function updateChat<K extends keyof fullChat>(id: string, changes: 
   catch {}
 }
 
-export function useDeleteMessage() {
-  const {chatHistory: [history, setHistory], currentSessionId: [id]} = useContext(PageContext).userData;
-  
-  return async function deleteMessage(index: number) {
-    if(!history[index]) return;
-    const newHistory = structuredClone(history)
-    newHistory.splice(index, 1);
-    setHistory(newHistory);
-    return await updateChat(id, {
-      messages: newHistory
-    });
-  }
+/** Removes one message from the open chat and saves the shortened chat. */
+export async function deleteMessage(index: number) {
+  const { chatHistory, currentSessionId, setChatHistory } = useChatStore.getState();
+  if (!chatHistory[index]) return;
+  const newHistory = structuredClone(chatHistory);
+  newHistory.splice(index, 1);
+  setChatHistory(newHistory);
+  return await updateChat(currentSessionId, {
+    messages: newHistory
+  });
 }
