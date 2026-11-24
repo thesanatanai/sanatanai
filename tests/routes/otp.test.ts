@@ -112,7 +112,7 @@ describe("PUT /api/user/otp (request a code)", () => {
   it("does not send a second code while the first is still valid", async () => {
     seedOtp();
     const res = await requestCode();
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(429);
     expect(mocks.sendOtp).not.toHaveBeenCalled();
   });
 

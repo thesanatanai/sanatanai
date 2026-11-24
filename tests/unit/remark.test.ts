@@ -1,6 +1,6 @@
 import type { Html, Paragraph, Root } from "mdast";
 import { describe, expect, it } from "vitest";
-import remarkCustomBlocks from "@/utils/remark";
+import { remarkCustomBlocks } from "@/utils/remark";
 
 type Transformer = (tree: Root, file: { value: string }) => void;
 type Options = { tags?: string[] };

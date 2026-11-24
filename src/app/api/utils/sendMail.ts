@@ -20,14 +20,13 @@ export async function _sendOTP(otp: number, to: string) {
     });
 
     if (error) {
-      console.log(otp);
-      // throw error;
+      throw error;
     }
 
     return true;
   } catch (e) {
     console.error(e);
-    // throw e;
+    throw e;
   }
 }
 

@@ -49,5 +49,5 @@ const remarkCustomBlocks: Plugin<[Options?], Root> = (
 };
 
 const customPlugin = [remarkCustomBlocks, { tags: ["gita", "canvas", "timeline"] }] as Pluggable;
-
+export { remarkCustomBlocks };
 export default customPlugin;

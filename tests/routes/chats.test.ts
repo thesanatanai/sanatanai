@@ -24,7 +24,8 @@ vi.mock("@/actions/chatActions", () => ({
   updateChat: mocks.updateChat,
 }));
 
-import { DELETE, GET, PATCH, POST, PUT } from "@/app/api/chats/route";
+import { GET, POST } from "@/app/api/chats/route";
+import { DELETE, GET as GETChat, PUT } from "@/app/api/chats/[chatId]/route";
 
 const user = { id: "user-1" };
 const notFound = () => NextResponse.json({ error: "Chat does not exist" }, { status: 400 });
@@ -97,7 +98,7 @@ describe("POST /api/chats (open a chat)", () => {
     const messages = [{ role: "user", parts: [{ text: "hi" }] }];
     mocks.getChat.mockResolvedValue(stored(messages));
 
-    const res = await POST(jsonRequest("/api/chats", "POST", { id: "c1" }));
+    const res = await GETChat(jsonRequest("/api/chats/c1", "GET"), { params: Promise.resolve({ chatId: "c1" }) });
 
     expect(mocks.getChat).toHaveBeenCalledWith("user-1", "c1");
     const body = await res.json();
@@ -108,7 +109,7 @@ describe("POST /api/chats (open a chat)", () => {
     mocks.getChat.mockResolvedValue(stored([{ role: "user", parts: [{ text: "hi" }] }]));
     const before = Date.now();
 
-    const res = await POST(jsonRequest("/api/chats", "POST", { id: "c1" }));
+    const res = await GETChat(jsonRequest("/api/chats/c1", "GET"), { params: Promise.resolve({ chatId: "c1" }) });
 
     const { timestamp } = await res.json();
     expect(timestamp).toBeGreaterThanOrEqual(before);
@@ -118,33 +119,22 @@ describe("POST /api/chats (open a chat)", () => {
   it("empties a chat whose messages hold no text at all", async () => {
     mocks.getChat.mockResolvedValue(stored([{ role: "user", parts: [{}] }]));
 
-    const res = await POST(jsonRequest("/api/chats", "POST", { id: "c1" }));
+    const res = await GETChat(jsonRequest("/api/chats/c1", "GET"), { params: Promise.resolve({ chatId: "c1" }) });
 
     expect((await res.json()).messages).toEqual([]);
     expect(mocks.updateChat).toHaveBeenCalledWith("user-1", "c1", { messages: [] });
   });
 
-  it.each([
-    ["missing", {}],
-    ["empty", { id: "" }],
-    ["not a string", { id: { $ne: null } }],
-  ])("rejects a chat id that is %s", async (_label, body) => {
-    const res = await POST(jsonRequest("/api/chats", "POST", body));
-    expect(res.status).toBe(400);
-    expect(await res.json()).toEqual({ error: "Invalid chat id provided" });
-    expect(mocks.getChat).not.toHaveBeenCalled();
-  });
-
   it("passes on 'chat does not exist'", async () => {
     mocks.getChat.mockResolvedValue(notFound);
-    const res = await POST(jsonRequest("/api/chats", "POST", { id: "nope" }));
+    const res = await GETChat(jsonRequest("/api/chats/nope", "POST"), { params: Promise.resolve({ chatId: "nope" }) });
     expect(res.status).toBe(400);
     expect(await res.json()).toEqual({ error: "Chat does not exist" });
   });
 
   it("answers 401 without a session", async () => {
     mocks.verifyUser.mockResolvedValue(unauthorized());
-    expect((await POST(jsonRequest("/api/chats", "POST", { id: "c1" }))).status).toBe(401);
+    expect((await GETChat(jsonRequest("/api/chats/c1", "GET"), { params: Promise.resolve({ chatId: "c1" }) })).status).toBe(401);
   });
 });
 
@@ -152,7 +142,7 @@ describe("PATCH /api/chats (new chat)", () => {
   it("re-uses the empty chat the user already has instead of piling up blank ones", async () => {
     mocks.findOne.mockReturnValue({ select: () => ({ lean: async () => ({ chatId: "blank" }) }) });
 
-    const res = await PATCH();
+    const res = await POST();
 
     expect(mocks.findOne).toHaveBeenCalledWith({ messages: [], id: "user-1" });
     expect(await res.json()).toEqual({ id: "blank" });
@@ -163,7 +153,7 @@ describe("PATCH /api/chats (new chat)", () => {
     mocks.findOne.mockReturnValue({ select: () => ({ lean: async () => null }) });
     mocks.createNewChat.mockResolvedValue({ chatId: "brand-new" });
 
-    const res = await PATCH();
+    const res = await POST();
 
     expect(mocks.createNewChat).toHaveBeenCalledWith("user-1");
     expect(await res.json()).toEqual({ id: "brand-new" });
@@ -171,7 +161,7 @@ describe("PATCH /api/chats (new chat)", () => {
 
   it("answers 401 without a session", async () => {
     mocks.verifyUser.mockResolvedValue(unauthorized());
-    expect((await PATCH()).status).toBe(401);
+    expect((await POST()).status).toBe(401);
   });
 });
 
@@ -179,7 +169,7 @@ describe("DELETE /api/chats", () => {
   it("deletes a chat, but only if it belongs to the signed-in user", async () => {
     mocks.deleteOne.mockResolvedValue({ deletedCount: 1 });
 
-    const res = await DELETE(jsonRequest("/api/chats", "DELETE", { id: "c1" }));
+    const res = await DELETE(jsonRequest("/api/chats/c1", "DELETE"), { params: Promise.resolve({ chatId: "c1" }) });
 
     expect(mocks.deleteOne).toHaveBeenCalledWith({ id: "user-1", chatId: "c1" });
     expect(await res.json()).toEqual({ message: "Done" });
@@ -187,20 +177,14 @@ describe("DELETE /api/chats", () => {
 
   it("reports a chat that does not exist (or belongs to someone else)", async () => {
     mocks.deleteOne.mockResolvedValue({ deletedCount: 0 });
-    const res = await DELETE(jsonRequest("/api/chats", "DELETE", { id: "someone-elses" }));
+    const res = await DELETE(jsonRequest("/api/chats/someone-elses", "DELETE"), { params: Promise.resolve({ chatId: "someone-elses" }) });
     expect(res.status).toBe(400);
     expect(await res.json()).toEqual({ error: "Chat not found" });
   });
 
-  it.each([{}, { id: "" }, { id: 5 }, { id: { $gt: "" } }])("rejects chat id %j", async (body) => {
-    const res = await DELETE(jsonRequest("/api/chats", "DELETE", body));
-    expect(res.status).toBe(400);
-    expect(mocks.deleteOne).not.toHaveBeenCalled();
-  });
-
   it("answers 401 without a session", async () => {
     mocks.verifyUser.mockResolvedValue(unauthorized());
-    const res = await DELETE(jsonRequest("/api/chats", "DELETE", { id: "c1" }));
+    const res = await DELETE(jsonRequest("/api/chats/c1", "DELETE"), { params: Promise.resolve({ chatId: "c1" }) });
     expect(res.status).toBe(401);
     expect(mocks.deleteOne).not.toHaveBeenCalled();
   });
@@ -211,59 +195,53 @@ describe("PUT /api/chats (save changes)", () => {
     { role: "user", parts: [{ text: "hi" }] },
     { role: "model", parts: [{ text: "hello" }] },
   ];
-  const put = (body: unknown) => PUT(jsonRequest("/api/chats", "PUT", body));
+  const put = (chatId: string, body: unknown) => PUT(jsonRequest("/api/chats", "PUT", body), { params: Promise.resolve({ chatId }) });
 
   it("saves the messages of the signed-in user's chat", async () => {
-    const res = await put({ id: "c1", messages });
+    const res = await put("c1", { messages });
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ message: "Done" });
     expect(mocks.updateChat).toHaveBeenCalledWith("user-1", "c1", { messages });
   });
 
   it("also accepts a title and timestamp alongside the messages", async () => {
-    await put({ id: "c1", messages, title: "Karma", timestamp: 99 });
+    await put("c1", { messages, title: "Karma", timestamp: 99 });
     expect(mocks.updateChat).toHaveBeenCalledWith("user-1", "c1", { messages, title: "Karma", timestamp: 99 });
   });
 
   it("always acts on the session's user, never a user named in the body", async () => {
-    await put({ id: "c1", messages, userId: "victim", user: "victim" });
+    await put("c1", { messages, userId: "victim", user: "victim" });
     expect(mocks.updateChat.mock.calls[0][0]).toBe("user-1");
     expect(mocks.updateChat.mock.calls[0][2]).not.toHaveProperty("userId");
   });
 
   it("drops fields that are not part of the update", async () => {
-    await put({ id: "c1", messages, chatId: "hijack", $set: { id: "victim" } });
+    await put("c1", { messages, chatId: "hijack", $set: { id: "victim" } });
     expect(mocks.updateChat.mock.calls[0][2]).toEqual({ messages });
   });
 
   it("rejects an update that changes nothing", async () => {
-    const res = await put({ id: "c1" });
+    const res = await put("c1", {});
     expect(res.status).toBe(400);
     expect(await res.json()).toEqual({ error: "No modifications!!" });
   });
 
-  it("rejects a missing or invalid chat id", async () => {
-    expect((await put({ messages })).status).toBe(400);
-    expect((await put({ id: 7, messages })).status).toBe(400);
-    expect(mocks.updateChat).not.toHaveBeenCalled();
-  });
-
   it("rejects malformed messages", async () => {
-    const res = await put({ id: "c1", messages: [{ role: "system", parts: [] }] });
+    const res = await put("c1", { messages: [{ role: "system", parts: [] }] });
     expect(res.status).toBe(400);
     expect(mocks.updateChat).not.toHaveBeenCalled();
   });
 
   it("passes on 'chat does not exist'", async () => {
     mocks.updateChat.mockResolvedValue(notFound);
-    const res = await put({ id: "nope", messages });
+    const res = await put("nope", { messages });
     expect(res.status).toBe(400);
     expect(await res.json()).toEqual({ error: "Chat does not exist" });
   });
 
   it("answers 401 without a session", async () => {
     mocks.verifyUser.mockResolvedValue(unauthorized());
-    expect((await put({ id: "c1", messages })).status).toBe(401);
+    expect((await put("c1", { messages })).status).toBe(401);
     expect(mocks.updateChat).not.toHaveBeenCalled();
   });
 });

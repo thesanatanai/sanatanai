@@ -9,10 +9,11 @@ import dbConnect from "../../utils/db";
 
 void dbConnect();
 
-export async function GET(_request: Request, { params: { chatId } }: { params: { chatId: string } }) {
+export async function GET(_request: Request, { params }: { params: Promise<{ chatId: string }> }) {
   const user = (await verifyUser(true)) as User;
   if (typeof user == "function") return user();
 
+  const { chatId } = await params;
   const chat = await getChat(user.id, chatId);
     if (typeof chat == "function") return chat();
   
@@ -24,10 +25,11 @@ export async function GET(_request: Request, { params: { chatId } }: { params: {
 
 
 // Delete a chat
-export async function DELETE(_request: Request, { params: { chatId } }: { params: { chatId: string } }) {
+export async function DELETE(_request: Request, { params }: { params: Promise<{ chatId: string }> }) {
   const user = await verifyUser(true) as User;
   if(typeof user == "function") return user();
 
+  const { chatId } = await params;
   const { id } = user;
   const { deletedCount } = await chatModel.deleteOne({ id, chatId });
   if(!deletedCount) return respondErr("Chat not found");
@@ -59,12 +61,13 @@ const Modifications = z.object({
 });
 
 // Update an existing chat
-export async function PUT(request: Request, { params: { chatId } }: { params: { chatId: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ chatId: string }> }) {
   try {
     const user = (await verifyUser(true)) as User;
     if (typeof user == "function") return user();
 
     const { id } = user;
+    const { chatId } = await params;
     const changes = await request.json();
 
     if (!Object.keys(changes).length) return respondErr("No modifications!!");
