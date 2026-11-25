@@ -35,7 +35,7 @@ export function initGestures(sidebar: HTMLDivElement, isSwipeIncluded = true, hi
     if (
       !sidebar.classList.contains(hideClass) &&
       !sidebar.contains(e.target as Element) &&
-      !(e.target as Element)?.closest("."+btnClass)
+      !(e.target as Element)?.closest("." + btnClass)
     ) {
       sidebar.classList.add(hideClass);
     }

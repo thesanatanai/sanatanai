@@ -31,16 +31,12 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      # Node 24 (see .nvmrc) ships npm 11. The committed package-lock.json is
-      # written by a recent npm, and `npm ci` on npm 10 (Node 20/22) reports it
-      # as out of sync, so do not lower this version.
       - uses: actions/setup-node@v7
         with:
-          node-version-file: .nvmrc
-          cache: npm
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run typecheck
+          cache: pnpm
+      - run: pnpm ci
+      - run: pnpm run lint
+      - run: pnpm run typecheck
 
   unit:
     name: Unit and component tests
@@ -50,11 +46,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v7
         with:
-          node-version-file: .nvmrc
-          cache: npm
-      - run: npm ci
+          cache: pnpm
+      - run: pnpm ci
       - name: Run tests with coverage (thresholds are enforced)
-        run: npm run test:coverage
+        run: pnpm run test:coverage
       - name: Coverage summary
         if: always()
         run: |
@@ -86,9 +81,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v7
         with:
-          node-version-file: .nvmrc
-          cache: npm
-      - run: npm ci
+          cache: pnpm
+      - run: pnpm ci
       - name: Restore the Next.js build cache
         uses: actions/cache@v4
         with:
@@ -97,9 +91,9 @@ jobs:
           restore-keys: |
             nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
       - name: Production build (also type-checks the tests)
-        run: npm run build
+        run: pnpm build
       - name: Smoke test the production server
-        run: npm run test:smoke
+        run: pnpm test:smoke
 
   audit:
     name: Dependency audit (informational)
@@ -109,12 +103,8 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v7
         with:
-          node-version-file: .nvmrc
-      # Reports known advisories in production dependencies without failing the
-      # build, so an upstream advisory never blocks unrelated work. Tighten this
-      # once the existing findings are resolved.
-      - name: npm audit
-        run: npm audit --omit=dev --audit-level=high || echo "::warning title=npm audit::High severity advisories were found in production dependencies. See this job's log."
+      - name: pnpm audit
+        run: pnpm audit --omit=dev --audit-level=high || echo "::warning title=pnpm audit::High severity advisories were found in production dependencies. See this job's log."
 
   # One stable check name for branch protection ("Require status checks").
   ci-passed:
