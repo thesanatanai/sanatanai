@@ -9,7 +9,7 @@ import { useChatStore } from "@/stores/chatStore";
 import { initGestures } from "@/utils/gestures";
 import useFileManager, { useStartRecording } from "@/utils/useFileManager";
 import useSendMessage from "@/utils/useSendMessage";
-import MagicMenu from "@/utils/enhancePrompt";
+import MagicMenu from "@/utils/MagicMenu";
 
 export default function Footer() {
   // Default context values for the footer component, including deep thinking mode and file management.
@@ -23,6 +23,7 @@ export default function Footer() {
   const t = useT();
   const fileRef = useRefManager<HTMLInputElement>();
   const menuRef = useRefManager<HTMLDivElement>();
+  const textareaRef = useRefManager<HTMLTextAreaElement>();
 
   // Initialize gesture controls for the magic menu, allowing it to be hidden or closed with gestures.
   menuRef.afterAvail((menu) => initGestures(menu, false, "hide", "add-btn"));
@@ -42,15 +43,29 @@ export default function Footer() {
     if (!btnMessage) return;
     sendMessage(btnMessage);
     setBtnMessage(false);
-  });
+  }, [btnMessage]);
+
+  useEffect(() => {
+    textareaRef.afterAvail((textarea) => {
+      const handleHeight = () => {
+        textarea.style.height = "0"; // reset height
+        if (!textarea.value) return;
+        textarea.style.height = textarea.scrollHeight + "px";
+      };
+      textarea.addEventListener("input", handleHeight);
+      textarea.addEventListener("change", handleHeight);
+      textarea.addEventListener("blur", handleHeight);
+      textarea.addEventListener("focus", handleHeight);
+    });
+  }, []);
 
   // Use custom React hook for handling message recordings.
   const { listening, toggle, supported } = useStartRecording(setUserMessage);
   return (
     <div className="chat-footer center-flex">
-      <div className="relative w-full flex justify-around">
+      <div className="relative w-full max-w-230 flex justify-center gap-4 items-end">
         <button
-          className="bg-(--glass-bg) rounded-full p-2 center-flex w-11 h-11 text-xl rotate-45 add-btn"
+          className="bg-(--glass-bg) rounded-full p-2 center-flex w-11 h-11 text-xl backdrop-blur-md transition duration-500 rotate-45 hover:rotate-135 add-btn"
           onClick={() =>
             menuRef.afterAvail((menu) => menu.classList.remove("hide"))
           }
@@ -70,38 +85,38 @@ export default function Footer() {
           }
         >
           <FilePreview />
+          <input
+            type="file"
+            name="file"
+            id="file-input"
+            ref={fileRef.set}
+            onChange={handleInput}
+            hidden
+          />
 
-          <div className="capsule-content">
-            <textarea
-              name="message"
-              id="message"
-              className="capsule-input h-11.75! p-[unset]"
-              value={userMessage}
-              placeholder={placeHolder}
-              onChange={(e) => setUserMessage(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key == "Enter" && (e.ctrlKey || (isPC && !e.shiftKey)))
-                  return sendMessage(userMessage, {
-                    ...e,
-                    currentTarget: document.querySelector(".send-btn-capsule"),
-                  });
-              }}
-            ></textarea>
-
-            <div className="capsule-controls">
-              <input
-                type="file"
-                name="file"
-                id="file-input"
-                ref={fileRef.set}
-                onChange={handleInput}
-                hidden
-              />
-            </div>
-          </div>
+          <textarea
+            name="message"
+            id="message"
+            className="capsule-input p-[unset] h-0"
+            value={userMessage}
+            ref={textareaRef.set}
+            placeholder={placeHolder}
+            onChange={(e) => setUserMessage(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key == "Enter" && (e.ctrlKey || (isPC && !e.shiftKey)))
+                return sendMessage(userMessage, {
+                  ...e,
+                  currentTarget: document.querySelector(".send-btn-capsule"),
+                });
+            }}
+          ></textarea>
         </div>
         {supported && !userMessage && (
-          <button aria-label={t("voice")} onClick={() => toggle()} className="bg-(--glass-bg) rounded-full p-2 center-flex w-11 h-11">
+          <button
+            aria-label={t("voice")}
+            onClick={() => toggle()}
+            className="bg-(--glass-bg) rounded-full p-2 center-flex w-11 h-11 text-xl backdrop-blur-md"
+          >
             <Lordicon
               size={24}
               target="parent"
@@ -111,7 +126,7 @@ export default function Footer() {
         )}
         {userMessage && (
           <button
-            className="bg-(--glass-bg) rounded-full p-2 center-flex w-11 h-11"
+            className="bg-(--glass-bg) rounded-full p-2 center-flex w-11 h-11 text-xl backdrop-blur-md"
             onClick={(e) => sendMessage(userMessage, e)}
             disabled={responding}
           >

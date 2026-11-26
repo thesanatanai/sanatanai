@@ -20,6 +20,7 @@
 .light_mode {
   --subheading-color: #222;
   --secondary-color: #e1ebfc;
+  --glass-bg: #0005;
   --secondary-hover-color: #afbfd6;
   --selection-background: #b3d4fc60;
   --most-dark-color: #fff;
@@ -137,7 +138,6 @@
 }
 
 .chat-footer {
-  gap: 1rem;
   flex-wrap: wrap;
   position: fixed;
   bottom: 20px;
@@ -150,14 +150,6 @@
   padding: 0 10px;
 }
 
-.welcome-field {
-  width: 100%;
-  border-radius: 18px;
-  background: var(--secondary-color);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: var(--text-color);
-  padding: 0.95rem 1rem;
-}
 
 .chat-options-menu {
   position: fixed;
@@ -330,14 +322,6 @@
   max-width: 800px;
 }
 
-.capsule-content {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  align-items: flex-start;
-  gap: 8px;
-}
-
 .chat-capsule:focus-within {
   box-shadow: var(--bxsd);
 }
@@ -346,9 +330,10 @@
   width: 100%;
   border: none;
   background: transparent;
+  scrollbar-width: none;
   color: var(--text-color);
   padding: 12px 14px;
-  min-height: 44px;
+  min-height: 47px;
   max-height: 200px;
   resize: none;
   font-size: 0.95rem;
@@ -358,36 +343,6 @@
 
 .capsule-input::placeholder {
   color: #777;
-}
-
-.capsule-controls {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  width: 100%;
-  gap: 8px; /* Increase gap */
-  padding-bottom: 4px;
-  flex-shrink: 0; /* Prevent buttons from squashing */
-}
-
-.capsule-action-btn {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: none;
-  background: transparent;
-  color: var(--text-color);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-  position: relative;
-}
-
-.capsule-action-btn:hover {
-  background: var(--secondary-color);
-  transform: translateY(-2px);
 }
 
 /* Deep Think Toggle Active State */
@@ -428,15 +383,15 @@
 .popover-menu {
   position: absolute;
   bottom: 100%;
-  left: 0;
+  left: 44px;
   margin-bottom: 10px;
-  background: rgba(20, 20, 20, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
   border-radius: 12px;
   padding: 8px;
   min-width: 180px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(20px);
   display: flex;
   flex-direction: column;
   gap: 4px;

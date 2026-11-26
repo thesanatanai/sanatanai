@@ -101,12 +101,12 @@ table {
     appearance: button;
     position: fixed;
     z-index: 4 !important;
-    bottom: 100px;
-    right: 50px;
-    background: linear-gradient(135deg, var(--secondary-color), var(--secondary-hover-color));
-    font-size: 24px;
-    width: 55px;
-    height: 55px;
+    bottom: 80px;
+    right: 40px;
+    transform: translateX(50%);
+    background: var(--secondary-color);
+    width: 32px;
+    height: 32px;
     animation: scrollBtn 1s ease;
     align-items: center;
     justify-content: center;
@@ -116,8 +116,7 @@ table {
 }
 
 .scroll-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+  background: var(--secondary-hover-color);
 }
 
 button,

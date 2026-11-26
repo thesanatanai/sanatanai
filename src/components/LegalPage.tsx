@@ -5,8 +5,6 @@ import { locales, t } from "@/utils/i18n";
 import { Check, LucideIcon } from "lucide-react";
 import type { CSSProperties, JSX } from "react";
 import "@/css/legalPage.css";
-import Script from "next/script";
-import AdUnit from "./AdUnit";
 
 type LanguageKey = keyof typeof locales.en;
 
@@ -141,13 +139,6 @@ export default function LegalPage({
             />
           </button>
         </div>
-        <Script
-            async
-            strategy="afterInteractive"
-            src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3342425038494765"
-            crossOrigin="anonymous"
-          />
-          <AdUnit />
       </div>
     </main>
   );
