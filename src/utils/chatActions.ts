@@ -1,11 +1,10 @@
 import { useChatStore } from "@/stores/chatStore";
 import { setSession } from "./session";
+import { createChat, listChats, patchChat, removeChat } from "./api";
 
 export async function createNewChat() {
   try {
-    const { id } = await fetch("api/chats", {
-      method: "POST",
-    }).then((res) => res.json());
+    const { id } = await createChat();
     useChatStore.getState().setCurrentSessionId(id);
     void getChats();
   } catch {}
@@ -22,34 +21,25 @@ export function loadChat(id: string) {
  */
 export async function getChats(selectLatest = false) {
   const { setChats, setCurrentSessionId } = useChatStore.getState();
-  const chats: Chats = await fetch("api/chats").then((c) => c.json());
-  if (chats && selectLatest) setSession(chats, setCurrentSessionId);
-  setChats(chats || []);
-  return chats || [];
+  const chats = await listChats();
+  if (chats.length && selectLatest) setSession(chats, setCurrentSessionId);
+  setChats(chats);
+  return chats;
 }
 
 export async function deleteChat(id: string) {
   // Whether the open chat is the deleted one has to be decided before the request.
   const isOpen = id === useChatStore.getState().currentSessionId;
   try {
-    const { message } = await fetch("api/chats/" + id, {
-      method: "DELETE",
-    }).then((res) => res.json());
-
-    const chats = await getChats(isOpen);
-    if (message && !chats.length) void createNewChat();
+    await removeChat(id);
+    // The API gives a user who has no chats left a new empty one.
+    await getChats(isOpen);
   } catch {}
 }
 
 export async function updateChat<K extends keyof fullChat>(id: string, changes: Record<K, fullChat[K]>) {
   try {
-    await fetch(`api/chats/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(changes)
-    })
+    await patchChat(id, changes as Parameters<typeof patchChat>[1]);
   }
   catch {}
 }

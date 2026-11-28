@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 
 // A package that is imported but not listed in package.json only works while
 // some other dependency happens to install it (hoisting). It breaks, without
-// warning and in CI only, the day that other dependency drops it. `npm ci`
+// warning and in CI only, the day that other dependency drops it. `pnpm install --frozen-lockfile`
 // cannot detect this, so this test does.
 
 const root = process.cwd();

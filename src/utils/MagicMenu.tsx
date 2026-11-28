@@ -5,6 +5,7 @@ import { Language } from "./i18n";
 import { useNotification } from "@/components/Notification";
 import { useState } from "react";
 import { useChatStore } from "@/stores/chatStore";
+import { enhanceMessage } from "./api";
 
 export default function MagicMenu({
   message,
@@ -65,28 +66,14 @@ function useEnhance(
           type: "error",
         });
       }
-      const enhanced = await fetch("api/chat/v2", {
-        method: "POST",
-        body: JSON.stringify({
-          newMessage: message,
-        }),
-      }).then((response) => response.text());
-      try {
-        const json = JSON.parse(enhanced);
-        if (json.error) {
-          setIsEnhancing(false);
-          return notification("failedToEnhancePrompt", {
-            type: "error",
-            language: true,
-          });
-        }
-      } catch {}
+      const { message: enhanced } = await enhanceMessage(message);
       setIsEnhancing(false);
       return setMessage(enhanced);
     } catch {
       setIsEnhancing(false);
       notification("failedToEnhancePrompt", {
         language: true,
+        type: "error",
       });
     }
   };

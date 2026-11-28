@@ -5,6 +5,7 @@ import { useChatStore } from "@/stores/chatStore";
 import { useCallback } from "react";
 import { parentCount } from "./utils";
 import streamSendMessage from "./message";
+import { generateTitle } from "./api";
 
 /** Custom hook to handle sending messages, including file attachments and streaming responses from the model.
  @param setMessage The function to set message to ""
@@ -34,24 +35,15 @@ function useSendMessage(
       const copied = structuredClone(chats);
       const chat = copied.find((chat) => chat.id == id);
       if (chat && !history.some((val) => val.role == "model")) {
-        void fetch("/api/chat/name", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            newMessage: message,
-            chatId: id,
-          }),
-        })
-          .then((response) => (response.ok ? response.text() : ""))
-          .then((name) => {
+        generateTitle(id, message)
+          .then(({ title }) => {
             // A failed title request must not put an error message in the sidebar.
-            if (!name) return;
-            chat.title = name;
+            if (!title) return;
+            chat.title = title;
             chat.timestamp = Date.now();
             setChats(copied);
-          });
+          })
+          .catch(() => {});
       }
 
       const newMessage: ChatHistory[0] = {

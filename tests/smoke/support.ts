@@ -1,19 +1,7 @@
-import jwt from "jsonwebtoken";
-
 export const PORT = Number(process.env.SMOKE_PORT ?? 3100);
 
 /** Where the app under test is listening. */
 export const BASE_URL = (process.env.SMOKE_BASE_URL ?? `http://127.0.0.1:${PORT}`).replace(/\/$/, "");
-
-/**
- * Secret the server signs sessions with. When this suite starts the server
- * itself it is known; against an external server, pass SMOKE_JWT_SECRET to
- * enable the tests that need a valid session cookie (they are skipped otherwise).
- */
-export const JWT_SECRET = process.env.SMOKE_JWT_SECRET ?? (process.env.SMOKE_BASE_URL ? undefined : "smoke-test-secret-smoke-test-secret");
-
-export const sessionCookie = (options: jwt.SignOptions = {}, secret = JWT_SECRET!) =>
-  `token=${jwt.sign({ id: "smoke-user" }, secret, options)}`;
 
 type Init = Omit<RequestInit, "redirect"> & { cookie?: string; json?: unknown };
 
@@ -38,3 +26,15 @@ export const locationOf = (response: Response) => {
   const url = new URL(location, BASE_URL);
   return url.pathname + url.search;
 };
+
+const base64url = (value: unknown) => Buffer.from(JSON.stringify(value)).toString("base64url");
+
+/**
+ * An access-token cookie as the API sets it, but signed with nothing. The site holds no
+ * signing secret, so its proxy can only read the expiry; the API is what verifies.
+ * @param expiresInSeconds Negative for a token that has already ended
+ */
+export const accessCookie = (expiresInSeconds = 900) =>
+  `access_token=${base64url({ alg: "HS256", typ: "JWT" })}.${base64url({ sub: "smoke-user", exp: Math.floor(Date.now() / 1000) + expiresInSeconds })}.not-a-real-signature`;
+
+export const refreshCookie = () => "refresh_token=opaque-refresh-token-value-0123456789";

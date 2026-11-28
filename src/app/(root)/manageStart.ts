@@ -1,6 +1,4 @@
 import { logger } from "@/utils/utils";
-import { useAppStore } from "@/stores/appStore";
-import jsCookie from "js-cookie";
 
 async function manageSw() {
   if(!globalThis.navigator) return;
@@ -22,10 +20,6 @@ async function manageSw() {
   }
 }
 
-async function _manage() {
+export default function manage() {
   void manageSw();
-  if(!jsCookie.get("setupComplete")) return;
-  await useAppStore.getState().loadProfile();
 }
-
-export default function manage() { void _manage() }

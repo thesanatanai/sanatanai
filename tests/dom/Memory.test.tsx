@@ -2,24 +2,23 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import Memory from "@/components/Memory";
 import { recordNotifications } from "../helpers/stores";
+import { fakeApi, json, signIn } from "../helpers/api";
 
 vi.mock("@/components/Lordicon", () => ({ default: () => null, Icon: () => null }));
 
-const json = (body: unknown, init?: ResponseInit) =>
-  new Response(JSON.stringify(body), { status: 200, ...init });
-
-/** Routes fetch() calls made by the component. */
-function stubApi(memories: unknown, deleteStatus = 200) {
-  const fetchMock = vi.fn(async (_url: string, init?: RequestInit) =>
-    init?.method === "DELETE" ? new Response("Done", { status: deleteStatus }) : json(memories),
-  );
-  vi.stubGlobal("fetch", fetchMock);
-  return fetchMock;
+/** Fakes the API calls made by the component. */
+function stubApi(memories: unknown, deleteStatus = 204) {
+  return fakeApi({
+    "GET /v1/me/memories": () => json(memories),
+    "DELETE /v1/me/memories": () =>
+      deleteStatus === 204 ? new Response(null, { status: 204 }) : json({ error: "No" }, { status: deleteStatus }),
+  });
 }
 
 const trashIcons = () => screen.getAllByRole("listitem").map((item) => item.querySelector("svg")!);
 
 beforeEach(() => {
+  signIn();
   vi.spyOn(console, "error").mockImplementation(() => {});
 });
 
@@ -34,10 +33,10 @@ describe("<Memory />", () => {
   });
 
   it("asks the server for the memories of the signed-in user", async () => {
-    const fetchMock = stubApi([]);
+    const { calls } = stubApi([]);
     render(<Memory setIsOpen={vi.fn()} />);
     await screen.findByText("No memories found.");
-    expect(fetchMock).toHaveBeenCalledWith("/api/user/memories");
+    expect(calls).toMatchObject([{ method: "GET", path: "/v1/me/memories", credentials: "omit", headers: { authorization: "Bearer access-1" } }]);
   });
 
   it("shows a placeholder while loading", () => {
@@ -54,7 +53,7 @@ describe("<Memory />", () => {
   });
 
   it("shows an error when the server rejects the request", async () => {
-    stubApi({ error: "Token not found" });
+    fakeApi({ "GET /v1/me/memories": () => json({ error: "Nope", code: "boom" }, { status: 500 }) });
     render(<Memory setIsOpen={vi.fn()} />);
     expect(await screen.findByText("Failed to load memories.")).toBeDefined();
   });
@@ -77,14 +76,16 @@ describe("<Memory />", () => {
 
 describe("<Memory /> deleting a memory", () => {
   it("asks the server to delete exactly that memory", async () => {
-    const fetchMock = stubApi(["a", "b", "c"]);
+    const { calls } = stubApi(["a", "b", "c"]);
     render(<Memory setIsOpen={vi.fn()} />);
     await screen.findByText("b");
 
     fireEvent.click(trashIcons()[1]);
 
     await waitFor(() =>
-      expect(fetchMock).toHaveBeenCalledWith("/api/user/memories", { method: "DELETE", body: "b" }),
+      expect(calls).toContainEqual(
+        expect.objectContaining({ method: "DELETE", path: "/v1/me/memories", body: { memory: "b" } }),
+      ),
     );
   });
 

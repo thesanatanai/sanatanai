@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { useChatStore } from "@/stores/chatStore";
 import useSendMessage from "@/utils/useSendMessage";
 import { setChat } from "../helpers/stores";
+import { fakeApi, json } from "../helpers/api";
 
 const mocks = vi.hoisted(() => ({ stream: vi.fn() }));
 vi.mock("@/utils/message", () => ({ default: mocks.stream }));
@@ -33,7 +34,7 @@ const file = (name: string, type: string, content: string): UserFileData => ({
 
 beforeEach(() => {
   mocks.stream.mockReset().mockResolvedValue(undefined);
-  vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("A Chat Title")));
+  fakeApi({ "POST /v1/chats/chat-1/title": { title: "A Chat Title" } });
   vi.spyOn(console, "log").mockImplementation(() => {});
 });
 
@@ -193,11 +194,9 @@ describe("useSendMessage: naming new chats", () => {
 
     send("What is dharma?");
 
-    expect(fetch).toHaveBeenCalledWith("/api/chat/name", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ newMessage: "What is dharma?", chatId: "chat-1" }),
-    });
+    const [url, init] = vi.mocked(fetch).mock.calls[0];
+    expect(url).toBe("http://localhost:8080/v1/chats/chat-1/title");
+    expect(init).toMatchObject({ method: "POST", body: JSON.stringify({ message: "What is dharma?" }) });
     await waitFor(() => expect(useChatStore.getState().chats[0].title).toBe("A Chat Title"));
     const updated = useChatStore.getState().chats;
     expect(updated[0].title).toBe("A Chat Title");
@@ -220,12 +219,9 @@ describe("useSendMessage: naming new chats", () => {
 
   // Regression test for a bug that has been fixed (see CHANGELOG).
   it("does not use an error response as the chat title", async () => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue(
-        new Response(JSON.stringify({ error: "Sorry, something went wrong" }), { status: 500 }),
-      ),
-    );
+    fakeApi({
+      "POST /v1/chats/chat-1/title": () => json({ error: "Sorry, something went wrong", code: "internal" }, { status: 500 }),
+    });
     const { send } = setup({ chatHistory: [] });
     send("hello");
 

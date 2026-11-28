@@ -54,7 +54,7 @@ lord-icon {
 
 body {
   width: 100%;
-  min-height: 100vh;
+  min-height: 100svh;
   background: var(--primary-color);
   color: var(--text-color);
   transition: all 1s ease;

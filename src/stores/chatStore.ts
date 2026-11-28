@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { resolve, type Updater } from "./updater";
+import { getChat } from "@/utils/api";
 
 interface ChatState {
   isDeep: boolean;
@@ -74,7 +75,7 @@ export const useChatStore = create<ChatState>()((set, get) => ({
 
   loadChat: async (id) => {
     set({ historyLoading: true });
-    const chat: fullChat = await fetch("api/chats/" + id).then((res) => res.json());
+    const chat = await getChat(id);
     set((s) => {
       const idx = s.chats.findIndex((c) => c.id == id);
       let chats = s.chats;
@@ -83,7 +84,12 @@ export const useChatStore = create<ChatState>()((set, get) => ({
         chats[idx].timestamp = chat.timestamp;
         chats[idx].title = chat.title;
       }
-      return { chatHistory: chat.messages, historyLoading: false, chats };
+      return { chatHistory: withIndexes(chat.messages), historyLoading: false, chats };
     });
   },
 }));
+
+/** The API stores messages without their position, which the chat view uses. */
+export function withIndexes(messages: ChatHistory | undefined): ChatHistory {
+  return (messages ?? []).map((message, i) => ({ ...message, index: i + 1 }));
+}

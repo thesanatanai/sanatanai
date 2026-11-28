@@ -83,7 +83,7 @@ table {
 
 .fullscreen {
     width: 100vw !important;
-    height: 100vh !important;
+    height: 100svh !important;
     align-items: center;
     background: rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(5px);

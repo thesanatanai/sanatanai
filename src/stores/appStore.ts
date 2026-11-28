@@ -1,12 +1,13 @@
 import { create } from "zustand";
 import { logger } from "@/utils/utils";
+import { ApiError, endSession, getProfile, updateProfile, type ApiUser } from "@/utils/api";
 import { resolve, type Updater } from "./updater";
 
 export type Locale = "en" | "hi";
 export type ThemeChoice = theme | "auto";
 export type NotificationType = "info" | "success" | "error";
 
-/** Names of the profile fields as the server (`/api/user`) knows them. */
+/** Names of the profile fields as the API (`/v1/me`) knows them. */
 export type ProfileField = "name" | "email" | "picture" | "preferredLocale";
 
 export interface NotificationState {
@@ -47,6 +48,9 @@ interface AppState {
   setPicture: (value: Updater<string>, onDb?: boolean) => void;
   setFetched: (value: boolean) => void;
   /** Loads the signed-in user's profile from the server. */
+  /** Takes the user as the server loaded it. Nothing is saved back. */
+  hydrateProfile: (user: ApiUser) => void;
+  /** Loads the user from the API in the browser, for when the server could not. */
   loadProfile: () => Promise<void>;
   setNotification: (patch: Partial<NotificationState>) => void;
   notify: (message: string, props?: NotificationProps<boolean>) => void;
@@ -104,16 +108,11 @@ const dbField = (field: "name" | "email" | "picture" | "language"): ProfileField
 
 async function saveProfileField(query: ProfileField, value: string) {
   if (!useAppStore.getState().fetched) return;
+  // The API only lets the user change their name and language. The email and
+  // picture come from the sign-in and are not editable.
+  if (query !== "name" && query !== "preferredLocale") return;
   try {
-    await fetch("api/user", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        [query]: value,
-      }),
-    });
+    await updateProfile({ [query]: value });
   } catch {}
 }
 //#endregion
@@ -161,22 +160,25 @@ export const useAppStore = create<AppState>()((set, get) => {
     setPicture: profileSetter<string>("picture"),
     setFetched: (value) => set({ fetched: value }),
 
+    hydrateProfile: (userData) => {
+      const { setName, setEmail, setPicture, setLanguage, setFetched } = get();
+      // The values come from the server, so they must not be saved back to it.
+      setName(userData.name, false);
+      setEmail(userData.email, false);
+      setPicture(userData.picture, false);
+      setLanguage(userData.preferredLocale, false);
+      setFetched(true);
+    },
+
     loadProfile: async () => {
       try {
-        const data = await fetch("api/user");
-        const { userData } = await data.json();
-        const { setName, setEmail, setPicture, setLanguage, setFetched } = get();
-        // The values come from the server, so they must not be saved back to it.
-        setName(userData.name, false);
-        setEmail(userData.email, false);
-        setPicture(userData.picture, false);
-        setLanguage(userData.preferredLocale, false);
-        setFetched(true);
+        get().hydrateProfile(await getProfile());
       } catch (e) {
         logger(e);
         if (!globalThis.window) return get().setFetched(true);
-        void cookieStore.delete("setupComplete");
-        open("/welcome?logout=true", "_self");
+        // A session the API refuses even after renewing it is over. Trouble that is only the
+        // network or the server keeps the session: the profile just stays empty.
+        if (e instanceof ApiError && e.status === 401) endSession();
         get().setFetched(true);
       }
     },

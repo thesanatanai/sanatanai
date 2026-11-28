@@ -1,35 +1,25 @@
 "use client";
 
 import WelcomeStep from "./WelcomeStep";
-import jsCookie from "js-cookie";
 import { ParticleBackground } from "@/components/Particles";
 import "@/css/onboarding.css";
 import { useEffect, useState } from "react";
+import { signOut } from "@/utils/api";
 
 const Welcome = () => {
     const [step, setStep] = useState<"google" | "terms">("terms");
 
     useEffect(() => {
-        async function redirect() {
-            // Read the actual browser URL.
-            const logout =
-                new URLSearchParams(window.location.search).get("logout") ===
-                "true";
+        // Read the actual browser URL.
+        const logout =
+            new URLSearchParams(window.location.search).get("logout") ===
+            "true";
 
-            // Logout URL must always bypass the redirect check.
-            if (logout) {
-                jsCookie.remove("setupComplete");
-                return;
-            }
-
-            const value = jsCookie.get("setupComplete");
-
-            if (value === "true") {
-                window.location.replace("/");
-            }
+        // The logout URL always shows this page, and ends the session on the server.
+        if (logout) {
+            void signOut();
         }
-
-        redirect();
+        // A visitor who is signed in never gets here: the proxy sends them to the app.
     }, []);
 
     return (

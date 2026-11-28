@@ -1,6 +1,6 @@
 import { logger } from "@/utils/utils";
+import { signInWithGoogle } from "@/utils/api";
 import { CredentialResponse } from "@react-oauth/google";
-import jsCookie from "js-cookie";
 
 export default async function handleLogin(
   credentialResponse: CredentialResponse,
@@ -9,28 +9,9 @@ export default async function handleLogin(
   const googleToken = credentialResponse.credential;
   if (!googleToken) return;
   try {
-    const response = await fetch("/api/user", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        credential: googleToken,
-        locale: lang,
-      }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      jsCookie.set("setupComplete", "true", {
-        expires: 365,
-      });
-      window.location.href = "/app";
-    } else {
-      logger("Backend authentication failed:", data.error);
-    }
+    await signInWithGoogle(googleToken, lang);
+    window.location.href = "/app";
   } catch (err) {
-    logger("Network Error:", err);
+    logger("Sign-in failed:", err);
   }
 }

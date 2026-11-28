@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import MemorySkeleton from "./skeletons/Memory";
 import { Trash } from "lucide-react";
 import { useNotification } from "./Notification";
+import { deleteMemory as apiDeleteMemory, getMemories } from "@/utils/api";
 
 export default function Memory({
   setIsOpen,
@@ -17,11 +18,7 @@ export default function Memory({
   useEffect(() => {
     async function get() {
       try {
-        const memories = await fetch("/api/user/memories").then((response) =>
-          response.json(),
-        );
-        if (memories.error) return setError(true);
-        setMemories(memories);
+        setMemories(await getMemories());
         setFetched(true);
       } catch {
         setError(true);
@@ -79,19 +76,18 @@ function useDeleteMemory(
   return function deleteMemory(memory: string) {
     setMemories((memories) => memories.filter((item) => item !== memory));
 
-    void fetch("/api/user/memories", {
-      method: "DELETE",
-      body: memory,
-    }).then((response) => {
-      if (response.ok)
-        return notification("deletedMemory", {
+    apiDeleteMemory(memory)
+      .then(() =>
+        notification("deletedMemory", {
           language: true,
           type: "success",
-        });
-      return notification("errorMemory", {
-        language: true,
-        type: "error",
-      });
-    });
+        }),
+      )
+      .catch(() =>
+        notification("errorMemory", {
+          language: true,
+          type: "error",
+        }),
+      );
   };
 }

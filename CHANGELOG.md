@@ -1,3 +1,16 @@
+# 2.4.4
+- The site now uses the separate `sanatanai-api` backend (`NEXT_PUBLIC_API_URL`, and optionally `API_INTERNAL_URL` for the server) instead of this app's own `/api/*` routes. Replies now arrive as server-sent events.
+- **Sessions are cookies, and the access token is only in memory.** The API sets HttpOnly `access_token` and `refresh_token` cookies that this site's server and proxy can read. Nothing is stored in `localStorage`. The server hands the access token to the page, which keeps it in a Zustand store (`src/stores/authStore.ts`) and sends it as a bearer token without cookies. A renewal is a bodiless `POST /v1/auth/refresh` that uses the refresh cookie.
+- `/app` is server-rendered again: `src/app/(root)/app/page.tsx` reads the access cookie, loads the user, the chats and the latest chat from the API (`src/utils/serverData.ts`) and passes them to `ChatStoreProvider`. If the server cannot reach the API, the browser loads the same data itself.
+- `src/proxy.ts` is back: it sends visitors without a session from `/app` to sign-in and signed-in visitors from `/`, `/hi` and `/welcome` to the app, and renews a session whose access token has ended before `/app` is rendered, passing the new cookies to the browser and the page. It only reads the cookies: the API checks every call.
+- New `src/utils/api.ts` (API client: in-memory bearer token, one shared renewal for all calls and tabs, retry after 401, a lost renewal race is retried, end of session when the refresh token is refused) and `src/utils/sse.ts` (event-stream reader).
+- `/welcome?logout=true` now really signs out (the session is revoked on the server).
+- Only the name and language can be saved to the profile; email and picture come from sign-in.
+- The Content Security Policy allows the API's origin in `connect-src`.
+- Existing sessions (the old `token` cookie) end: everybody signs in once more.
+- The old `src/app/api/**` routes are kept but unused by the browser, to be removed later.
+- Tests: new API client, event-stream and sign-in tests; the store, page and smoke tests follow the new flow.
+
 # 4.2.3
 - Migrated client state management from React Context to Zustand. `AllContext` and `PageContext` are replaced by two stores in `src/stores/`: `appStore` (theme, user profile, notifications) and `chatStore` (chats, messages, settings panel, Deep Think, persona).
 - Components read what they need with selectors, so they re-render only when that value changes. Chat actions (`createNewChat`, `deleteChat`, `deleteMessage`, ...) no longer take setter arguments.

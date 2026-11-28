@@ -5,7 +5,7 @@
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
+  height: 100svh;
   z-index: 9999;
   overflow: hidden;
 }
@@ -143,7 +143,7 @@
 
   .welcome {
     width: 100vw !important;
-    height: 100vh !important;
+    height: 100svh !important;
     padding: 0 !important;
   }
 

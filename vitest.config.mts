@@ -25,7 +25,7 @@ export default defineConfig({
     unstubGlobals: true,
     projects: [
       {
-        // Server code: route handlers, utilities, schemas, the proxy, ...
+        // Server-side utilities and API clients.
         extends: true,
         test: {
           name: "node",
@@ -63,14 +63,13 @@ export default defineConfig({
         "src/app/**/page.tsx",
         "src/app/**/*.d.ts",
       ],
-      // `npm run test:coverage` fails when coverage drops below these. Server
-      // code (API routes, server actions, the proxy) is held to a high bar;
+      // `pnpm test:coverage` fails when coverage drops below these. The API client
+      // and stream parser are held to a high bar;
       // the rest has a floor that catches large regressions. Raise the floor
       // as UI tests are added, never lower it to make a build pass.
       thresholds: {
-        "src/app/api/**": { statements: 95, branches: 90, functions: 95, lines: 95 },
-        "src/actions/**": { statements: 95, branches: 90, functions: 95, lines: 95 },
-        "src/proxy.ts": { statements: 95, branches: 90, functions: 95, lines: 95 },
+        "src/utils/api.ts": { statements: 95, branches: 90, functions: 95, lines: 95 },
+        "src/utils/sse.ts": { statements: 95, branches: 90, functions: 95, lines: 95 },
         statements: 65,
         branches: 58,
         functions: 55,

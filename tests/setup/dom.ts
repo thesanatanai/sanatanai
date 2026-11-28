@@ -6,5 +6,7 @@ import { resetStores } from "../helpers/stores";
 // The stores are shared by every test in a file, so they are reset as well.
 afterEach(() => {
   cleanup();
+  localStorage.clear();
+  sessionStorage.clear();
   resetStores();
 });

@@ -1,7 +1,7 @@
 import { spawn, type ChildProcess } from "node:child_process";
 import { existsSync } from "node:fs";
 import { createRequire } from "node:module";
-import { BASE_URL, JWT_SECRET, PORT } from "./support";
+import { BASE_URL, PORT } from "./support";
 
 let server: ChildProcess | undefined;
 const logs: string[] = [];
@@ -30,7 +30,7 @@ export async function setup() {
   }
 
   if (!existsSync(".next/BUILD_ID")) {
-    throw new Error("No production build found. Run `npm run build` before `npm run test:smoke`.");
+    throw new Error("No production build found. Run `pnpm build` before `pnpm test:smoke`.");
   }
 
   const nextBin = createRequire(import.meta.url).resolve("next/dist/bin/next");
@@ -39,14 +39,10 @@ export async function setup() {
       ...process.env,
       NODE_ENV: "production",
       NEXT_TELEMETRY_DISABLED: "1",
-      // Fake credentials. MongoDB points at a closed port so that any
-      // accidental database access fails instantly instead of hanging.
+      // Use a closed API address so server-side fetches fail immediately.
       NEXT_PUBLIC_OAUTH_CLIENT_ID: "smoke-client-id",
-      MONGO_URI: "mongodb://127.0.0.1:1/smoke",
-      JWT_SECRET,
-      GENAI: "smoke",
-      TAVILY_API: "smoke",
-      RESEND_API: "re_smoke",
+      NEXT_PUBLIC_API_URL: "https://api.smoke.test",
+      API_INTERNAL_URL: "http://127.0.0.1:1",
     },
     stdio: ["ignore", "pipe", "pipe"],
   });

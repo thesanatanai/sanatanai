@@ -2,6 +2,7 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import AppBootstrap from "@/app/(root)/AppBootstrap";
 import { useAppStore } from "@/stores/appStore";
+import { fakeApi, json, signIn } from "../helpers/api";
 
 const mocks = vi.hoisted(() => ({
   pathname: "/",
@@ -12,7 +13,6 @@ vi.mock("next/navigation", () => ({ usePathname: () => mocks.pathname }));
 vi.mock("@/app/(root)/manageStart", () => ({ default: mocks.manage }));
 
 const app = () => useAppStore.getState();
-const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status });
 /** Moves the browser to a page, which is how the store knows whether the user is in the app. */
 const visit = (path: string) => window.history.pushState(null, "", path);
 
@@ -23,6 +23,7 @@ function stubMatchMedia(dark: boolean) {
 }
 
 beforeEach(() => {
+  signIn();
   mocks.pathname = "/";
   mocks.manage.mockReset();
   localStorage.clear();
@@ -30,25 +31,21 @@ beforeEach(() => {
   document.head.innerHTML = `<meta name="theme-color" content="#123456">`;
   document.body.className = "";
   stubMatchMedia(false);
-  vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("{}")));
+  fakeApi({ "PATCH /v1/me": {} });
 });
 afterEach(() => {
   document.head.innerHTML = "";
 });
 
-describe("AppBootstrap: loading gate", () => {
-  it("shows pages other than /app immediately", () => {
+describe("AppBootstrap", () => {
+  it("shows every page immediately: the chat page brings its own loading screen", () => {
     render(<AppBootstrap><p>child</p></AppBootstrap>);
     expect(screen.getByText("child")).toBeDefined();
   });
 
-  it("holds /app back behind the loading screen until the profile has loaded", () => {
+  it("does not hold /app back: the profile arrives with the chat page's data", () => {
     mocks.pathname = "/app";
     render(<AppBootstrap><p>child</p></AppBootstrap>);
-    expect(screen.queryByText("child")).toBeNull();
-    expect(screen.getByText("Sanatan AI")).toBeDefined();
-
-    act(() => app().setFetched(true));
     expect(screen.getByText("child")).toBeDefined();
   });
 
@@ -162,26 +159,34 @@ describe("app store: language and profile", () => {
   it("saves a language change to the server while in the app", async () => {
     loaded();
     act(() => app().setLanguage("hi"));
+    await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
+    const [url, init] = vi.mocked(fetch).mock.calls[0];
+    expect(url).toBe("http://localhost:8080/v1/me");
+    expect(init).toMatchObject({ method: "PATCH", body: JSON.stringify({ preferredLocale: "hi" }) });
+    expect(init).toMatchObject({ credentials: "omit" });
+    expect(new Headers(init!.headers).get("Authorization")).toBe("Bearer access-1");
+  });
+
+  it("saves a change to the name while in the app", async () => {
+    loaded();
+    act(() => app().setName("Ram"));
+    expect(app().name).toBe("Ram");
     await waitFor(() =>
-      expect(fetch).toHaveBeenCalledWith("api/user", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ preferredLocale: "hi" }),
-      }),
+      expect(fetch).toHaveBeenCalledWith(
+        "http://localhost:8080/v1/me",
+        expect.objectContaining({ method: "PATCH", body: JSON.stringify({ name: "Ram" }) }),
+      ),
     );
   });
 
   it.each([
-    ["name", "setName", "Ram"],
     ["email", "setEmail", "ram@example.com"],
     ["picture", "setPicture", "ram.png"],
-  ] as const)("saves a change to the %s while in the app", async (field, setter, value) => {
+  ] as const)("changes the %s here but does not send it, the API does not let it be changed", (field, setter, value) => {
     loaded();
     act(() => app()[setter](value));
     expect(app()[field]).toBe(value);
-    await waitFor(() =>
-      expect(fetch).toHaveBeenCalledWith("api/user", expect.objectContaining({ body: JSON.stringify({ [field]: value }) })),
-    );
+    expect(fetch).not.toHaveBeenCalled();
   });
 
   it("does not save when the value is only being loaded from the server", () => {
@@ -226,6 +231,16 @@ describe("app store: language and profile", () => {
   });
 });
 
+describe("app store: hydrateProfile", () => {
+  it("takes the user the server loaded, marks the profile as loaded, and saves nothing back", () => {
+    visit("/app");
+    const { fetchMock } = fakeApi({});
+    app().hydrateProfile({ id: "u1", name: "Shivam", email: "s@example.com", picture: "me.png", preferredLocale: "hi", memories: [] });
+    expect(app()).toMatchObject({ name: "Shivam", email: "s@example.com", picture: "me.png", language: "hi", fetched: true });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
 describe("app store: loadProfile", () => {
   beforeEach(() => {
     vi.spyOn(console, "log").mockImplementation(() => {});
@@ -234,31 +249,38 @@ describe("app store: loadProfile", () => {
   it("copies the signed-in user's profile into the app without writing it back", async () => {
     visit("/app");
     app().setFetched(true);
-    const fetchMock = vi
-      .fn()
-      .mockResolvedValue(
-        json({ userData: { name: "Shivam", email: "s@example.com", picture: "me.png", preferredLocale: "hi" } }),
-      );
-    vi.stubGlobal("fetch", fetchMock);
+    const { calls } = fakeApi({
+      "GET /v1/me": { id: "u1", name: "Shivam", email: "s@example.com", picture: "me.png", preferredLocale: "hi", memories: [] },
+    });
 
     await app().loadProfile();
 
     expect(app()).toMatchObject({ name: "Shivam", email: "s@example.com", picture: "me.png", language: "hi", fetched: true });
-    expect(fetchMock).toHaveBeenCalledTimes(1); // only the GET, no PUT
-    expect(fetchMock).toHaveBeenCalledWith("api/user");
+    expect(calls).toMatchObject([{ method: "GET", path: "/v1/me", credentials: "omit", headers: { authorization: "Bearer access-1" } }]); // only the GET, no PATCH
   });
 
-  it("signs the user out when the session is not valid", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(json({ error: "Invalid token" }, 401)));
-    const cookieDelete = vi.fn();
-    vi.stubGlobal("cookieStore", { delete: cookieDelete });
-    const open = vi.fn();
-    vi.stubGlobal("open", open);
+  it("signs the user out when the session cannot be renewed", async () => {
+    fakeApi({
+      "GET /v1/me": () => json({ error: "Invalid or expired token", code: "invalid_token" }, { status: 401 }),
+      "POST /v1/auth/refresh": () => json({ error: "Please sign in again.", code: "invalid_refresh_token" }, { status: 401 }),
+    });
+    const replace = vi.fn();
+    vi.stubGlobal("location", { pathname: "/app", replace });
 
     await app().loadProfile();
 
-    expect(cookieDelete).toHaveBeenCalledWith("setupComplete");
-    expect(open).toHaveBeenCalledWith("/welcome?logout=true", "_self");
+    expect(replace).toHaveBeenCalledWith("/welcome?logout=true");
+    expect(app().fetched).toBe(true);
+  });
+
+  it("keeps the session when only the network is down", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
+    const replace = vi.fn();
+    vi.stubGlobal("location", { pathname: "/app", replace });
+
+    await app().loadProfile();
+
+    expect(replace).not.toHaveBeenCalled();
     expect(app().fetched).toBe(true);
   });
 });

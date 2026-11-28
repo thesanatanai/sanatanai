@@ -6,7 +6,7 @@
   z-index: 4;
   width: 300px;
   border-right: 1px solid #777;
-  height: 100vh;
+  height: 100svh;
   transition: all 0.3s ease;
   background: var(--secondary-color);
 }

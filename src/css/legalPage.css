@@ -18,7 +18,7 @@ lord-icon {
 }
 
 .page {
-  min-height: 100vh;
+  min-height: 100svh;
   position: relative;
   overflow: hidden;
   background: var(--bg);

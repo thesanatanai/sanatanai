@@ -15,14 +15,9 @@ concurrency:
 
 env:
   NEXT_TELEMETRY_DISABLED: "1"
-  # Placeholder values. The app validates its environment when it loads, but CI
-  # never talks to Gemini, Tavily, Resend, Google or MongoDB for real.
+  # The frontend build needs only a public OAuth client id and API origin.
   NEXT_PUBLIC_OAUTH_CLIENT_ID: ci-google-client-id
-  MONGO_URI: mongodb://127.0.0.1:27017/ci
-  JWT_SECRET: ci-jwt-secret-ci-jwt-secret-ci-jwt-secret
-  GENAI: ci-genai-key
-  TAVILY_API: ci-tavily-key
-  RESEND_API: re_ci_key
+  NEXT_PUBLIC_API_URL: https://api.smoke.test
 
 jobs:
   static:
@@ -87,9 +82,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .next/cache
-          key: nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ hashFiles('src/**', 'public/**', 'next.config.ts') }}
+          key: nextjs-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ hashFiles('src/**', 'public/**', 'next.config.ts') }}
           restore-keys: |
-            nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
+            nextjs-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
       - name: Production build (also type-checks the tests)
         run: pnpm build
       - name: Smoke test the production server

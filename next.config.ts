@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 
 const isProd = process.env.NODE_ENV === "production";
 
+/** The API's origin, which the browser must be allowed to call. */
+const apiOrigin = new URL(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").origin;
+
 const csp = [
   "default-src 'self'",
   [
@@ -25,6 +28,7 @@ const csp = [
 
   [
     "connect-src 'self'",
+    apiOrigin, // The Sanatan AI API (sanatanai-api)
     "https://*.google.com",
     "https://*.googletagmanager.com",
     "https://*.googleusercontent.com",

@@ -1,16 +1,18 @@
-import jsCookie from "js-cookie";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import handleLogin from "@/app/(root)/welcome/handleLogin";
 import manage from "@/app/(root)/manageStart";
 import { useAppStore } from "@/stores/appStore";
+import { fakeApi, json } from "../helpers/api";
 
-const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status });
+// Sign-in answers carry no tokens: those are in the cookies the API sets.
+const authResult = {
+  expiresIn: 900,
+  user: { id: "u1", name: "Shivam", email: "s@example.com", picture: "", preferredLocale: "hi", memories: [] },
+};
 
 beforeEach(() => {
   vi.spyOn(console, "log").mockImplementation(() => {});
-  jsCookie.remove("setupComplete");
 });
-afterEach(() => jsCookie.remove("setupComplete"));
 
 describe("handleLogin (Google sign-in button)", () => {
   /** jsdom cannot navigate, so location is replaced by a recording stub. */
@@ -20,35 +22,30 @@ describe("handleLogin (Google sign-in button)", () => {
     return location;
   }
 
-  it("sends the Google credential and language to the server, then opens the app", async () => {
-    const fetchMock = vi.fn().mockResolvedValue(json({ message: "User logged in" }));
-    vi.stubGlobal("fetch", fetchMock);
+  it("sends the Google credential and language to the API, with cookies, then opens the app", async () => {
+    const { calls } = fakeApi({ "POST /v1/auth/google": authResult });
     const location = stubLocation();
 
     await handleLogin({ credential: "google-jwt" } as never, "hi");
 
-    expect(fetchMock).toHaveBeenCalledWith("/api/user", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ credential: "google-jwt", locale: "hi" }),
-    });
-    expect(jsCookie.get("setupComplete")).toBe("true");
+    expect(calls).toMatchObject([
+      { method: "POST", path: "/v1/auth/google", body: { credential: "google-jwt", locale: "hi" }, credentials: "include" },
+    ]);
+    expect(localStorage.length).toBe(0); // the session is in cookies, nothing is stored by the page
     expect(location.href).toBe("/app");
   });
 
-  it("stays on the sign-in page when the server rejects the credential", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(json({ error: "Invalid Google Token" }, 401)));
+  it("stays on the sign-in page when the API rejects the credential", async () => {
+    fakeApi({ "POST /v1/auth/google": () => json({ error: "Invalid Google Token", code: "invalid_credential" }, { status: 401 }) });
     const location = stubLocation();
 
     await handleLogin({ credential: "bad" } as never, "en");
 
-    expect(jsCookie.get("setupComplete")).toBeUndefined();
     expect(location.href).toBe("/welcome");
   });
 
   it("does nothing when Google returned no credential", async () => {
-    const fetchMock = vi.fn();
-    vi.stubGlobal("fetch", fetchMock);
+    const { fetchMock } = fakeApi({});
     await handleLogin({} as never, "en");
     expect(fetchMock).not.toHaveBeenCalled();
   });
@@ -86,29 +83,12 @@ describe("manage (app start-up)", () => {
     expect(serviceWorker.register).not.toHaveBeenCalled();
   });
 
-  it("does not load the profile for a visitor who has not signed in", async () => {
+  it("only registers the service worker: the chat page brings its own user and chats", async () => {
     stubServiceWorker(undefined);
-    const fetchMock = vi.fn();
-    vi.stubGlobal("fetch", fetchMock);
+    const { fetchMock } = fakeApi({});
     manage();
     await new Promise((resolve) => setTimeout(resolve, 20));
     expect(fetchMock).not.toHaveBeenCalled();
     expect(useAppStore.getState().fetched).toBe(false);
-  });
-
-  it("loads the profile of a returning user", async () => {
-    stubServiceWorker(undefined);
-    jsCookie.set("setupComplete", "true");
-    vi.stubGlobal(
-      "fetch",
-      vi.fn().mockResolvedValue(
-        json({ userData: { name: "Shivam", email: "s@example.com", picture: "", preferredLocale: "hi" } }),
-      ),
-    );
-
-    manage();
-
-    await vi.waitFor(() => expect(useAppStore.getState().fetched).toBe(true));
-    expect(useAppStore.getState()).toMatchObject({ name: "Shivam", email: "s@example.com", language: "hi" });
   });
 });

@@ -1,10 +1,12 @@
 import { useAppStore } from "@/stores/appStore";
+import { useAuthStore } from "@/stores/authStore";
 import { useChatStore } from "@/stores/chatStore";
 
-/** Puts both stores back to the state they had when the app loaded. */
+/** Puts the stores back to the state they had when the app loaded. */
 export function resetStores() {
   useAppStore.setState(useAppStore.getInitialState(), true);
   useChatStore.setState(useChatStore.getInitialState(), true);
+  useAuthStore.setState(useAuthStore.getInitialState(), true);
 }
 
 /** Sets the app store's values (language, theme, profile, notification, ...) directly. */

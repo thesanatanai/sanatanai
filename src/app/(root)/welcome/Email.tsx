@@ -1,7 +1,7 @@
 import { Language, useT } from "@/utils/i18n";
 import { useEffect, useState } from "react";
 import { useAppStore } from "@/stores/appStore";
-import jsCookie from "js-cookie";
+import { ApiError, requestOtp, verifyOtp } from "@/utils/api";
 import Lordicon from "@/components/Lordicon";
 import { Edit3 } from "lucide-react";
 
@@ -33,18 +33,7 @@ export default function Email(props: Record<string, Function>) {
 
       // Show loading until the OTP is being sent
       props.setIsLoading(true);
-      const res = await fetch("api/user/otp", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
-      const { error, newIn } = await res.json();
-      if (error) {
-        props.setIsLoading(false);
-        throw new Error(error);
-      }
+      const newIn = await requestOtp(email);
 
       // Set user's information after sending OTP
       userEmail(email);
@@ -52,8 +41,15 @@ export default function Email(props: Record<string, Function>) {
       setTimeLeft(newIn || 120);
       setOtpGot(true);
       props.setIsLoading(false);
-    } catch {
+    } catch (error) {
       props.setIsLoading(false);
+      // Asking again too soon: the server says how long to wait.
+      if (error instanceof ApiError && typeof error.body.newIn === "number") {
+        userEmail(email);
+        setTimeLeft(error.body.newIn);
+        setOtpGot(true);
+        return;
+      }
       setErrMsg(t("sorrySomethingWrong"));
     }
   }
@@ -73,32 +69,17 @@ export default function Email(props: Record<string, Function>) {
 
       // Show loading UI until the OTP verifies
       props.setIsLoading(true);
-      const user = await fetch("api/user/otp", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          otp,
-          locale: currentLanguage,
-        }),
-      }).then((res) => res.json());
-
-      // Send error message if caught
-      if (user.error) {
-        props.setIsLoading(false);
-        setTimeLeft(timeLeft => user.newIn || timeLeft);
-        return setErrMsg(user.error);
-      }
-
-      jsCookie.set("setupComplete", "true", {
-        expires: 365,
-      });
+      await verifyOtp(email, otp, currentLanguage);
       props.setIsLoading(false);
       window.location.href = "/app";
-    } catch {
+    } catch (error) {
       props.setIsLoading(false);
+      // The server's own words for a wrong code, an expired code or a lockout.
+      if (error instanceof ApiError && error.status < 500) {
+        const newIn = error.body.newIn;
+        if (typeof newIn === "number") setTimeLeft(newIn);
+        return setErrMsg(error.message);
+      }
       return setErrMsg(t("errorInvalidOtp"));
     }
   }

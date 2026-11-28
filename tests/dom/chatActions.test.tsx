@@ -11,9 +11,10 @@ import {
 } from "@/utils/chatActions";
 import { setSession } from "@/utils/session";
 import { setChat } from "../helpers/stores";
+import { fakeApi, json as ok, signIn } from "../helpers/api";
 
-const json = (body: unknown, status = 200) =>
-  new Response(JSON.stringify(body), { status });
+const json = (body: unknown, status = 200) => ok(body, { status });
+const noContent = () => new Response(null, { status: 204 });
 const chat = (id: string, timestamp: number, title = id) => ({
   id,
   title,
@@ -22,22 +23,16 @@ const chat = (id: string, timestamp: number, title = id) => ({
 });
 const store = () => useChatStore.getState();
 
-type Route = (init?: RequestInit) => Response | Promise<Response>;
-/** fetch() stub that answers by "METHOD url". */
+type Route = () => Response | Promise<Response>;
+/** Fakes the API, which answers by "METHOD /path". */
 function stubApi(routes: Record<string, Route>) {
-  const fetchMock = vi.fn(async (url: string, init?: RequestInit) => {
-    const key = `${init?.method ?? "GET"} ${url}`;
-    const route = routes[key];
-    if (!route) throw new Error(`Unexpected request: ${key}`);
-    return route(init);
-  });
-  vi.stubGlobal("fetch", fetchMock);
-  return fetchMock;
+  return fakeApi(routes);
 }
 /** What a chat that has no messages yet looks like when it is opened. */
 const emptyChat = (id: string) => () => json({ ...chat(id, 1), messages: [] });
 
 beforeEach(() => {
+  signIn();
   vi.spyOn(console, "log").mockImplementation(() => {});
 });
 
@@ -59,7 +54,7 @@ describe("setSession", () => {
 
 describe("getChats", () => {
   it("loads the chat list into the store", async () => {
-    stubApi({ "GET api/chats": () => json([chat("a", 1), chat("b", 2)]) });
+    stubApi({ "GET /v1/chats": () => json([chat("a", 1), chat("b", 2)]) });
     setChat({ currentSessionId: "a" });
 
     const chats = await getChats();
@@ -71,8 +66,8 @@ describe("getChats", () => {
 
   it("also opens the latest chat when asked to", async () => {
     stubApi({
-      "GET api/chats": () => json([chat("a", 1), chat("b", 2)]),
-      "GET api/chats/b": emptyChat("b"),
+      "GET /v1/chats": () => json([chat("a", 1), chat("b", 2)]),
+      "GET /v1/chats/b": emptyChat("b"),
     });
     setChat({ currentSessionId: "a" });
 
@@ -85,9 +80,9 @@ describe("getChats", () => {
 describe("createNewChat", () => {
   it("creates a chat, switches to it and refreshes the list", async () => {
     stubApi({
-      "POST api/chats": () => json({ id: "fresh" }),
-      "GET api/chats": () => json([chat("fresh", 99)]),
-      "GET api/chats/fresh": emptyChat("fresh"),
+      "POST /v1/chats": () => json({ id: "fresh" }),
+      "GET /v1/chats": () => json([chat("fresh", 99)]),
+      "GET /v1/chats/fresh": emptyChat("fresh"),
     });
 
     await createNewChat();
@@ -104,9 +99,9 @@ describe("createNewChat", () => {
 
 describe("loadChat", () => {
   it("shows a loading state, loads the messages and refreshes the title in the list", async () => {
-    const messages = [{ role: "user", index: 1, parts: [{ text: "hi" }] }];
+    const messages = [{ role: "user", parts: [{ text: "hi" }] }];
     stubApi({
-      "GET api/chats/b": () =>
+      "GET /v1/chats/b": () =>
         json({ id: "b", title: "Karma talk", timestamp: 500, messages }),
     });
     setChat({ chats: [chat("a", 1, "A"), chat("b", 2, "old title")] });
@@ -117,7 +112,7 @@ describe("loadChat", () => {
     await loading;
 
     expect(store().historyLoading).toBe(false);
-    expect(store().chatHistory).toEqual(messages);
+    expect(store().chatHistory).toEqual([{ ...messages[0], index: 1 }]);
     expect(store().chats[1]).toMatchObject({
       id: "b",
       title: "Karma talk",
@@ -130,8 +125,8 @@ describe("loadChat", () => {
 describe("deleteChat", () => {
   it("deletes a chat and refreshes the list", async () => {
     stubApi({
-      "DELETE api/chats/b": () => json({ message: "Done" }),
-      "GET api/chats": () => json([chat("a", 1)]),
+      "DELETE /v1/chats/b": () => noContent(),
+      "GET /v1/chats": () => json([chat("a", 1)]),
     });
     setChat({ chats: [chat("a", 1), chat("b", 2)], currentSessionId: "a" });
 
@@ -143,9 +138,9 @@ describe("deleteChat", () => {
 
   it("switches to the latest remaining chat when the open chat is deleted", async () => {
     stubApi({
-      "DELETE api/chats/gone": () => json({ message: "Done" }),
-      "GET api/chats": () => json([chat("a", 1), chat("b", 5)]),
-      "GET api/chats/b": emptyChat("b"),
+      "DELETE /v1/chats/gone": () => noContent(),
+      "GET /v1/chats": () => json([chat("a", 1), chat("b", 5)]),
+      "GET /v1/chats/b": emptyChat("b"),
     });
     setChat({ currentSessionId: "gone" });
 
@@ -155,32 +150,18 @@ describe("deleteChat", () => {
   });
 
   it("lands on the chat the server creates when the last one is deleted", async () => {
-    // GET /api/chats never returns an empty list: when a user has no chats the
+    // GET /v1/chats never returns an empty list: when a user has no chats the
     // server creates one and returns it, so deleting the last chat selects it.
     stubApi({
-      "DELETE api/chats/only": () => json({ message: "Done" }),
-      "GET api/chats": () => json([chat("fresh", 99)]),
-      "GET api/chats/fresh": emptyChat("fresh"),
+      "DELETE /v1/chats/only": () => noContent(),
+      "GET /v1/chats": () => json([chat("fresh", 99)]),
+      "GET /v1/chats/fresh": emptyChat("fresh"),
     });
     setChat({ currentSessionId: "only" });
 
     await deleteChat("only");
 
     expect(store().currentSessionId).toBe("fresh");
-  });
-
-  it("asks the server for a new chat if the list somehow comes back empty", async () => {
-    const fetchMock = stubApi({
-      "DELETE api/chats/only": () => json({ message: "Done" }),
-      "GET api/chats": () => json([]),
-      "POST api/chats": () => json({ id: "new" }),
-      "GET api/chats/new": emptyChat("new"),
-    });
-    setChat({ currentSessionId: "open" }); // not the deleted chat, so nothing is selected from the empty list
-    await deleteChat("only");
-
-    await vi.waitFor(() => expect(fetchMock).toHaveBeenCalledWith("api/chats", { method: "POST" }));
-    await vi.waitFor(() => expect(store().currentSessionId).toBe("new"));
   });
 
   it("swallows network errors", async () => {
@@ -190,16 +171,12 @@ describe("deleteChat", () => {
 });
 
 describe("updateChat", () => {
-  it("saves changes with PUT /api/chats/:id", async () => {
-    const fetchMock = stubApi({
-      "PUT api/chats/b": () => json({ message: "Done" }),
-    });
+  it("saves changes with PATCH /v1/chats/:id", async () => {
+    const { calls } = stubApi({ "PATCH /v1/chats/b": noContent });
     await updateChat("b", { title: "New title" });
-    expect(fetchMock).toHaveBeenCalledWith("api/chats/b", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: "New title" }),
-    });
+    expect(calls).toMatchObject([
+      { method: "PATCH", path: "/v1/chats/b", body: { title: "New title" }, credentials: "omit", headers: { authorization: "Bearer access-1" } },
+    ]);
   });
 
   it("swallows network errors", async () => {
@@ -218,10 +195,9 @@ describe("deleteMessage", () => {
 
   function setup(history: ChatHistory) {
     setChat({ chatHistory: history, currentSessionId: "chat-7" });
-    const fetchMock = stubApi({
-      "PUT api/chats/chat-7": () => json({ message: "Done" }),
+    return stubApi({
+      "PATCH /v1/chats/chat-7": () => noContent(),
     });
-    return { fetchMock };
   }
 
   it("removes a message locally and saves the shortened chat", async () => {
@@ -230,18 +206,17 @@ describe("deleteMessage", () => {
       message("model", "b", 2),
       message("user", "c", 3),
     ];
-    const { fetchMock } = setup(history);
+    const { calls } = setup(history);
 
     await act(() => deleteMessage(1));
 
     const expected = [history[0], history[2]];
     expect(store().chatHistory).toEqual(expected);
-    expect(fetchMock).toHaveBeenCalledWith(
-      "api/chats/chat-7",
-      expect.objectContaining({ method: "PUT" }),
-    );
-    expect(JSON.parse(fetchMock.mock.calls[0][1]!.body as string)).toEqual({
-      messages: expected,
+    expect(calls).toHaveLength(1);
+    expect(calls[0]).toMatchObject({ method: "PATCH", path: "/v1/chats/chat-7" });
+    // Only what the API stores is sent: the view's own `index` stays behind.
+    expect(calls[0].body).toEqual({
+      messages: expected.map(({ role, parts }) => ({ role, parts })),
     });
   });
 

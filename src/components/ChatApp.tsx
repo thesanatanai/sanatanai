@@ -203,7 +203,7 @@ function ScrollBtn() {
         scroll(btn.currentTarget.parentElement?.querySelector(".chat-body"))
       }
     >
-      <Lordicon src="down" />
+      <Lordicon src="down" size={24} />
     </button>
   );
 }

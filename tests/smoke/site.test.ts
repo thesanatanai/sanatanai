@@ -109,7 +109,7 @@ describe("crawler and PWA files", () => {
 });
 
 describe("security headers", () => {
-  it.each(["/", "/hi", "/terms", "/welcome", "/robots.txt", "/api/user"])(
+  it.each(["/", "/hi", "/terms", "/welcome", "/app", "/robots.txt"])(
     "are set on %s",
     async (path) => {
       const res = await request(path);
@@ -141,6 +141,15 @@ describe("security headers", () => {
     expect(policy).toContain("object-src 'none'");
     expect(policy).toContain("frame-ancestors 'none'");
     expect(policy).toContain("base-uri 'self'");
+  });
+
+  it("lets the browser call the API, and only that origin besides Google", async () => {
+    const policy = (await request("/")).headers.get("content-security-policy") ?? "";
+    const connect = policy.split("; ").find((directive) => directive.startsWith("connect-src")) ?? "";
+    const apiOrigin = new URL(process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080").origin;
+    expect(connect).toContain("'self'");
+    expect(connect).toContain(apiOrigin);
+    expect(connect).not.toContain("*.test");
   });
 
 });
